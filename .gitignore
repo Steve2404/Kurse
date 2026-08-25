@@ -3,6 +3,21 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Modules lab (chapter 12) - build artifacts, not sources ###
+modules-lab/**/mods/
+modules-lab/**/compile.log
+modules-lab/**/*.jmod
+modules-lab/**/custom-runtime/
+modules-lab/**/jars/
+modules-lab/07-module-types/classes-unnamed/
+modules-lab/07-module-types/classes-named/
+modules-lab/07-module-types/jars/
+modules-lab/07-module-types/classpath-app-out/
+modules-lab/07-module-types/modpath-auto/
+modules-lab/07-module-types/modpath-named/
+modules-lab/07-module-types/modpath-app-mods-auto/
+modules-lab/07-module-types/modpath-app-mods-named/
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
