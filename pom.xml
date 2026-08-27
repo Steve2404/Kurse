@@ -7,6 +7,13 @@
   <name>Archetype - Kurse</name>
   <url>http://maven.apache.org</url>
 
+  <properties>
+    <!-- Requis a partir du chapitre 7 (records, sealed classes) : Java 8 par
+         defaut ne les comprend pas du tout. -->
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <dependencies>
     <!-- Base embarquee (en memoire), utilisee par les exercices JDBC de base (chapitre 15) -->
     <dependency>
