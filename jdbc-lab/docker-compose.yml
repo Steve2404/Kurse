@@ -1,0 +1,41 @@
+# Ce fichier est une "liste de courses" que Docker lit pour preparer des
+# boites toutes pretes (des "conteneurs"). Voir DOCKER_EXPLIQUE.md dans ce
+# meme dossier si le mot "Docker" ne te dit rien du tout.
+#
+# Demarrer les 2 boites : docker compose up -d   (depuis ce dossier jdbc-lab/)
+# Voir si elles tournent : docker compose ps
+# Les arreter           : docker compose down
+services:
+
+  # Boite n1 : une vraie base PostgreSQL, prete a l'emploi.
+  kurse-jdbc-postgres:
+    image: postgres:16        # le "logiciel" installe DANS la boite
+    container_name: kurse-jdbc-postgres
+    environment:               # les reglages de depart de la base
+      POSTGRES_DB: kurse       # nom de la base creee automatiquement
+      POSTGRES_USER: kurse     # utilisateur autorise a s'y connecter
+      POSTGRES_PASSWORD: kurse # son mot de passe
+    ports:
+      # "15432:5432" veut dire : "la boite ecoute sur son port 5432
+      # (le port HABITUEL de Postgres), mais on la branche sur le
+      # port 15432 de TA machine". Pourquoi pas le port habituel
+      # 5432 directement ? Parce qu'un AUTRE projet sur cette machine
+      # fait deja tourner son propre Postgres sur ce port precis -
+      # utiliser 15432 evite tout conflit avec lui, sans jamais y
+      # toucher.
+      - "15432:5432"
+
+  # Boite n2 : une vraie base MySQL, prete a l'emploi.
+  kurse-jdbc-mysql:
+    image: mysql:8.4
+    container_name: kurse-jdbc-mysql
+    environment:
+      MYSQL_DATABASE: kurse
+      MYSQL_USER: kurse
+      MYSQL_PASSWORD: kurse
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # Meme logique que pour Postgres : 13306 plutot que le port
+      # habituel 3306, pour ne jamais entrer en conflit avec un autre
+      # MySQL qui tournerait deja ailleurs sur cette machine.
+      - "13306:3306"

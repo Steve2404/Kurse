@@ -6,4 +6,24 @@
   <version>1.0-SNAPSHOT</version>
   <name>Archetype - Kurse</name>
   <url>http://maven.apache.org</url>
+
+  <dependencies>
+    <!-- Base embarquee (en memoire), utilisee par les exercices JDBC de base (chapitre 15) -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.3.232</version>
+    </dependency>
+    <!-- Drivers pour les exercices JDBC multi-fournisseurs (Postgres/MySQL via Docker) -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.7.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>9.1.0</version>
+    </dependency>
+  </dependencies>
 </project>
