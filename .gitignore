@@ -4,19 +4,19 @@ target/
 !**/src/test/**/target/
 
 ### Modules lab (chapter 12) - build artifacts, not sources ###
-modules-lab/**/mods/
-modules-lab/**/compile.log
-modules-lab/**/*.jmod
-modules-lab/**/custom-runtime/
-modules-lab/**/jars/
-modules-lab/07-module-types/classes-unnamed/
-modules-lab/07-module-types/classes-named/
-modules-lab/07-module-types/jars/
-modules-lab/07-module-types/classpath-app-out/
-modules-lab/07-module-types/modpath-auto/
-modules-lab/07-module-types/modpath-named/
-modules-lab/07-module-types/modpath-app-mods-auto/
-modules-lab/07-module-types/modpath-app-mods-named/
+ch12_modules-lab/**/mods/
+ch12_modules-lab/**/compile.log
+ch12_modules-lab/**/*.jmod
+ch12_modules-lab/**/custom-runtime/
+ch12_modules-lab/**/jars/
+ch12_modules-lab/07-module-types/classes-unnamed/
+ch12_modules-lab/07-module-types/classes-named/
+ch12_modules-lab/07-module-types/jars/
+ch12_modules-lab/07-module-types/classpath-app-out/
+ch12_modules-lab/07-module-types/modpath-auto/
+ch12_modules-lab/07-module-types/modpath-named/
+ch12_modules-lab/07-module-types/modpath-app-mods-auto/
+ch12_modules-lab/07-module-types/modpath-app-mods-named/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
