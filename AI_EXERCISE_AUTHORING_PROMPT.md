@@ -168,6 +168,13 @@ comme référence exacte).
 
 ### 2.3 Fichier `exercises/ExerciseNN_NomQuiz.java` (exercice "quiz")
 
+> **Préférence de l'utilisateur (à respecter en priorité) :** il ne veut
+> PAS de quiz. Il veut « mettre les mains dans le cambouis » : remplace
+> chaque quiz prévu par un exercice comportemental (section 2.2) de plus
+> en plus complexe, et fais vérifier les pièges par les tests du `main()`
+> (compteurs, traces, exceptions attendues). Le format ci-dessous n'est
+> conservé que pour les anciens chapitres qui en contiennent déjà.
+
 Utilisé quand il n'y a pas UNE seule implémentation correcte, mais une
 question de type "est-ce que ce code compile ?" ou "quel est le
 résultat ?". Pas de `solutions/SolutionNN_...java` associé — le
@@ -221,8 +228,11 @@ adapter au minimum) :
   imbriquées, types, etc.).
 - Javadoc minimal : `Corrige de l'exercice N. A ne consulter qu'apres
   avoir essaye par vous-meme dans chN_nom.exercices.ExerciseNN_Nom.`
-- Implémentation réelle et correcte, **aucun commentaire narratif**,
-  pas de `main()`.
+- Implémentation réelle et correcte, pas de `main()`.
+- **Chaque méthode commence par un court commentaire `//`** (1 à 2 lignes)
+  qui explique POURQUOI cet outil a été choisi et quel piège il évite
+  (pas une paraphrase de la ligne de code). L'utilisateur lit les
+  corrigés pour apprendre : un corrigé muet ne lui apprend rien.
 
 ## 3. Discipline de vérification — RÈGLE LA PLUS IMPORTANTE
 
