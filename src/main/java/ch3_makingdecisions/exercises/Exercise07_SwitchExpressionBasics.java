@@ -3,11 +3,11 @@ package ch3_makingdecisions.exercises;
 import ch3_makingdecisions.ExerciseChecker;
 
 /**
- * EXERCICE 6 - switch expression : RENVOIE une valeur directement, plus besoin de break (niveau : moyen/difficile)
+ * EXERCICE 7 - switch expression : RENVOIE une valeur directement, plus besoin de break (niveau : moyen/difficile)
  * ==========================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise04_SwitchStatementBasics.java.
+ * Exercise05_SwitchStatementBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -22,7 +22,7 @@ import ch3_makingdecisions.ExerciseChecker;
  *     1, 2 ->").
  *   - le compilateur EXIGE que TOUTES les valeurs possibles soient
  *     couvertes (par les case, ou par un default) - sinon, ca ne
- *     compile MEME PAS (voir Exercise07).
+ *     compile MEME PAS (voir Exercise??07).
  *
  * Pour une seule expression apres la fleche, sa valeur est
  * AUTOMATIQUEMENT le resultat (pas besoin d'ecrire "yield"). Pour un
@@ -72,7 +72,7 @@ import ch3_makingdecisions.ExerciseChecker;
  *     - la syntaxe de regroupement change ENTIEREMENT entre statement
  *     et expression.
  */
-public class Exercise06_SwitchExpressionBasics {
+public class Exercise07_SwitchExpressionBasics {
 
     public static String seasonForMonthExpr(int monthNumber) {
         throw new UnsupportedOperationException("TODO 1 : implementer seasonForMonthExpr()");

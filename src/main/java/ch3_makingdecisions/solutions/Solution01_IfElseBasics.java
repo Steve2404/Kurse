@@ -7,6 +7,8 @@ package ch3_makingdecisions.solutions;
 public class Solution01_IfElseBasics {
 
     public static String classifyNumber(int n) {
+        // Chaine if / else if / else : un seul bloc s'execute, le dernier else attrape tout le reste.
+        // Les accolades evitent les pieges d'indentation (instruction capturee, dangling else).
         if (n < 0) {
             return "negatif";
         } else if (n == 0) {

@@ -1,12 +1,13 @@
 package ch3_makingdecisions.solutions;
 
 /**
- * Corrige de l'exercice 4. A ne consulter qu'apres avoir essaye par
- * vous-meme dans ch3_makingdecisions.exercises.Exercise04_SwitchStatementBasics.
+ * Corrige de l'exercice 5. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch3_makingdecisions.exercises.Exercise05_SwitchStatementBasics.
  */
-public class Solution04_SwitchStatementBasics {
+public class Solution05_SwitchStatementBasics {
 
     public static String monthName(int monthNumber) {
+        // Chaque case sort par return : pas de break necessaire, pas de fall-through possible.
         switch (monthNumber) {
             case 1:
                 return "Janvier";
@@ -38,6 +39,8 @@ public class Solution04_SwitchStatementBasics {
     }
 
     public static String seasonForMonth(int monthNumber) {
+        // Plusieurs case empiles partagent le meme code (fall-through voulu), puis break pour s'arreter.
+        // result est initialisee sur tous les chemins grace au default.
         String result;
         switch (monthNumber) {
             case 12:

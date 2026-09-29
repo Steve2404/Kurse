@@ -7,6 +7,7 @@ package ch3_makingdecisions.solutions;
 public class Solution02_PatternMatchingAndFlowScoping {
 
     public static String describeViaEarlyReturn(Object obj) {
+        // Sortie anticipee sur le test NIE : apres le return, le compilateur sait que c'est une String.
         if (!(obj instanceof String s)) {
             return "pas une String";
         }
@@ -14,6 +15,7 @@ public class Solution02_PatternMatchingAndFlowScoping {
     }
 
     public static String describeIfLongString(Object obj) {
+        // && : la droite n'est evaluee que si la gauche a reussi, donc s y existe deja.
         if (obj instanceof String s && s.length() > 3) {
             return "longue String : " + s;
         }

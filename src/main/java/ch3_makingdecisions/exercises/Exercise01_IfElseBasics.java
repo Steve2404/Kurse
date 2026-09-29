@@ -66,6 +66,24 @@ public class Exercise01_IfElseBasics {
         throw new UnsupportedOperationException("TODO : implementer classifyNumber()");
     }
 
+    public static void main(String[] args) {
+        ExerciseChecker.check("classifyNumber(-5) == \"negatif\"", classifyNumber(-5).equals("negatif"));
+        ExerciseChecker.check("classifyNumber(0) == \"zero\"", classifyNumber(0).equals("zero"));
+        ExerciseChecker.check("classifyNumber(5) == \"positif\"", classifyNumber(5).equals("positif"));
+
+        counter = 0;
+        demonstrateBraceTrap(false);
+        ExerciseChecker.check("Piege 1 : counter vaut 1 (PAS 0) meme avec flag=false - la 2e ligne n'etait PAS dans le if",
+                counter == 1);
+
+        ExerciseChecker.check("Piege 2 : x=-5,y=5 -> \"aucun\" (le if EXTERNE, lui, est bien respecte)",
+                danglingElseDemo(-5, 5).equals("aucun"));
+        ExerciseChecker.check("Piege 2 : x=5,y=-5 -> l'else s'est colle au if INTERNE (y > 0), pas a x > 0",
+                danglingElseDemo(5, -5).equals("x positif seulement"));
+
+        ExerciseChecker.summary();
+    }
+
     // -- Piege 1 : instruction "capturee" sans accolades --
     // Malgre l'indentation qui LAISSE CROIRE que les 2 lignes sont
     // "dans" le if, SEULE counter++ (la 1ere ligne) en fait vraiment
@@ -90,23 +108,5 @@ public class Exercise01_IfElseBasics {
             else
                 result = "x positif seulement";
         return result;
-    }
-
-    public static void main(String[] args) {
-        ExerciseChecker.check("classifyNumber(-5) == \"negatif\"", classifyNumber(-5).equals("negatif"));
-        ExerciseChecker.check("classifyNumber(0) == \"zero\"", classifyNumber(0).equals("zero"));
-        ExerciseChecker.check("classifyNumber(5) == \"positif\"", classifyNumber(5).equals("positif"));
-
-        counter = 0;
-        demonstrateBraceTrap(false);
-        ExerciseChecker.check("Piege 1 : counter vaut 1 (PAS 0) meme avec flag=false - la 2e ligne n'etait PAS dans le if",
-                counter == 1);
-
-        ExerciseChecker.check("Piege 2 : x=-5,y=5 -> \"aucun\" (le if EXTERNE, lui, est bien respecte)",
-                danglingElseDemo(-5, 5).equals("aucun"));
-        ExerciseChecker.check("Piege 2 : x=5,y=-5 -> l'else s'est colle au if INTERNE (y > 0), pas a x > 0",
-                danglingElseDemo(5, -5).equals("x positif seulement"));
-
-        ExerciseChecker.summary();
     }
 }

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 8 - while vs do/while : la SEULE vraie difference - le do/while s'execute AU MOINS 1 fois (niveau : moyen)
- * ================================================================================================================================
+ * EXERCICE 10 - while vs do/while : la SEULE vraie difference - le do/while s'execute AU MOINS 1 fois (niveau : moyen)
+ * =================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_IfElseBasics.java.
@@ -73,7 +73,7 @@ import java.util.List;
  *     point-virgule final APRES la condition : contrairement au
  *     while classique, c'est ici une VRAIE instruction complete.
  */
-public class Exercise08_WhileVsDoWhile {
+public class Exercise10_WhileVsDoWhile {
 
     public static List<Integer> countdownWhile(int n) {
         throw new UnsupportedOperationException("TODO 1 : implementer countdownWhile()");

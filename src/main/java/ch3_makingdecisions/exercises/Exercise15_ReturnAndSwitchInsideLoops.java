@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 12 - return dans une boucle, et continue A TRAVERS un switch (niveau : difficile)
+ * EXERCICE 15 - return dans une boucle, et continue A TRAVERS un switch (niveau : difficile)
  * =====================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise11_LabeledLoops.java.
+ * Exercise14_LabeledLoops.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
- * return, c'est encore plus radical qu'un break etiquete (Exercise11)
+ * return, c'est encore plus radical qu'un break etiquete (Exercise14)
  * : il ne se contente pas d'arreter des boucles, il quitte
  * IMMEDIATEMENT toute la METHODE, en rendant sa valeur - peu importe
  * combien de boucles (ou de switch) sont imbriques autour, TOUT
@@ -76,14 +76,14 @@ import java.util.List;
  * Indices techniques Java (a lire seulement si le plan a la main est
  * clair mais que la traduction en code bloque) :
  *
- *   - Dans un switch EXPRESSION (avec ->, voir Exercise06), "case 3
+ *   - Dans un switch EXPRESSION (avec ->, voir Exercise07), "case 3
  *     -> continue;" fonctionne comme une INSTRUCTION normale dans le
  *     corps du switch STATEMENT ici (switch (n) { ... }, sans return
  *     direct) - continue reste une instruction de FLUX, pas une
  *     valeur, donc ce switch-ci doit rester un switch STATEMENT
  *     classique, pas une expression utilisee comme valeur.
  */
-public class Exercise12_ReturnAndSwitchInsideLoops {
+public class Exercise15_ReturnAndSwitchInsideLoops {
 
     public static List<Integer> processExceptThree(int[] nums) {
         throw new UnsupportedOperationException("TODO 1 : implementer processExceptThree()");

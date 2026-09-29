@@ -5,11 +5,11 @@ import ch3_makingdecisions.ExerciseChecker;
 import java.util.Arrays;
 
 /**
- * EXERCICE 11 - Boucles imbriquees avec ETIQUETTE : le piege PREFERE de l'examen (niveau : difficile)
+ * EXERCICE 14 - Boucles imbriquees avec ETIQUETTE : le piege PREFERE de l'examen (niveau : difficile)
  * =============================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise10_BreakAndContinue.java.
+ * Exercise13_BreakAndContinue.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -84,7 +84,7 @@ import java.util.Arrays;
  *     IMMEDIATEMENT avant le mot-cle "for" de la boucle qu'on
  *     etiquette, sans rien entre les 2.
  */
-public class Exercise11_LabeledLoops {
+public class Exercise14_LabeledLoops {
 
     public static int rowsContainingValue(int[][] grid, int target) {
         throw new UnsupportedOperationException("TODO 1 : implementer rowsContainingValue()");

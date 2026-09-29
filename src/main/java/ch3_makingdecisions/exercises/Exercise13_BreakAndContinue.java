@@ -3,11 +3,11 @@ package ch3_makingdecisions.exercises;
 import ch3_makingdecisions.ExerciseChecker;
 
 /**
- * EXERCICE 10 - break et continue : arreter la boucle ENTIEREMENT, ou juste sauter CE tour (niveau : moyen)
+ * EXERCICE 13 - break et continue : arreter la boucle ENTIEREMENT, ou juste sauter CE tour (niveau : moyen)
  * ====================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise08_WhileVsDoWhile.java.
+ * Exercise10_WhileVsDoWhile.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -70,7 +70,7 @@ import ch3_makingdecisions.ExerciseChecker;
  *   - "if (n < 0) { continue; }" DOIT etre place AVANT le "total +=
  *     n" pour vraiment sauter cette ligne pour les nombres negatifs.
  */
-public class Exercise10_BreakAndContinue {
+public class Exercise13_BreakAndContinue {
 
     public static int firstMultipleOf(int[] nums, int divisor) {
         throw new UnsupportedOperationException("TODO 1 : implementer firstMultipleOf()");

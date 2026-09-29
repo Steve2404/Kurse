@@ -3,7 +3,7 @@ package ch3_makingdecisions.exercises;
 import ch3_makingdecisions.ExerciseChecker;
 
 /**
- * EXERCICE 4 - switch statement : branche au 1er match, PUIS continue jusqu'a un break (niveau : moyen)
+ * EXERCICE 5 - switch statement : branche au 1er match, PUIS continue jusqu'a un break (niveau : moyen)
  * ================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
@@ -72,7 +72,7 @@ import ch3_makingdecisions.ExerciseChecker;
  *     (result = "Hiver"), quel que soit CELUI des 3 qui a
  *     initialement matche.
  */
-public class Exercise04_SwitchStatementBasics {
+public class Exercise05_SwitchStatementBasics {
 
     public static String monthName(int monthNumber) {
         throw new UnsupportedOperationException("TODO 1 : implementer monthName()");

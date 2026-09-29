@@ -3,11 +3,11 @@ package ch3_makingdecisions.exercises;
 import ch3_makingdecisions.ExerciseChecker;
 
 /**
- * EXERCICE 9 - for vs for-each : quand tu as besoin de l'index, et quand tu n'en as PAS besoin (niveau : moyen)
- * =======================================================================================================================
+ * EXERCICE 11 - for vs for-each : quand tu as besoin de l'index, et quand tu n'en as PAS besoin (niveau : moyen)
+ * ========================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise08_WhileVsDoWhile.java.
+ * Exercise10_WhileVsDoWhile.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -68,7 +68,7 @@ import ch3_makingdecisions.ExerciseChecker;
  *     impossible a exprimer avec un for-each, qui, LUI, parcourt
  *     TOUJOURS element par element, sans jamais sauter.
  */
-public class Exercise09_ForVsForEach {
+public class Exercise11_ForVsForEach {
 
     public static int sumEvenIndices(int[] nums) {
         throw new UnsupportedOperationException("TODO 1 : implementer sumEvenIndices()");
