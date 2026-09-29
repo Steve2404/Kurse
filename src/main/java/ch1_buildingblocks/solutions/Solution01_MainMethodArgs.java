@@ -7,10 +7,13 @@ package ch1_buildingblocks.solutions;
 public class Solution01_MainMethodArgs {
 
     public static String getArgumentAt(String[] args, int index) {
+        // Aucune verification : Java ne controle jamais args a notre place, un index absent
+        // lance ArrayIndexOutOfBoundsException comme pour n'importe quel tableau.
         return args[index];
     }
 
     public static String firstArgumentOrDefault(String[] args, String defaultValue) {
+        // On regarde la longueur AVANT de lire args[0] : c'est ce qui evite l'exception.
         if (args.length == 0) {
             return defaultValue;
         }

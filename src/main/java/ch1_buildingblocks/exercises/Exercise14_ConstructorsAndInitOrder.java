@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 11 - Un constructeur, c'est "comme une methode sans type de retour" - et il parle TOUJOURS EN DERNIER (niveau : moyen)
+ * EXERCICE 14 - Un constructeur, c'est "comme une methode sans type de retour" - et il parle TOUJOURS EN DERNIER (niveau : moyen)
  * =========================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise10_VariableScopeBasics.java.
+ * Exercise12_VariableScopeBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -53,7 +53,7 @@ import java.util.List;
  *     a fait ordinaire, qui ne s'executerait JAMAIS automatiquement
  *     a la creation d'un objet.
  */
-public class Exercise11_ConstructorsAndInitOrder {
+public class Exercise14_ConstructorsAndInitOrder {
 
     static class Widget {
         private final List<String> events = new ArrayList<>();

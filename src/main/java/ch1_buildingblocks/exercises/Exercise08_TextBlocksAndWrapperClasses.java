@@ -3,11 +3,11 @@ package ch1_buildingblocks.exercises;
 import ch1_buildingblocks.ExerciseChecker;
 
 /**
- * EXERCICE 6 - Blocs de texte (""") et classes wrapper : un String multi-lignes, et des methodes sur un "nombre" (niveau : moyen)
+ * EXERCICE 8 - Blocs de texte (""") et classes wrapper : un String multi-lignes, et des methodes sur un "nombre" (niveau : moyen)
  * =========================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise04_PrimitivesVsReferenceTypes.java.
+ * Exercise05_PrimitivesVsReferenceTypes.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -20,7 +20,7 @@ import ch1_buildingblocks.ExerciseChecker;
  * la ligne avant), il n'y a PAS de saut de ligne final.
  *
  * Une classe wrapper (Integer pour int, Boolean pour boolean...) est
- * un type de REFERENCE (voir Exercise04) qui "enveloppe" un
+ * un type de REFERENCE (voir Exercise05) qui "enveloppe" un
  * primitif - et lui ajoute des METHODES que le primitif NU n'a
  * jamais eues (compareTo(), par exemple : un int, lui, n'a AUCUNE
  * methode du tout, seul Integer en a).
@@ -76,7 +76,7 @@ import ch1_buildingblocks.ExerciseChecker;
  *     plus petit, POSITIF s'il est plus grand, 0 si egal - PAS
  *     forcement -1/0/1 exactement, juste le SIGNE compte.
  */
-public class Exercise06_TextBlocksAndWrapperClasses {
+public class Exercise08_TextBlocksAndWrapperClasses {
 
     public static String withTrailingBreak() {
         throw new UnsupportedOperationException("TODO 1 : implementer withTrailingBreak()");

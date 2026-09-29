@@ -3,7 +3,7 @@ package ch1_buildingblocks.exercises;
 import ch1_buildingblocks.ExerciseChecker;
 
 /**
- * EXERCICE 4 - Primitifs vs types de reference : seuls les references peuvent etre null (niveau : moyen)
+ * EXERCICE 5 - Primitifs vs types de reference : seuls les references peuvent etre null (niveau : moyen)
  * =================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
@@ -66,7 +66,7 @@ import ch1_buildingblocks.ExerciseChecker;
  *     NE COMPILE PAS DU TOUT - la preuve concrete qu'un primitif ne
  *     peut jamais accueillir null, contrairement a Integer.
  */
-public class Exercise04_PrimitivesVsReferenceTypes {
+public class Exercise05_PrimitivesVsReferenceTypes {
 
     static class Defaults {
         int number;

@@ -3,11 +3,11 @@ package ch1_buildingblocks.exercises;
 import ch1_buildingblocks.ExerciseChecker;
 
 /**
- * EXERCICE 10 - 3 sortes de variables, 3 portees DIFFERENTES : locale, d'instance, de classe (niveau : moyen)
+ * EXERCICE 12 - 3 sortes de variables, 3 portees DIFFERENTES : locale, d'instance, de classe (niveau : moyen)
  * ======================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise04_PrimitivesVsReferenceTypes.java.
+ * Exercise05_PrimitivesVsReferenceTypes.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -70,7 +70,7 @@ import ch1_buildingblocks.ExerciseChecker;
  *     N'IMPORTE OU ailleurs dans la classe, meme depuis une autre
  *     methode de ScopeDemo.
  */
-public class Exercise10_VariableScopeBasics {
+public class Exercise12_VariableScopeBasics {
 
     static class ScopeDemo {
         static int classVar = 100;
