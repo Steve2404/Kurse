@@ -3,7 +3,7 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 6 - Operateurs relationnels et instanceof : comparer des nombres, verifier un type (niveau : moyen)
+ * EXERCICE 8 - Operateurs relationnels et instanceof : comparer des nombres, verifier un type (niveau : moyen)
  * ========================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
@@ -66,7 +66,7 @@ import ch2_operators.ExerciseChecker;
  *     attendant un Object, est AUTOBOXE en Integer avant meme d'etre
  *     teste (voir le chapitre "Methods").
  */
-public class Exercise06_RelationalOperatorsAndInstanceof {
+public class Exercise08_RelationalOperatorsAndInstanceof {
 
     public static boolean isInRange(int value, int min, int max) {
         throw new UnsupportedOperationException("TODO 1 : implementer isInRange()");

@@ -3,11 +3,11 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 9 - L'operateur ternaire ?: et sa promotion DECIDEE A LA COMPILATION, pas a l'execution (niveau : difficile)
- * ===================================================================================================================================
+ * EXERCICE 13 - L'operateur ternaire ?: et sa promotion DECIDEE A LA COMPILATION, pas a l'execution (niveau : difficile)
+ * ====================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise03_NumericPromotion.java.
+ * Exercise04_NumericPromotion.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -20,7 +20,7 @@ import ch2_operators.ExerciseChecker;
  * a l'execution, une SEULE des 2 est reellement choisie. Consequence
  * : la branche int, meme quand c'est ELLE qui est choisie a
  * l'execution, se retrouve QUAND MEME promue en double au final -
- * exactement comme au Exercise03, mais decide ICI a l'avance, pas au
+ * exactement comme au Exercise04, mais decide ICI a l'avance, pas au
  * moment ou la branche "gagne".
  *
  *
@@ -66,7 +66,7 @@ import ch2_operators.ExerciseChecker;
  *     compilation - impossible d'ecrire "int" en retour ici sans un
  *     cast explicite, meme pour le cas ou flag vaut true.
  */
-public class Exercise09_TernaryAndPromotion {
+public class Exercise13_TernaryAndPromotion {
 
     public static int max(int a, int b) {
         throw new UnsupportedOperationException("TODO 1 : implementer max()");

@@ -3,11 +3,11 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 7 - && / || (court-circuit) vs & / | (jamais court-circuit) : LE cote droit est-il evalue ? (niveau : difficile)
+ * EXERCICE 9 - && / || (court-circuit) vs & / | (jamais court-circuit) : LE cote droit est-il evalue ? (niveau : difficile)
  * =======================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise06_RelationalOperatorsAndInstanceof.java.
+ * Exercise08_RelationalOperatorsAndInstanceof.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -76,7 +76,7 @@ import ch2_operators.ExerciseChecker;
  *     pas besoin d'etre range dans une variable pour que l'effet de
  *     bord (ou son ABSENCE) se produise.
  */
-public class Exercise07_ShortCircuitVsNonShortCircuit {
+public class Exercise09_ShortCircuitVsNonShortCircuit {
 
     private static int counter = 0;
 

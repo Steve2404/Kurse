@@ -3,11 +3,11 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 5 - Les operateurs composes (+=, *=...) cachent un CAST GRATUIT que "=" tout seul n'a JAMAIS (niveau : difficile)
+ * EXERCICE 6 - Les operateurs composes (+=, *=...) cachent un CAST GRATUIT que "=" tout seul n'a JAMAIS (niveau : difficile)
  * =======================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise04_CastingAndNarrowing.java.
+ * Exercise05_CastingAndNarrowing.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -18,7 +18,7 @@ import ch2_operators.ExerciseChecker;
  * (b + 5)" - un CAST est INSERE GRATUITEMENT, tout seul, par le
  * compilateur, UNIQUEMENT quand on utilise la forme COMPOSEE
  * (+=, -=, *=, /=...). "b + 5" tout seul (sans le +=) promeut
- * TOUJOURS en int (voir Exercise03) - et int ne rentre jamais
+ * TOUJOURS en int (voir Exercise04) - et int ne rentre jamais
  * automatiquement dans un byte, meme si le RESULTAT, lui,
  * "rentrerait" en pratique.
  *
@@ -67,7 +67,7 @@ import ch2_operators.ExerciseChecker;
  *     la preuve concrete que *= cache bien un cast que sa version
  *     "developpee" n'a jamais.
  */
-public class Exercise05_CompoundAssignmentImplicitCast {
+public class Exercise06_CompoundAssignmentImplicitCast {
 
     public static byte incrementByteViaCompound(byte b, int amount) {
         throw new UnsupportedOperationException("TODO 1 : implementer incrementByteViaCompound()");

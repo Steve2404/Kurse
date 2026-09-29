@@ -3,11 +3,11 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 10 - La precedence des operateurs : QUI calcule en premier quand plusieurs sont melanges ? (niveau : difficile)
+ * EXERCICE 14 - La precedence des operateurs : QUI calcule en premier quand plusieurs sont melanges ? (niveau : difficile)
  * ======================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise09_TernaryAndPromotion.java.
+ * Exercise13_TernaryAndPromotion.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -56,7 +56,7 @@ import ch2_operators.ExerciseChecker;
  * -- Ces 2 TODO ont-ils besoin d'une boite magique separee ? --
  *
  * Non : chacun tient en une ligne - c'est justement l'ABSENCE de
- * parentheses qui est la lecon ici (voir Exercise11 pour le
+ * parentheses qui est la lecon ici (voir Exercise15 pour le
  * contraire).
  *
  * Exemple a verifier : multiplyBeforeAdd() == 14. Avec a=3, b=5,
@@ -68,11 +68,11 @@ import ch2_operators.ExerciseChecker;
  * clair mais que la traduction en code bloque) :
  *
  *   - Comparez le resultat de multiplyBeforeAdd() (14) avec celui de
- *     forcedAdditionFirst() dans Exercise11 (20) : EXACTEMENT les
+ *     forcedAdditionFirst() dans Exercise15 (20) : EXACTEMENT les
  *     memes nombres, un resultat DIFFERENT, juste a cause de
  *     parentheses ajoutees.
  */
-public class Exercise10_OperatorPrecedence {
+public class Exercise14_OperatorPrecedence {
 
     public static int multiplyBeforeAdd() {
         throw new UnsupportedOperationException("TODO 1 : implementer multiplyBeforeAdd()");

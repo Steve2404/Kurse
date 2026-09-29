@@ -3,7 +3,7 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 3 - Promotion numerique : le resultat "grandit" TOUT SEUL pour ne rien perdre (niveau : moyen/difficile)
+ * EXERCICE 4 - Promotion numerique : le resultat "grandit" TOUT SEUL pour ne rien perdre (niveau : moyen/difficile)
  * ==========================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
@@ -64,7 +64,7 @@ import ch2_operators.ExerciseChecker;
  *     REELLEMENT promu de a + b - impossible d'ecrire "byte" en
  *     retour ici sans un cast explicite.
  */
-public class Exercise03_NumericPromotion {
+public class Exercise04_NumericPromotion {
 
     public static int sumBytes(byte a, byte b) {
         throw new UnsupportedOperationException("TODO 1 : implementer sumBytes()");

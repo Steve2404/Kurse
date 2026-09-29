@@ -3,15 +3,15 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 8 - &, | et ^ marchent AUSSI directement sur des boolean (pas seulement en binaire) (niveau : moyen)
- * =========================================================================================================================
+ * EXERCICE 10 - &, | et ^ marchent AUSSI directement sur des boolean (pas seulement en binaire) (niveau : moyen)
+ * ==========================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise07_ShortCircuitVsNonShortCircuit.java.
+ * Exercise09_ShortCircuitVsNonShortCircuit.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
- * & et | (Exercise07) fonctionnent directement sur des boolean, sans
+ * & et | (Exercise09) fonctionnent directement sur des boolean, sans
  * jamais passer par du binaire - mais il existe un 3e operateur de
  * cette famille, ^ (XOR, "ou exclusif"), qui, LUI, N'A PAS
  * d'equivalent court-circuit du tout (il n'existe pas de "^^") :
@@ -64,7 +64,7 @@ import ch2_operators.ExerciseChecker;
  *     tout seul AVANT le ^, ce qui donnerait un resultat
  *     completement different.
  */
-public class Exercise08_BooleanBitwiseOperators {
+public class Exercise10_BooleanBitwiseOperators {
 
     public static boolean exactlyOneTrue(boolean a, boolean b) {
         throw new UnsupportedOperationException("TODO 1 : implementer exactlyOneTrue()");

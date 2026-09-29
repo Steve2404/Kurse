@@ -3,15 +3,15 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 4 - Retrecir un type : le cast est OBLIGATOIRE, et Java ne "arrondit" JAMAIS tout seul (niveau : difficile)
+ * EXERCICE 5 - Retrecir un type : le cast est OBLIGATOIRE, et Java ne "arrondit" JAMAIS tout seul (niveau : difficile)
  * ================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise03_NumericPromotion.java.
+ * Exercise04_NumericPromotion.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
- * Contrairement a la promotion (Exercise03, qui se fait TOUTE SEULE,
+ * Contrairement a la promotion (Exercise04, qui se fait TOUTE SEULE,
  * automatiquement, sans rien demander), RETRECIR un type (double ->
  * int, int -> byte...) risque de PERDRE de l'information - Java
  * refuse donc de le faire sans qu'on le demande EXPLICITEMENT, via
@@ -59,10 +59,10 @@ import ch2_operators.ExerciseChecker;
  * clair mais que la traduction en code bloque) :
  *
  *   - "(byte) value" ou value est un int : le cast est ECRIT
- *     EXPLICITEMENT ici, contrairement a la promotion de l'Exercise03
+ *     EXPLICITEMENT ici, contrairement a la promotion de l'Exercise04
  *     qui, elle, ne s'ecrit JAMAIS.
  */
-public class Exercise04_CastingAndNarrowing {
+public class Exercise05_CastingAndNarrowing {
 
     public static byte narrowToByte(int value) {
         throw new UnsupportedOperationException("TODO 1 : implementer narrowToByte()");

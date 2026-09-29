@@ -3,16 +3,16 @@ package ch2_operators.exercises;
 import ch2_operators.ExerciseChecker;
 
 /**
- * EXERCICE 11 - Les parentheses : forcer TON ordre de calcul, contre l'ordre par defaut (niveau : moyen)
+ * EXERCICE 15 - Les parentheses : forcer TON ordre de calcul, contre l'ordre par defaut (niveau : moyen)
  * ================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * Exercise10_OperatorPrecedence.java.
+ * Exercise14_OperatorPrecedence.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
  * Les parentheses ( ) sont le SEUL moyen de forcer un ordre de calcul
- * DIFFERENT de la precedence par defaut (Exercise10) - ce qui est
+ * DIFFERENT de la precedence par defaut (Exercise14) - ce qui est
  * ENTOURE de parentheses est TOUJOURS calcule EN PREMIER, quelle que
  * soit sa priorite naturelle. C'est exactement comme au college :
  * "2 + 3 * 4" vaut 14 (multiplication d'abord), mais "(2 + 3) * 4"
@@ -28,7 +28,7 @@ import ch2_operators.ExerciseChecker;
  * (2 + 3) * 4 : l'addition, ENTOUREE de parentheses, se fait
  * D'ABORD (2 + 3 = 5), PUIS la multiplication (5 * 4 = 20) -
  * EXACTEMENT les memes nombres que multiplyBeforeAdd() de
- * l'Exercise10 (qui, LUI, rendait 14), mais un resultat totalement
+ * l'Exercise14 (qui, LUI, rendait 14), mais un resultat totalement
  * different.
  *
  * -- Le plan --
@@ -56,7 +56,7 @@ import ch2_operators.ExerciseChecker;
  * Non : chacun tient en une ligne.
  *
  * Exemple a verifier : forcedAdditionFirst() == 20 (compare avec
- * multiplyBeforeAdd() de l'Exercise10, qui rendait 14). Avec a=1,
+ * multiplyBeforeAdd() de l'Exercise14, qui rendait 14). Avec a=1,
  * b=-1, c=5 : forcedOrLast(1, -1, 5) == true (a > 0 vrai, ET (b > 0
  * FAUX OU c > 0 VRAI) = vrai au final, grace au c).
  *
@@ -68,7 +68,7 @@ import ch2_operators.ExerciseChecker;
  *     comme "(a > 0 && b > 0) || c > 0" (le && naturel passe avant
  *     le ||) - un sens COMPLETEMENT different de celui voulu ici.
  */
-public class Exercise11_ParenthesesOverridePrecedence {
+public class Exercise15_ParenthesesOverridePrecedence {
 
     public static int forcedAdditionFirst() {
         throw new UnsupportedOperationException("TODO 1 : implementer forcedAdditionFirst()");
