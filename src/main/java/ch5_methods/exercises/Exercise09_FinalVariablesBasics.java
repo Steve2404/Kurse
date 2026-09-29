@@ -3,11 +3,11 @@ package ch5_methods.exercises;
 import ch5_methods.ExerciseChecker;
 
 /**
- * EXERCICE 6 - final sur une variable locale, un champ d'instance, et un champ static (niveau : moyen)
- * ==============================================================================================================
+ * EXERCICE 9 - final sur une variable locale, un champ d'instance, et un champ static (niveau : moyen)
+ * ====================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * methods.exercises.Exercise01_MethodDeclarationQuiz.java.
+ * Exercise01_MethodDeclarationRules.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -22,7 +22,7 @@ import ch5_methods.ExerciseChecker;
  *     constructeur, mais 2 objets DIFFERENTS peuvent avoir 2 valeurs
  *     DIFFERENTES.
  *   - un champ STATIC final : UNE SEULE valeur, partagee par TOUTE la
- *     classe (comme un champ static ordinaire, voir Exercise03), mais
+ *     classe (comme un champ static ordinaire, voir Exercise05), mais
  *     qui, elle, ne changera plus JAMAIS une fois la classe chargee -
  *     c'est LA vraie facon d'ecrire une CONSTANTE en Java (souvent en
  *     MAJUSCULES par convention, comme MAX_RETRIES ci-dessous).
@@ -65,7 +65,7 @@ import ch5_methods.ExerciseChecker;
  *     utilisation, exactement comme un champ final "blank" (voir
  *     Class Design) - ici, elle est directement initialisee.
  */
-public class Exercise06_FinalVariablesBasics {
+public class Exercise09_FinalVariablesBasics {
 
     static class Config {
         static final int MAX_RETRIES = 3;

@@ -6,12 +6,11 @@ import static java.lang.Math.PI;
 import static java.lang.Math.max;
 
 /**
- * EXERCICE 5 - Les imports static A L'OEUVRE : utiliser un membre static SANS jamais ecrire le nom de sa classe (niveau : moyen)
- * =====================================================================================================================================
+ * EXERCICE 7 - Les imports static A L'OEUVRE : utiliser un membre static SANS jamais ecrire le nom de sa classe (niveau : moyen)
+ * ==============================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * methods.exercises.Exercise01_MethodDeclarationQuiz.java (pour la
- * syntaxe des imports static, deja verifiee au quiz).
+ * Exercise01_MethodDeclarationRules.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -62,7 +61,7 @@ import static java.lang.Math.max;
  *     et max(...) ne seraient PAS reconnus tels quels - il faudrait
  *     alors ecrire Math.PI et Math.max(...) partout.
  */
-public class Exercise05_StaticImportsUsage {
+public class Exercise07_StaticImportsUsage {
 
     public static double computeCircumference(double radius) {
         throw new UnsupportedOperationException("TODO 1 : implementer computeCircumference()");

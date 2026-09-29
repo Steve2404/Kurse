@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 11 - Quelle surcharge Java choisit-il ? PREDIT a la main, puis verifie contre le VRAI comportement (niveau : difficile)
- * =======================================================================================================================================
+ * EXERCICE 16 - Quelle surcharge Java choisit-il ? PREDIT a la main, puis verifie contre le VRAI comportement (niveau : difficile)
+ * ================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * methods.exercises.Exercise01_MethodDeclarationQuiz.java.
+ * Exercise01_MethodDeclarationRules.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -72,8 +72,30 @@ import java.util.List;
  *     varargsPick(int...) disponibles] : l'autoboxing passe AVANT les
  *     varargs, le DERNIER recours de la liste.
  */
-public class Exercise11_OverloadResolutionOrder {
+public class Exercise16_OverloadResolutionOrder {
 
+    public static List<String> buildExpectedResolutions() {
+        throw new UnsupportedOperationException("TODO : implementer buildExpectedResolutions()");
+    }
+
+    public static void main(String[] args) {
+        List<String> predicted = buildExpectedResolutions();
+
+        short s = 5;
+        List<String> real = new ArrayList<>();
+        real.add(widthPick(5));
+        real.add(widthPick(5L));
+        real.add(widthPick(s));
+        real.add(boxPick(5));
+        real.add(varargsPick(5));
+
+        ExerciseChecker.check("l'ordre de resolution PREDIT correspond EXACTEMENT au vrai comportement -> " + real,
+                predicted.equals(real));
+
+        ExerciseChecker.summary();
+    }
+
+    // Deja ecrit : les 6 surcharges a analyser (rien a completer ici).
     static String widthPick(int x) {
         return "int";
     }
@@ -96,26 +118,5 @@ public class Exercise11_OverloadResolutionOrder {
 
     static String varargsPick(int... x) {
         return "int...";
-    }
-
-    public static List<String> buildExpectedResolutions() {
-        throw new UnsupportedOperationException("TODO : implementer buildExpectedResolutions()");
-    }
-
-    public static void main(String[] args) {
-        List<String> predicted = buildExpectedResolutions();
-
-        short s = 5;
-        List<String> real = new ArrayList<>();
-        real.add(widthPick(5));
-        real.add(widthPick(5L));
-        real.add(widthPick(s));
-        real.add(boxPick(5));
-        real.add(varargsPick(5));
-
-        ExerciseChecker.check("l'ordre de resolution PREDIT correspond EXACTEMENT au vrai comportement -> " + real,
-                predicted.equals(real));
-
-        ExerciseChecker.summary();
     }
 }

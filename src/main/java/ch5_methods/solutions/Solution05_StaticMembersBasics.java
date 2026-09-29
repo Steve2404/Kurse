@@ -1,10 +1,10 @@
 package ch5_methods.solutions;
 
 /**
- * Corrige de l'exercice 3. A ne consulter qu'apres avoir essaye par
- * vous-meme dans methods.exercises.Exercise03_StaticMembersBasics.
+ * Corrige de l'exercice 5. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans methods.exercises.Exercise05_StaticMembersBasics.
  */
-public class Solution03_StaticMembersBasics {
+public class Solution05_StaticMembersBasics {
 
     static class Counter {
         static int totalCreated = 0;
@@ -20,10 +20,12 @@ public class Solution03_StaticMembersBasics {
         }
 
         String describeWithTotal() {
+            // Une methode d'instance lit son champ id ET le champ static partage totalCreated.
             return "Counter #" + id + " sur " + totalCreated + " au total";
         }
 
         String describeDoubled() {
+            // Instance -> static : toujours permis (l'inverse demanderait un objet).
             return "Double du total : " + doubleTotal();
         }
     }

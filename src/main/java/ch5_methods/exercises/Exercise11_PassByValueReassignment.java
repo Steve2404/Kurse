@@ -3,11 +3,11 @@ package ch5_methods.exercises;
 import ch5_methods.ExerciseChecker;
 
 /**
- * EXERCICE 8 - Pass-by-value : REASSIGNER un parametre NE CHANGE JAMAIS la variable de l'appelant (niveau : moyen)
- * ==========================================================================================================================
+ * EXERCICE 11 - Pass-by-value : REASSIGNER un parametre NE CHANGE JAMAIS la variable de l'appelant (niveau : moyen)
+ * =================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * methods.exercises.Exercise01_MethodDeclarationQuiz.java.
+ * Exercise01_MethodDeclarationRules.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -63,7 +63,7 @@ import ch5_methods.ExerciseChecker;
  *     recopiee) : dans les 2 cas, c'est la PHOTOCOPIE locale qui
  *     change de valeur, jamais l'original de l'appelant.
  */
-public class Exercise08_PassByValueReassignment {
+public class Exercise11_PassByValueReassignment {
 
     public static void tryToDouble(int value) {
         throw new UnsupportedOperationException("TODO 1 : implementer tryToDouble()");

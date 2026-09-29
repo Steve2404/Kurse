@@ -5,11 +5,11 @@ import ch5_methods.ExerciseChecker;
 import java.util.List;
 
 /**
- * EXERCICE 10 - Autoboxing et unboxing : Java convertit tout seul, mais unboxing null EXPLOSE (niveau : moyen/difficile)
- * ================================================================================================================================
+ * EXERCICE 14 - Autoboxing et unboxing : Java convertit tout seul, mais unboxing null EXPLOSE (niveau : moyen/difficile)
+ * ======================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * methods.exercises.Exercise01_MethodDeclarationQuiz.java.
+ * Exercise01_MethodDeclarationRules.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -80,7 +80,7 @@ import java.util.List;
  *     add() attend un Integer - Java l'autoboxe tout seul avant
  *     l'appel, sans qu'on ait besoin d'ecrire "Integer.valueOf(1)".
  */
-public class Exercise10_AutoboxingAndUnboxing {
+public class Exercise14_AutoboxingAndUnboxing {
 
     public static int sumViaAutobox(List<Integer> numbers) {
         throw new UnsupportedOperationException("TODO 1 : implementer sumViaAutobox()");

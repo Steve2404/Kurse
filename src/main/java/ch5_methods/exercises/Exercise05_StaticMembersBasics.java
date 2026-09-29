@@ -3,17 +3,11 @@ package ch5_methods.exercises;
 import ch5_methods.ExerciseChecker;
 
 /**
- * EXERCICE 3 - Membres static : partages par TOUTES les instances, accessibles par le NOM de la classe (niveau : moyen)
- * ============================================================================================================================
+ * EXERCICE 5 - Membres static : partages par TOUTES les instances, accessibles par le NOM de la classe (niveau : moyen)
+ * =====================================================================================================================
  *
- * -- Rappel du decoupage en "boites magiques" --
- *
- * Une methode, c'est une boite magique : tu la nourris d'ingredients
- * (parametres), et elle rend un resultat, sans que tu aies besoin de
- * savoir comment elle travaille dedans. Pour CHAQUE etape d'un plan,
- * demande-toi : est-ce qu'elle se raconte seule ? revient-elle
- * plusieurs fois ? cache-t-elle sa propre petite recette ? Si oui a au
- * moins une question, elle merite sa propre boite.
+ * Rappel express du decoupage en "boites magiques" : voir
+ * Exercise01_MethodDeclarationRules.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -27,7 +21,7 @@ import ch5_methods.ExerciseChecker;
  * ce n'est PAS la convention preferee. A L'INTERIEUR de la classe, une
  * methode D'INSTANCE peut appeler un membre static SANS AUCUN
  * probleme (elle "voit" tout) - mais l'inverse, lui, est INTERDIT
- * (voir Exercise04).
+ * (voir Exercise06_StaticVsInstanceRules).
  *
  *
  * ==================================================================
@@ -79,7 +73,7 @@ import ch5_methods.ExerciseChecker;
  *     c'est la convention preferee pour lire un champ static depuis
  *     l'exterieur - jamais via une instance particuliere.
  */
-public class Exercise03_StaticMembersBasics {
+public class Exercise05_StaticMembersBasics {
 
     static class Counter {
         static int totalCreated = 0;

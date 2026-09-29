@@ -221,7 +221,7 @@ public class Exercise25_DateTimeRules {
     }
 
     // Deja ecrit : le piege, pour comparaison (ofWeeks est statique).
-    @SuppressWarnings("static-access")
+    @SuppressWarnings("static")
     private static Period trapPeriod() {
         return Period.ofYears(1).ofWeeks(2);
     }
