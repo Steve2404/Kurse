@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 /**
- * Corrige de l'exercice 27. A ne consulter qu'apres avoir essaye par
- * vous-meme dans ch4_coreapis.exercises.Exercise27_JournalCapstone.
+ * Corrige de l'exercice 32. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch4_coreapis.exercises.Exercise32_JournalCapstone.
  */
-public class Solution27_JournalCapstone {
+public class Solution32_JournalCapstone {
 
     public record Entry(LocalDateTime when, String level, String message) {
     }

@@ -6,12 +6,12 @@ import ch4_coreapis.drills.Journal;
 import java.time.LocalDate;
 
 /**
- * DRILL 06 - Kata melange : tout le chapitre 4 sans indice de methode
+ * DRILL 08 - Kata melange : tout le chapitre 4 sans indice de methode
  * ===================================================================
  *
  * Mode d'emploi : voir Drill01_StringApi. Ici, PAS de crochet : c'est a
  * toi de choisir String, StringBuilder, Arrays, Math ou java.time. Fais
- * ce drill seulement quand les drills 01 a 05 passent.
+ * ce drill seulement quand les drills 01 a 07 passent.
  *
  *
  * -- Les TODO --
@@ -29,7 +29,7 @@ import java.time.LocalDate;
  * TODO 11 : paddedScores()        chaque score sur 3 caracteres, separes par "|" -> " 42|  7| 19| 88|  7| 63".
  * TODO 12 : fridaysIn(year, month) le nombre de vendredis dans le mois ; (2024, 3) -> 5.
  */
-public class Drill06_MixedKata {
+public class Drill08_MixedKata {
 
     public static String levelOf() {
         throw new UnsupportedOperationException("TODO 1 : implementer levelOf()");

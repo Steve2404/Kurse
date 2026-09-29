@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 
 /**
- * EXERCICE 27 (CAPSTONE) - Le journal de bord : String, StringBuilder, Arrays, Math et java.time ensemble (niveau : capstone)
+ * EXERCICE 32 (CAPSTONE) - Le journal de bord : String, StringBuilder, Arrays, Math et java.time ensemble (niveau : capstone)
  * ===========================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
@@ -156,7 +156,7 @@ import java.util.Arrays;
  *   - Entry est un record : e.when(), e.level(), e.message().
  *   - LocalDateTime.toString() donne "2024-03-10T09:15" (les secondes a 0 ne s'affichent pas).
  */
-public class Exercise27_JournalCapstone {
+public class Exercise32_JournalCapstone {
 
     public record Entry(LocalDateTime when, String level, String message) {
     }

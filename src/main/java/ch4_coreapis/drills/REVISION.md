@@ -1,7 +1,7 @@
 # Chapitre 4 (Core APIs) — parcours, drills et plan de révision
 
-Les **exercices** (`ch4_coreapis/exercises`, 01 → 27) t'apprennent les API.
-Les **drills** (`ch4_coreapis/drills/exercises`, 01 → 06) te font répéter chaque méthode jusqu'à ce
+Les **exercices** (`ch4_coreapis/exercises`, 01 → 32) t'apprennent les API et l'algorithmique.
+Les **drills** (`ch4_coreapis/drills/exercises`, 01 → 08) te font répéter chaque méthode jusqu'à ce
 qu'elle sorte toute seule. Tous les drills utilisent les mêmes données : le journal de bord de
 `drills/Journal.java` (une ligne de journal, un titre, des mots, des scores, des dates et des heures).
 Lis ce fichier une fois et garde-le ouvert à côté.
@@ -22,8 +22,9 @@ explique pourquoi cette méthode d'API et quel piège elle évite. Lis-les **apr
 | 2 | StringBuilder | 07 → 08 → 09 → 10 | Drill02 |
 | 3 | Tableaux et `Arrays` | 11 → 12 → 13 → 14 → 15 → 16 | Drill03 |
 | 4 | `Math` | 17 → 18 → 19 → 20 | Drill04 |
-| 5 | Dates et heures (`java.time`) | 21 → 22 → 23 → 24 → 25 → 26 | Drill05 |
-| 6 | Synthèse | 27 (capstone : le journal de bord) | Drill06 (kata mélangé) |
+| 5 | Dates et heures (`java.time`), dont `Instant` | 21 → 22 → 23 → 24 → 25 → 26 → 27 | Drill05, puis Drill06 (méthodes qu'on oublie) |
+| 6 | Algorithmique avec les Core APIs | 28 → 29 → 30 → 31 | Drill07 (schémas d'algorithme) |
+| 7 | Synthèse | 32 (capstone : le journal de bord) | Drill08 (kata mélangé) |
 
 **Séance type (≈ 1 h) :** 1) les révisions dues (10 – 20 min), 2) la nouveauté,
 3) 2 minutes de « carte vierge » : écrire de mémoire toutes les méthodes d'une classe
@@ -40,7 +41,9 @@ explique pourquoi cette méthode d'API et quel piège elle évite. Lis-les **apr
 | 03 `ArraysApi` | `toString`, `copyOf`, `copyOfRange`, `sort`, `binarySearch`, `fill`, `equals`, `compare`, `mismatch`, `deepToString`, `asList`, tableaux en escalier, valeurs par défaut | 14 |
 | 04 `MathApi` | `round` (long ou int), `ceil`, `floor`, `pow`, `sqrt`, `max` mixte, `min`, `abs(MIN_VALUE)`, `random`, `addExact` | 13 |
 | 05 `DateTimeApi` | `of`, `plusMonths`, `getDayOfWeek`, `isLeapYear`, `withMonth`, `atTime`, `Duration`, `Period`, `ChronoUnit`, `parse`, `truncatedTo`, `ZonedDateTime` et heure d'été | 18 |
-| 06 `MixedKata` | 12 questions sur le journal, **sans indiquer la méthode** | 12 |
+| 06 `ApiExtras` | `indent`, `stripIndent`, `translateEscapes`, pool (`trim`, `toUpperCase`, `intern`), `chars`, `Arrays.compare`/`mismatch` avec null, `Instant` (`parse`, `ofEpochSecond`, `atZone`, `plus`, `until`, `toInstant`) | 18 |
+| 07 `AlgorithmPatterns` | swap, deux pointeurs, meilleur, `int[26]`, dichotomie, fenêtre glissante, sommes préfixes, Euclide, premier, chiffres, FizzBuzz, insertion triée, distincts | 14 |
+| 08 `MixedKata` | 12 questions sur le journal, **sans indiquer la méthode** | 12 |
 
 ---
 
@@ -57,8 +60,11 @@ explique pourquoi cette méthode d'API et quel piège elle évite. Lis-les **apr
 
 - **Rappel actif** : refaire depuis une page blanche vaut dix relectures.
 - **Répétition espacée** : J, J+1, J+3, J+7, J+14, J+30, puis tous les 2 mois.
-- **Mélange** : le Drill06 chaque semaine pendant la révision de l'examen.
-- **Lecture de code** : les Javadoc des exercices 04, 05, 09, 15, 19, 23, 25 et 26 commencent par
+- **Mélange** : le Drill08 chaque semaine pendant la révision de l'examen.
+- **Algorithmique « au bout des doigts »** : refais le Drill07 **chaque jour** jusqu'à le finir en
+  moins de 20 minutes sans la carte, puis passe au calendrier normal. Ensuite, reprends un exercice
+  28 à 31 **sur une page blanche** (sans relire l'énoncé détaillé, seulement le titre du TODO).
+- **Lecture de code** : les Javadoc des exercices 04, 05, 09, 15, 19, 23, 25, 26, 27 et 31 commencent par
   des « Rappels vérifiés » (résultats et messages d'erreur réels de Java 17) : relis-les avant
   l'examen, puis fais les questions de révision du livre.
 
@@ -82,4 +88,6 @@ Format : `date – temps – score au 1er lancement` (ex. `30/09 – 9 min – 1
 | 03 Arrays | | | | | | | |
 | 04 Math | | | | | | | |
 | 05 java.time | | | | | | | |
-| 06 Kata mélangé | | | | | | | |
+| 06 Méthodes qu'on oublie | | | | | | | |
+| 07 Schémas d'algorithme | | | | | | | |
+| 08 Kata mélangé | | | | | | | |

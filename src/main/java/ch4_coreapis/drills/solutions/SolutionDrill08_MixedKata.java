@@ -8,10 +8,10 @@ import java.time.LocalDate;
 import java.util.Arrays;
 
 /**
- * Corrige du drill 6. A ne consulter qu'apres avoir essaye par
- * vous-meme dans ch4_coreapis.drills.exercises.Drill06_MixedKata.
+ * Corrige du drill 8. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch4_coreapis.drills.exercises.Drill08_MixedKata.
  */
-public class SolutionDrill06_MixedKata {
+public class SolutionDrill08_MixedKata {
 
     public static String levelOf() {
         // Le niveau commence en 17 et s'arrete au prochain espace.
