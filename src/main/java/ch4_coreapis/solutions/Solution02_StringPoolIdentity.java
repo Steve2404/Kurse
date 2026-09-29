@@ -9,6 +9,7 @@ import java.util.List;
 public class Solution02_StringPoolIdentity {
 
     public static List<Boolean> buildExpectedComparisons() {
+        // == compare les adresses : seuls les litteraux et les constantes de compilation partagent le pool.
         return List.of(
                 true,  // "hello" == "hello" : 2 litteraux identiques -> meme casier du pool
                 false, // new String("hello") == "hello" : objet FORCE hors du pool

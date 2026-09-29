@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * EXERCICE 2 - Le pool de String : PREDIT a la main quels == rendent true, puis verifie contre le VRAI comportement (niveau : difficile)
- * ==================================================================================================================================================
+ * ======================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_StringImmutabilityAndConcatenation.java.

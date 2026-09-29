@@ -4,7 +4,7 @@ import ch4_coreapis.ExerciseChecker;
 
 /**
  * EXERCICE 3 - Les methodes String les plus utilisees, et le piege classique de substring() (niveau : moyen)
- * ====================================================================================================================
+ * ==========================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_StringImmutabilityAndConcatenation.java.

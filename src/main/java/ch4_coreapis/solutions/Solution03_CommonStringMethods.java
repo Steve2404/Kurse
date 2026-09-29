@@ -7,10 +7,12 @@ package ch4_coreapis.solutions;
 public class Solution03_CommonStringMethods {
 
     public static String extractWorld(String text) {
+        // substring(debut, fin) : fin EXCLUE, donc 12 pour garder les index 7 a 11.
         return text.substring(7, 12);
     }
 
     public static String firstWord(String sentence) {
+        // indexOf rend -1 si absent : sans ce test, substring(0, -1) lancerait une exception.
         int position = sentence.indexOf(' ');
         if (position == -1) {
             return sentence;
@@ -19,6 +21,7 @@ public class Solution03_CommonStringMethods {
     }
 
     public static String cleanedTrim(String text) {
+        // strip() enleve aussi les espaces Unicode, contrairement a trim().
         return text.strip();
     }
 }

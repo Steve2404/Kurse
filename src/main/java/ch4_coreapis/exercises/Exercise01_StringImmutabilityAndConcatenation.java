@@ -4,7 +4,7 @@ import ch4_coreapis.ExerciseChecker;
 
 /**
  * EXERCICE 1 - String : immuable, et l'operateur + qui change de sens EN COURS DE ROUTE (niveau : moyen)
- * ================================================================================================================
+ * ======================================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *
