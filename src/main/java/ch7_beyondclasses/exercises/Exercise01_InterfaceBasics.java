@@ -4,7 +4,7 @@ import ch7_beyondclasses.ExerciseChecker;
 
 /**
  * EXERCICE 1 - Interfaces : methodes abstraites, champs implicites, heritage multiple (niveau : moyen)
- * ==========================================================================================================
+ * ====================================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *

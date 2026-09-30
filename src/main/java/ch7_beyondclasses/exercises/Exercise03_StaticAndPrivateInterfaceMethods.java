@@ -4,10 +4,10 @@ import ch7_beyondclasses.ExerciseChecker;
 
 /**
  * EXERCICE 3 - Methodes static et private d'interface : la boite a outils publique vs les astuces secretes (niveau : difficile)
- * ====================================================================================================================================
+ * =============================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * beyondclasses.exercises.Exercise01_InterfaceBasics.java.
+ * Exercise01_InterfaceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *

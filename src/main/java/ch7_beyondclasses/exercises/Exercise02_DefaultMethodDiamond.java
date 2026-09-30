@@ -4,10 +4,10 @@ import ch7_beyondclasses.ExerciseChecker;
 
 /**
  * EXERCICE 2 - Methodes default : le "diamant" de l'heritage multiple, et un default qui appelle un abstract (niveau : difficile)
- * ======================================================================================================================================
+ * ===============================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc... non, voir beyondclasses.exercises.Exercise01_InterfaceBasics.java.
+ * Exercise01_InterfaceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *

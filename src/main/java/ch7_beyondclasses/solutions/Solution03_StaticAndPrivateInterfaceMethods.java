@@ -2,7 +2,7 @@ package ch7_beyondclasses.solutions;
 
 /**
  * Corrige de l'exercice 3. A ne consulter qu'apres avoir essaye par
- * vous-meme dans beyondclasses.exercises.Exercise03_StaticAndPrivateInterfaceMethods.
+ * vous-meme dans ch7_beyondclasses.exercises.Exercise03_StaticAndPrivateInterfaceMethods.
  */
 public class Solution03_StaticAndPrivateInterfaceMethods {
 
@@ -16,6 +16,7 @@ public class Solution03_StaticAndPrivateInterfaceMethods {
         }
 
         static int squarePlusDouble(int n) {
+            // Une static d'interface ne peut appeler que des methodes static (ici une private static).
             return square(n) + doubleIt(n);
         }
 
@@ -24,6 +25,7 @@ public class Solution03_StaticAndPrivateInterfaceMethods {
         }
 
         default int scoreFor(int n) {
+            // Un default peut appeler une private d'instance ET une static de la meme interface.
             return square(n) - privateBonus(n);
         }
     }

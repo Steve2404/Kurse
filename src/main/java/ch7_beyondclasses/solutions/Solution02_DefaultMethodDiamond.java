@@ -2,7 +2,7 @@ package ch7_beyondclasses.solutions;
 
 /**
  * Corrige de l'exercice 2. A ne consulter qu'apres avoir essaye par
- * vous-meme dans beyondclasses.exercises.Exercise02_DefaultMethodDiamond.
+ * vous-meme dans ch7_beyondclasses.exercises.Exercise02_DefaultMethodDiamond.
  */
 public class Solution02_DefaultMethodDiamond {
 
@@ -35,11 +35,13 @@ public class Solution02_DefaultMethodDiamond {
 
         @Override
         public String greet(String name) {
+            // Deux default de meme signature : la classe DOIT redefinir, et peut choisir avec X.super.greet(...).
             return Greeter.super.greet(name) + " / " + Waver.super.greet(name);
         }
 
         @Override
         public String name() {
+            // Le default describe() appelle cette methode abstraite : c'est la version de l'objet qui repond.
             return label;
         }
     }
