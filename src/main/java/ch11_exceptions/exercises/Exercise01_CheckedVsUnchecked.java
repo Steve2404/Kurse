@@ -4,7 +4,7 @@ import ch11_exceptions.ExerciseChecker;
 
 /**
  * EXERCICE 1 - Creer sa propre exception checked et sa propre exception unchecked (niveau : moyen/difficile)
- * =========================================================================================================================
+ * ==========================================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *
@@ -100,6 +100,8 @@ import ch11_exceptions.ExerciseChecker;
 public class Exercise01_CheckedVsUnchecked {
 
     static class InsufficientFundsException extends Exception {
+        private static final long serialVersionUID = 1L; // une Exception est Serializable : -Xlint:serial l'exige
+
         private final double shortfall;
 
         InsufficientFundsException(String message, double shortfall) {
@@ -112,6 +114,8 @@ public class Exercise01_CheckedVsUnchecked {
     }
 
     static class InvalidAccountException extends RuntimeException {
+        private static final long serialVersionUID = 1L; // une Exception est Serializable : -Xlint:serial l'exige
+
         InvalidAccountException(String message) {
             super(message);
         }
@@ -126,6 +130,9 @@ public class Exercise01_CheckedVsUnchecked {
     }
 
     public static void main(String[] args) throws InsufficientFundsException {
+        InsufficientFundsException built = new InsufficientFundsException("manque 50", 50.0);
+        ExerciseChecker.check("TODO 1 : InsufficientFundsException garde son message et son shortfall",
+                built.getMessage().equals("manque 50") && built.getShortfall() == 50.0);
         ExerciseChecker.check("withdraw(100, 30) == 70.0", withdraw(100, 30) == 70.0);
 
         boolean caughtChecked = false;
