@@ -4,7 +4,7 @@ import ch8_lambdas.ExerciseChecker;
 
 /**
  * EXERCICE 1 - Fabriquer sa propre interface fonctionnelle (niveau : moyen/difficile)
- * ============================================================================
+ * ===================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *
@@ -109,7 +109,7 @@ import ch8_lambdas.ExerciseChecker;
  *   - or() suit le meme patron avec ||.
  *   - negate() suit le meme patron avec !this.test(value).
  *   - Pourquoi "Validator<? super T>" et pas juste "Validator<T>" en
- *     parametre ? Meme raisonnement PECS que dans Exercise08 du
+ *     parametre ? Meme raisonnement PECS que dans Exercise09 du
  *     package collections : un Validator qui sait valider un type plus
  *     general que T sait forcement aussi valider un T.
  */
