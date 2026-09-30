@@ -24,7 +24,7 @@ import java.util.Deque;
  * rendre".
  *
  * Ce capstone reutilise le patron a-deux-piles de
- * ch9_collections/exercises/Exercise04_BrowserHistory (chapitre 9) (Deque comme pile),
+ * ch9_collections/exercises/Exercise05_BrowserHistory (chapitre 9) (Deque comme pile),
  * mais chaque "page" devient ici une PAIRE de fonctions plutot qu'une
  * simple chaine de caracteres.
  *

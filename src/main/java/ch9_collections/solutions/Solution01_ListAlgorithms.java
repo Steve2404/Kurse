@@ -10,6 +10,7 @@ import java.util.List;
 public class Solution01_ListAlgorithms {
 
     public static <T> void rotate(List<T> list, int k) {
+        // Le double modulo ramene aussi un k negatif ou plus grand que la taille dans [0, taille) ; on lit une copie pendant qu'on ecrit.
         int size = list.size();
         if (size == 0) {
             return;
@@ -25,6 +26,7 @@ public class Solution01_ListAlgorithms {
     }
 
     public static <T> List<T> distinctPreservingOrder(List<T> list) {
+        // Une liste resultat garde l'ordre d'arrivee (un HashSet seul le perdrait) ; contains est en O(n), acceptable ici.
         List<T> result = new ArrayList<>();
         for (T item : list) {
             if (!result.contains(item)) {
