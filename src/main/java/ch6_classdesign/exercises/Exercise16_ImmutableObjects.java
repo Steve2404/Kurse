@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 12 - Objets immuables : la "copie de securite" a l'entree ET a la sortie (niveau : difficile)
- * ================================================================================================================
+ * EXERCICE 16 - Objets immuables : la "copie de securite" a l'entree ET a la sortie (niveau : difficile)
+ * ======================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -71,7 +71,7 @@ import java.util.List;
  *     tags", qui, lui, ne fait que pointer les 2 noms vers LA MEME
  *     liste en memoire (aucune protection).
  */
-public class Exercise12_ImmutableObjects {
+public class Exercise16_ImmutableObjects {
 
     static final class ImmutablePoint {
         private final int x;

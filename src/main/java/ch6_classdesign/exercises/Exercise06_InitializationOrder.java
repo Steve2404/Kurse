@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 5 - L'ordre d'initialisation, PREDIT a la main puis verifie contre le VRAI comportement (niveau : difficile)
- * ============================================================================================================================
+ * EXERCICE 6 - L'ordre d'initialisation, PREDIT a la main puis verifie contre le VRAI comportement (niveau : difficile)
+ * =====================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -65,8 +65,25 @@ import java.util.List;
  *     block ici, mais ca pourrait etre l'inverse selon comment c'est
  *     ecrit) qui compte, jamais un ordre "logique" suppose.
  */
-public class Exercise05_InitializationOrder {
+public class Exercise06_InitializationOrder {
 
+    public static List<String> buildExpectedOrder() {
+        throw new UnsupportedOperationException("TODO : implementer buildExpectedOrder()");
+    }
+
+    public static void main(String[] args) {
+        List<String> predicted = buildExpectedOrder();
+
+        Child child = new Child();
+        List<String> real = Parent.log;
+
+        ExerciseChecker.check("l'ordre PREDIT correspond EXACTEMENT au vrai log de new Child()",
+                predicted.equals(real));
+
+        ExerciseChecker.summary();
+    }
+
+    // Deja ecrit : les vraies classes observees (rien a completer ici).
     static class Parent {
         static List<String> log = new ArrayList<>();
 
@@ -109,21 +126,5 @@ public class Exercise05_InitializationOrder {
         Child() {
             log.add("Child.constructor");
         }
-    }
-
-    public static List<String> buildExpectedOrder() {
-        throw new UnsupportedOperationException("TODO : implementer buildExpectedOrder()");
-    }
-
-    public static void main(String[] args) {
-        List<String> predicted = buildExpectedOrder();
-
-        Child child = new Child();
-        List<String> real = Parent.log;
-
-        ExerciseChecker.check("l'ordre PREDIT correspond EXACTEMENT au vrai log de new Child()",
-                predicted.equals(real));
-
-        ExerciseChecker.summary();
     }
 }

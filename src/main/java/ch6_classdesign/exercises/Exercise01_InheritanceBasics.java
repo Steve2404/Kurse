@@ -4,7 +4,7 @@ import ch6_classdesign.ExerciseChecker;
 
 /**
  * EXERCICE 1 - Heritage simple : ce qu'on recoit d'un parent, et ce qu'on recoit TOUJOURS d'Object (niveau : moyen)
- * ========================================================================================================================
+ * =================================================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *

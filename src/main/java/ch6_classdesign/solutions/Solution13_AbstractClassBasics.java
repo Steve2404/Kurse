@@ -1,10 +1,10 @@
 package ch6_classdesign.solutions;
 
 /**
- * Corrige de l'exercice 10. A ne consulter qu'apres avoir essaye par
- * vous-meme dans classdesign.exercises.Exercise10_AbstractClassBasics.
+ * Corrige de l'exercice 13. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch6_classdesign.exercises.Exercise13_AbstractClassBasics.
  */
-public class Solution10_AbstractClassBasics {
+public class Solution13_AbstractClassBasics {
 
     abstract static class Shape {
         abstract double area();
@@ -23,6 +23,7 @@ public class Solution10_AbstractClassBasics {
 
         @Override
         double area() {
+            // La 1re classe concrete remplit le trou abstract ; describe() du parent l'appellera.
             return Math.PI * radius * radius;
         }
     }
@@ -38,6 +39,7 @@ public class Solution10_AbstractClassBasics {
     static class Dog extends Pet {
         @Override
         String trick() {
+            // Dog est la 1re classe concrete sous Pet : elle doit ecrire trick().
             return name + " fait le beau";
         }
     }

@@ -4,10 +4,10 @@ import ch6_classdesign.ExerciseChecker;
 
 /**
  * EXERCICE 2 - this et super : demeler 3 "label" portant le MEME nom (niveau : difficile)
- * ================================================================================================
+ * =======================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *

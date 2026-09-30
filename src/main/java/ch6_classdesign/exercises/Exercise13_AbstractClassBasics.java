@@ -3,11 +3,11 @@ package ch6_classdesign.exercises;
 import ch6_classdesign.ExerciseChecker;
 
 /**
- * EXERCICE 10 - Classes abstraites : un plan a moitie rempli, que la 1ere classe concrete DOIT terminer (niveau : moyen/difficile)
- * =======================================================================================================================================
+ * EXERCICE 13 - Classes abstraites : un plan a moitie rempli, que la 1ere classe concrete DOIT terminer (niveau : moyen/difficile)
+ * ================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -71,7 +71,7 @@ import ch6_classdesign.ExerciseChecker;
  *     d'accolades, meme vides) - une methode abstract N'A PAS DE
  *     CORPS DU TOUT, contrairement a une methode normale.
  */
-public class Exercise10_AbstractClassBasics {
+public class Exercise13_AbstractClassBasics {
 
     abstract static class Shape {
         abstract double area();

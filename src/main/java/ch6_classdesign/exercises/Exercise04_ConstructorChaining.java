@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 3 - Chainage de constructeurs : this(), super(), et le constructeur "gratuit" (niveau : difficile)
- * ====================================================================================================================
+ * EXERCICE 4 - Chainage de constructeurs : this(), super(), et le constructeur "gratuit" (niveau : difficile)
+ * ===========================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -89,7 +89,7 @@ import java.util.List;
  *     toute PREMIERE instruction du constructeur - aucune ligne,
  *     meme un simple commentaire de code, ne peut passer avant.
  */
-public class Exercise03_ConstructorChaining {
+public class Exercise04_ConstructorChaining {
 
     static class Vehicle {
         protected final List<String> log;

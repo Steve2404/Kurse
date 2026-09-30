@@ -3,11 +3,11 @@ package ch6_classdesign.exercises;
 import ch6_classdesign.ExerciseChecker;
 
 /**
- * EXERCICE 7 - Surcharge (overload) vs redefinition (override) : 2 mecanismes qu'on confond souvent (niveau : difficile)
- * ================================================================================================================================
+ * EXERCICE 9 - Surcharge (overload) vs redefinition (override) : 2 mecanismes qu'on confond souvent (niveau : difficile)
+ * ======================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -76,9 +76,9 @@ import ch6_classdesign.ExerciseChecker;
  *     le compilateur que ca redefinit VRAIMENT une methode heritee -
  *     s'il n'y avait, par erreur, AUCUNE methode compute(int, int)
  *     dans Calculator, @Override ferait ECHOUER LA COMPILATION (voir
- *     Exercise08 pour toutes les regles precises de redefinition).
+ *     Exercise10_OverrideRules pour toutes les regles precises de redefinition).
  */
-public class Exercise07_OverloadingVsOverriding {
+public class Exercise09_OverloadingVsOverriding {
 
     static class Calculator {
         int compute(int a, int b) {

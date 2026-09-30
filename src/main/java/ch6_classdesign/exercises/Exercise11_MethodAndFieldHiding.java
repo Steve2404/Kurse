@@ -3,11 +3,11 @@ package ch6_classdesign.exercises;
 import ch6_classdesign.ExerciseChecker;
 
 /**
- * EXERCICE 9 - Cacher (hiding) n'est PAS redefinir (overriding) : static et les champs ne sont JAMAIS polymorphiques (niveau : difficile)
- * ===================================================================================================================================================
+ * EXERCICE 11 - Cacher (hiding) n'est PAS redefinir (overriding) : static et les champs ne sont JAMAIS polymorphiques (niveau : difficile)
+ * ========================================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * classdesign.exercises.Exercise01_InheritanceBasics.java.
+ * Exercise01_InheritanceBasics.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -57,7 +57,7 @@ import ch6_classdesign.ExerciseChecker;
  *     dans les 2 cas, c'est TOUJOURS le type ECRIT dans le code
  *     (Parent ici) qui decide, jamais le vrai objet.
  */
-public class Exercise09_MethodAndFieldHiding {
+public class Exercise11_MethodAndFieldHiding {
 
     static class Parent {
         static String staticGreet() {

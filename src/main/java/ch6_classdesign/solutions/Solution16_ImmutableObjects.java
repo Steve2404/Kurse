@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Corrige de l'exercice 12. A ne consulter qu'apres avoir essaye par
- * vous-meme dans classdesign.exercises.Exercise12_ImmutableObjects.
+ * Corrige de l'exercice 16. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch6_classdesign.exercises.Exercise16_ImmutableObjects.
  */
-public class Solution12_ImmutableObjects {
+public class Solution16_ImmutableObjects {
 
     static final class ImmutablePoint {
         private final int x;
@@ -15,12 +15,14 @@ public class Solution12_ImmutableObjects {
         private final List<String> tags;
 
         private ImmutablePoint(int x, int y, List<String> tags) {
+            // Copie a l'ENTREE : modifier la liste de l'appelant ne change plus ce point.
             this.x = x;
             this.y = y;
             this.tags = new ArrayList<>(tags);
         }
 
         static ImmutablePoint of(int x, int y, List<String> tags) {
+            // Fabrique static : le constructeur private reste la seule porte.
             return new ImmutablePoint(x, y, tags);
         }
 
@@ -33,6 +35,7 @@ public class Solution12_ImmutableObjects {
         }
 
         List<String> tags() {
+            // Copie a la SORTIE : l'appelant recoit une autre liste.
             return new ArrayList<>(tags);
         }
     }
