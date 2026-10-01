@@ -134,11 +134,15 @@ import java.util.function.Supplier;
 public class Exercise01_OptionalBasics {
 
     public static Optional<Integer> safeDivide(int a, int b) {
-        throw new UnsupportedOperationException("TODO 1 : implementer safeDivide()");
+        if (b == 0)
+            return Optional.empty();
+        return Optional.of(a/b);
     }
 
     public static String describeSafely(Optional<Integer> opt) {
-        throw new UnsupportedOperationException("TODO 2 : implementer describeSafely()");
+        if (opt.isPresent())
+            return "Resultat: " + opt.get();
+        return "Pas de Resultat";
     }
 
     public static int valueOrFallback(Optional<Integer> opt, Supplier<Integer> fallback) {
