@@ -5,8 +5,8 @@ import ch13_concurrency.ExerciseChecker;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * EXERCICE 5 - ReentrantLock et tryLock() (niveau : difficile)
- * =========================================================================
+ * EXERCICE 7 - ReentrantLock et tryLock() (niveau : difficile)
+ * ============================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -74,9 +74,9 @@ import java.util.concurrent.locks.ReentrantLock;
  *   - if (lock.tryLock()) { try { ... return true; } finally { lock.unlock(); } } return false;
  *   - Un MEME ReentrantLock, partage entre plusieurs threads, protege
  *     le MEME SharedCounter partout ou il est utilise - exactement
- *     comme le moniteur de synchronized a l'Exercise04.
+ *     comme le moniteur de synchronized a l'Exercise06.
  */
-public class Exercise05_ReentrantLockAndTryLock {
+public class Exercise07_ReentrantLockAndTryLock {
 
     static class SharedCounter {
         private int value;

@@ -5,8 +5,8 @@ import ch13_concurrency.ExerciseChecker;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * EXERCICE 6 - Les classes atomiques (niveau : difficile)
- * ====================================================================
+ * EXERCICE 8 - Les classes atomiques (niveau : difficile)
+ * =======================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -18,14 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * "lire-modifier-ranger" se fait comme un SEUL geste indivisible, que
  * DEUX threads ne peuvent jamais se marcher dessus au milieu - sans
  * jamais avoir besoin d'un synchronized ou d'un ReentrantLock explicite
- * (Exercise04/Exercise05).
+ * (Exercise06/Exercise07).
  *
  * -- Piege classique de l'examen : atomic vs volatile --
  *
  * Un champ 'volatile int' garantit que TOUS les threads voient
  * IMMEDIATEMENT la derniere valeur ecrite (visibilite), mais ne rend
  * PAS "value++" atomique pour autant - les 3 sous-etapes cachees
- * (lire/modifier/ranger, voir Exercise04) restent tout aussi
+ * (lire/modifier/ranger, voir Exercise06) restent tout aussi
  * separables avec volatile qu'avec un int normal. AtomicInteger
  * resout les DEUX problemes a la fois (visibilite ET atomicite),
  * volatile ne resout QUE la visibilite.
@@ -82,7 +82,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *     entre la valeur ACTUELLE et 'valeur', range le resultat, et le
  *     renvoie - le tout de facon atomique.
  */
-public class Exercise06_AtomicClasses {
+public class Exercise08_AtomicClasses {
 
     public static void incrementAtomic(AtomicInteger counter) {
         throw new UnsupportedOperationException("TODO 1 : implementer incrementAtomic()");

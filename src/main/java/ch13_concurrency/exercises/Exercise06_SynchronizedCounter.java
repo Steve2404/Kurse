@@ -3,8 +3,8 @@ package ch13_concurrency.exercises;
 import ch13_concurrency.ExerciseChecker;
 
 /**
- * EXERCICE 4 - Proteger un compteur partage avec synchronized (niveau : difficile)
- * ===============================================================================================
+ * EXERCICE 6 - Proteger un compteur partage avec synchronized (niveau : difficile)
+ * ================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -62,7 +62,7 @@ import ch13_concurrency.ExerciseChecker;
  *     dans increment() bloque bien un autre thread qui voudrait
  *     entrer dans get() en meme temps, et inversement.
  */
-public class Exercise04_SynchronizedCounter {
+public class Exercise06_SynchronizedCounter {
 
     static class Counter {
         private int value;

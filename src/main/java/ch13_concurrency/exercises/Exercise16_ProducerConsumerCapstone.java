@@ -8,8 +8,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * EXERCICE 12 - Capstone : producteur/consommateur avec BlockingQueue (niveau : capstone, style entretien)
- * ===========================================================================================================================
+ * EXERCICE 16 - Capstone : producteur/consommateur avec BlockingQueue (niveau : capstone, style entretien)
+ * ========================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -85,7 +85,7 @@ import java.util.concurrent.BlockingQueue;
  *     confondue avec une vraie donnee produite (ici, Integer.MIN_VALUE,
  *     hors de la plage 0..itemCount-1 utilisee).
  */
-public class Exercise12_ProducerConsumerCapstone {
+public class Exercise16_ProducerConsumerCapstone {
 
     static final int POISON_PILL = Integer.MIN_VALUE;
 

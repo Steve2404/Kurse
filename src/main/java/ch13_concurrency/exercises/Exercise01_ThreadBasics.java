@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * EXERCICE 1 - Creer, attendre et interrompre un Thread (niveau : moyen/difficile)
- * ===============================================================================================
+ * ================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *

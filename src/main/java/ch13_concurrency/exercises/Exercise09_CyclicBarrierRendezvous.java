@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 
 /**
- * EXERCICE 7 - CyclicBarrier : un point de rendez-vous (niveau : difficile)
- * =======================================================================================
+ * EXERCICE 9 - CyclicBarrier : un point de rendez-vous (niveau : difficile)
+ * =========================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -62,7 +62,7 @@ import java.util.concurrent.CyclicBarrier;
  *   - new CyclicBarrier(n) : n est le nombre EXACT de threads attendus
  *     a chaque rendez-vous - ni plus, ni moins.
  */
-public class Exercise07_CyclicBarrierRendezvous {
+public class Exercise09_CyclicBarrierRendezvous {
 
     public static Runnable buildBarrierWorker(CyclicBarrier barrier, int index, List<String> trace) {
         throw new UnsupportedOperationException("TODO : implementer buildBarrierWorker()");

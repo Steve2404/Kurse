@@ -12,8 +12,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * EXERCICE 8 - Les collections concurrentes : ConcurrentHashMap et CopyOnWriteArrayList (niveau : difficile)
- * =========================================================================================================================
+ * EXERCICE 11 - Les collections concurrentes : ConcurrentHashMap et CopyOnWriteArrayList (niveau : difficile)
+ * ===========================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -92,7 +92,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *     d'ecritures (chaque ecriture est couteuse, car elle recopie tout
  *     le tableau) - jamais l'inverse.
  */
-public class Exercise08_ConcurrentCollections {
+public class Exercise11_ConcurrentCollections {
 
     public static Map<String, Integer> countOccurrencesConcurrent(List<String> words, int threadCount)
             throws InterruptedException {

@@ -13,8 +13,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * EXERCICE 2 - Callable, ExecutorService et Future (niveau : difficile)
- * ==================================================================================
+ * EXERCICE 3 - Callable, ExecutorService et Future (niveau : difficile)
+ * =====================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -87,7 +87,7 @@ import java.util.concurrent.TimeUnit;
  *   - N'appelle JAMAIS get() avant d'avoir soumis TOUTES les taches
  *     dans computeAllAndSum() - sinon plus de parallelisme reel.
  */
-public class Exercise02_CallableAndFutures {
+public class Exercise03_CallableAndFutures {
 
     public static int computeWithExecutor(ExecutorService executor, Callable<Integer> task)
             throws ExecutionException, InterruptedException {

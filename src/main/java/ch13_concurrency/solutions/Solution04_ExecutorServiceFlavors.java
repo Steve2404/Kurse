@@ -10,12 +10,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Corrige de l'exercice 3. A ne consulter qu'apres avoir essaye par
- * vous-meme dans concurrency.exercises.Exercise03_ExecutorServiceFlavors.
+ * Corrige de l'exercice 4. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch13_concurrency.exercises.Exercise04_ExecutorServiceFlavors.
  */
-public class Solution03_ExecutorServiceFlavors {
+public class Solution04_ExecutorServiceFlavors {
 
     public static void runInSingleThreadOrder(int taskCount, List<String> trace) throws InterruptedException {
+        // Un seul ouvrier = les taches passent dans l'ordre de soumission, meme si les premieres sont les plus lentes.
         ExecutorService executor = Executors.newSingleThreadExecutor();
         for (int i = 0; i < taskCount; i++) {
             int index = i;
@@ -32,6 +33,7 @@ public class Solution03_ExecutorServiceFlavors {
     }
 
     public static int countScheduledExecutions(int targetCount, long periodMillis) throws InterruptedException {
+        // Un latch remplace un sleep devine : on attend exactement targetCount executions, puis on annule la tache periodique.
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         AtomicInteger counter = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(targetCount);

@@ -5,8 +5,8 @@ import ch13_concurrency.ExerciseChecker;
 import java.util.List;
 
 /**
- * EXERCICE 3 - newSingleThreadExecutor() et ScheduledExecutorService (niveau : difficile)
- * ======================================================================================================
+ * EXERCICE 4 - newSingleThreadExecutor() et ScheduledExecutorService (niveau : difficile)
+ * =======================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -89,7 +89,7 @@ import java.util.List;
  *   - scheduleAtFixedRate(Runnable, delaiInitial, periode, unite) :
  *     le delai initial peut etre 0 (demarrer tout de suite).
  */
-public class Exercise03_ExecutorServiceFlavors {
+public class Exercise04_ExecutorServiceFlavors {
 
     public static void runInSingleThreadOrder(int taskCount, List<String> trace) throws InterruptedException {
         throw new UnsupportedOperationException("TODO 1 : implementer runInSingleThreadOrder()");

@@ -8,13 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Corrige de l'exercice 8. A ne consulter qu'apres avoir essaye par
- * vous-meme dans concurrency.exercises.Exercise08_ConcurrentCollections.
+ * Corrige de l'exercice 11. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch13_concurrency.exercises.Exercise11_ConcurrentCollections.
  */
-public class Solution08_ConcurrentCollections {
+public class Solution11_ConcurrentCollections {
 
     public static Map<String, Integer> countOccurrencesConcurrent(List<String> words, int threadCount)
             throws InterruptedException {
+        // Chaque thread a son paquet de mots ; merge sur ConcurrentHashMap est atomique, donc les comptes sont exacts.
         ConcurrentHashMap<String, Integer> counts = new ConcurrentHashMap<>();
         List<List<String>> chunks = new ArrayList<>();
         for (int i = 0; i < threadCount; i++) {
@@ -43,6 +44,7 @@ public class Solution08_ConcurrentCollections {
     }
 
     public static Iterator<String> buildCopyOnWriteSnapshotIterator(CopyOnWriteArrayList<String> list) {
+        // L'iterateur de CopyOnWriteArrayList est une PHOTO : il ignore les ajouts faits ensuite, sans ConcurrentModificationException.
         return list.iterator();
     }
 }

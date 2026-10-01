@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 11 - reduce() a 3 arguments : identite, accumulateur, combinateur (niveau : difficile)
- * ==============================================================================================================
+ * EXERCICE 14 - reduce() a 3 arguments : identite, accumulateur, combinateur (niveau : difficile)
+ * ===============================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -70,7 +70,7 @@ import java.util.List;
  *     doit pouvoir fonctionner aussi bien en sequentiel qu'en
  *     parallele.
  */
-public class Exercise11_ParallelReduceWithCombiner {
+public class Exercise14_ParallelReduceWithCombiner {
 
     public static int totalLength(List<String> words) {
         throw new UnsupportedOperationException("TODO : implementer totalLength()");

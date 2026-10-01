@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * EXERCICE 10 - Un stream parallele traite les elements dans le desordre (niveau : difficile)
- * ==========================================================================================================
+ * EXERCICE 13 - Un stream parallele traite les elements dans le desordre (niveau : difficile)
+ * ===========================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_ThreadBasics.java.
@@ -93,7 +93,7 @@ import java.util.stream.Collectors;
  *     threads y ajoutent en meme temps, une ArrayList normale
  *     risquerait de se corrompre.
  */
-public class Exercise10_ParallelStreamOrdering {
+public class Exercise13_ParallelStreamOrdering {
 
     public static long sumWithParallelStream(List<Integer> values) {
         throw new UnsupportedOperationException("TODO 1 : implementer sumWithParallelStream()");
