@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 /**
  * EXERCICE 1 - File (I/O) et Path (NIO.2) : creation et conversion (niveau : moyen)
- * ================================================================================================
+ * =================================================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *

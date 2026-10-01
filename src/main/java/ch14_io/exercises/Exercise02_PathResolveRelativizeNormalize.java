@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 /**
  * EXERCICE 2 - Combiner et resoudre des Path : resolve, relativize, normalize (niveau : difficile)
- * ================================================================================================================
+ * ================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_FileAndPathBasics.java.
