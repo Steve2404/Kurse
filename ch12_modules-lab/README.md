@@ -24,19 +24,28 @@ Les dossiers `exercise/` et `solution/` de chaque lab sont des arbres
 source `--module-source-path` complets et independants - ne regarde
 `solution/` qu'apres avoir essaye `exercise/` par toi-meme.
 
-## Index des labs
+## Index des labs (ranges par theme)
 
-| # | Dossier | Notion | A corriger |
-|---|---------|--------|------------|
-| 01 | `01-exports-requires` | `module-info.java`, `exports`, `requires` | 1 ligne manquante |
-| 02 | `02-qualified-exports` | Export qualifie `exports ... to ...` | 1 nom de module a ajouter |
-| 03 | `03-requires-transitive` | `requires transitive` | 1 mot-cle a ajouter |
-| 04 | `04-service-provider` | `provides`/`uses` + `ServiceLoader` (les 4 parties d'un service) | 1 directive `uses` manquante |
-| 05 | `05-opens-reflection` | `opens` (reflexion profonde vs `exports`) | 1 directive `opens` manquante |
-| 06 | `06-cyclic-dependency` | Cycles interdits par le JPMS | Refactoring (extraire un module commun) |
-| 07 | `07-module-types` | Named / automatic / unnamed modules | Aucun (observation + prediction) |
-| 08 | `08-cli-tooling` | `java --describe-module`, `jar --describe-module`, `jdeps`, `jlink` | Aucun (observation + prediction) |
-| 09 | `09-concepts-quiz` | Migration top-down/bottom-up, comptes de modules JDK | Quiz ecrit + verification reelle |
+| # | Dossier | Theme | Notion | A faire |
+|---|---------|-------|--------|---------|
+| 01 | `01-exports-requires` | Directives de base | `module-info.java`, `exports`, `requires` | 1 directive |
+| 02 | `02-qualified-exports` | Directives de base | export qualifie `exports ... to ...` | 1 nom de module |
+| 03 | `03-requires-transitive` | Directives de base | `requires transitive` | 1 mot-cle |
+| 04 | `04-service-provider` | Services | `provides`/`uses` + `ServiceLoader` (les 4 parties d'un service) | 1 directive `uses` |
+| 05 | `05-service-advanced` | Services (avance) | 2 fournisseurs, methode `provider()`, `ServiceLoader.stream()`, `Provider.type()` | 5 TODO |
+| 06 | `06-opens-reflection` | Reflexion | `opens` (reflexion profonde contre `exports`) | 1 directive `opens` |
+| 07 | `07-command-line-overrides` | Reflexion (avance) | `--add-exports` (javac ET java), `--add-opens`, `--add-modules` | 4 options |
+| 08 | `08-cyclic-dependency` | Cycles | cycles interdits par le JPMS | refactoring (module commun) |
+| 09 | `09-module-types` | Types de modules | named / automatic / unnamed, nom automatique | 5 TODO (module-info + commandes) |
+| 10 | `10-cli-tooling` | Outils | `--describe-module`, `jar`, `jdeps`, `jlink`, `--show-module-resolution` | 10 commandes |
+| 11 | `11-migration` | Capstone | migration bottom-up, top-down, puis tout nomme | 4 TODO |
+
+Les **drills** (memorisation) sont dans `drills/` : voir `drills/REVISION.md`
+pour le parcours complet (labs + drills) et la repetition espacee.
+
+Sous Windows, lancer les scripts depuis **Git Bash** ; ils choisissent
+eux-memes le bon separateur de chemins (`;` sous Windows, `:` ailleurs).
+Les fichiers generes vont dans `build/` (ignore par git).
 
 Chaque `run.sh` compile avec le VRAI compilateur et affiche les VRAIS
 messages d'erreur JPMS (pas des messages reconstitues) - c'est
