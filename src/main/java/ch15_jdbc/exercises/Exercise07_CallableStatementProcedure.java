@@ -9,8 +9,8 @@ import java.sql.Statement;
 import java.sql.Types;
 
 /**
- * EXERCICE 5 - CallableStatement : appeler une procedure stockee (niveau : difficile)
- * ====================================================================================================
+ * EXERCICE 7 - CallableStatement : appeler une procedure stockee (niveau : difficile)
+ * ===================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.
@@ -73,7 +73,7 @@ import java.sql.Types;
  *   - Types.INTEGER vient de java.sql.Types - une liste de constantes
  *     representant les types SQL, independamment du driver utilise.
  */
-public class Exercise05_CallableStatementProcedure {
+public class Exercise07_CallableStatementProcedure {
 
     // Deja fournie (pas un TODO) : c'est CETTE methode que l'ALIAS SQL
     // "APPLY_BONUS" appelle reellement, en coulisses.
@@ -88,8 +88,9 @@ public class Exercise05_CallableStatementProcedure {
     public static void main(String[] args) throws SQLException {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:exercice05", "sa", "")) {
             try (Statement setup = connection.createStatement()) {
-                setup.executeUpdate("CREATE ALIAS APPLY_BONUS FOR "
-                        + "\"jdbc.exercises.Exercise05_CallableStatementProcedure.applyBonus\"");
+                // Le nom complet de la classe est calcule (pas ecrit a la main) : il reste juste si le paquet change.
+                setup.executeUpdate("CREATE ALIAS APPLY_BONUS FOR \""
+                        + Exercise07_CallableStatementProcedure.class.getName() + ".applyBonus\"");
             }
 
             int result = callApplyBonus(connection, 100, 20);

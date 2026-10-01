@@ -5,12 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Corrige de l'exercice 6. A ne consulter qu'apres avoir essaye par
- * vous-meme dans jdbc.exercises.Exercise06_TransactionsCommitRollback.
+ * Corrige de l'exercice 8. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch15_jdbc.exercises.Exercise08_TransactionsCommitRollback.
  */
-public class Solution06_TransactionsCommitRollback {
+public class Solution08_TransactionsCommitRollback {
 
     public static boolean transfer(Connection conn, int fromId, int toId, int amount) throws SQLException {
+        // Debit et credit dans une transaction ; "balance >= ?" refuse un solde insuffisant (0 ligne -> rollback). finally remet l'auto-commit.
         conn.setAutoCommit(false);
         try {
             int rowsDebited;

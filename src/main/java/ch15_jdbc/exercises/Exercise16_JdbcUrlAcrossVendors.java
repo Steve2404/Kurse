@@ -6,11 +6,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * EXERCICE 9 - Identifier les URL JDBC valides ou invalides, tous fournisseurs confondus (niveau : difficile)
- * ==============================================================================================================================
+ * EXERCICE 16 - Identifier les URL JDBC valides ou invalides, tous fournisseurs confondus (niveau : difficile)
+ * ============================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
+ * ch15_jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
  *
  * -- Debut de la 2e moitie du chapitre : les fournisseurs "reels" --
  *
@@ -84,7 +84,7 @@ import java.sql.SQLException;
  *     pour H2 en memoire - CHAQUE fournisseur choisit librement la
  *     forme de son 3e morceau).
  */
-public class Exercise09_JdbcUrlAcrossVendors {
+public class Exercise16_JdbcUrlAcrossVendors {
 
     public static String buildPostgresUrl(String host, int port, String database) {
         throw new UnsupportedOperationException("TODO 1 : implementer buildPostgresUrl()");

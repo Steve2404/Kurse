@@ -10,8 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * EXERCICE 6 - Transactions : commit() et rollback() (niveau : difficile)
- * ========================================================================================
+ * EXERCICE 8 - Transactions : commit() et rollback() (niveau : difficile)
+ * =======================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.
@@ -73,20 +73,10 @@ import java.sql.Statement;
  *     le AND balance >= ? est la garde de securite qui empeche un
  *     solde negatif, DIRECTEMENT dans le SQL.
  */
-public class Exercise06_TransactionsCommitRollback {
+public class Exercise08_TransactionsCommitRollback {
 
     public static boolean transfer(Connection conn, int fromId, int toId, int amount) throws SQLException {
         throw new UnsupportedOperationException("TODO : implementer transfer()");
-    }
-
-    private static int balanceOf(Connection conn, int id) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement("SELECT balance FROM accounts WHERE id = ?")) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                return rs.getInt("balance");
-            }
-        }
     }
 
     public static void main(String[] args) throws SQLException {
@@ -109,5 +99,15 @@ public class Exercise06_TransactionsCommitRollback {
         }
 
         ExerciseChecker.summary();
+    }
+
+    private static int balanceOf(Connection conn, int id) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement("SELECT balance FROM accounts WHERE id = ?")) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt("balance");
+            }
+        }
     }
 }

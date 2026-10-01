@@ -11,7 +11,7 @@ import java.sql.Statement;
 
 /**
  * EXERCICE 4 - Lire un ResultSet : par index, par nom, et getObject() (niveau : moyen)
- * =====================================================================================================
+ * ====================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.

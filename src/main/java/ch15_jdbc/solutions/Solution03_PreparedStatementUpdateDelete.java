@@ -6,11 +6,12 @@ import java.sql.SQLException;
 
 /**
  * Corrige de l'exercice 3. A ne consulter qu'apres avoir essaye par
- * vous-meme dans jdbc.exercises.Exercise03_PreparedStatementUpdateDelete.
+ * vous-meme dans ch15_jdbc.exercises.Exercise03_PreparedStatementUpdateDelete.
  */
 public class Solution03_PreparedStatementUpdateDelete {
 
     public static int updateScore(Connection conn, int id, int newScore) throws SQLException {
+        // L'ordre des setX suit l'ordre des ? dans le SQL (ici SET avant WHERE).
         try (PreparedStatement ps = conn.prepareStatement("UPDATE players SET score = ? WHERE id = ?")) {
             ps.setInt(1, newScore);
             ps.setInt(2, id);
@@ -19,6 +20,7 @@ public class Solution03_PreparedStatementUpdateDelete {
     }
 
     public static int deletePlayer(Connection conn, int id) throws SQLException {
+        // 0 si aucune ligne ne correspond : pas d'exception.
         try (PreparedStatement ps = conn.prepareStatement("DELETE FROM players WHERE id = ?")) {
             ps.setInt(1, id);
             return ps.executeUpdate();

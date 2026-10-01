@@ -10,11 +10,12 @@ import java.util.List;
 
 /**
  * Corrige de l'exercice 14. A ne consulter qu'apres avoir essaye par
- * vous-meme dans jdbc.exercises.Exercise14_ResultSetMetaDataAcrossVendors.
+ * vous-meme dans ch15_jdbc.exercises.Exercise14_ResultSetMetaDataAcrossVendors.
  */
 public class Solution14_ResultSetMetaDataAcrossVendors {
 
     public static List<String> describeColumns(Connection conn) throws SQLException {
+        // getMetaData decouvre les colonnes ; toUpperCase car Postgres rend les noms en minuscules, H2 et MySQL non.
         try (Statement ddl = conn.createStatement()) {
             ddl.execute("DROP TABLE IF EXISTS meta_demo");
             ddl.execute("CREATE TABLE meta_demo (id INT PRIMARY KEY, name VARCHAR(50))");

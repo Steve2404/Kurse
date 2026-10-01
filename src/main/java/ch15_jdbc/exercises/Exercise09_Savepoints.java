@@ -12,15 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 7 - Les Savepoint : annuler PARTIELLEMENT une transaction (niveau : difficile)
- * ========================================================================================================
+ * EXERCICE 9 - Les Savepoint : annuler PARTIELLEMENT une transaction (niveau : difficile)
+ * =======================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
- * rollback() (Exercise06) annule TOUT depuis le debut de la
+ * rollback() (Exercise08) annule TOUT depuis le debut de la
  * transaction - parfois trop radical. Un Savepoint est un "signet"
  * pose A UN MOMENT PRECIS de la transaction : rollback(savepoint)
  * n'annule QUE ce qui s'est passe APRES ce signet, en GARDANT tout ce
@@ -62,11 +62,11 @@ import java.util.List;
  * Indices techniques Java (a lire seulement si le plan a la main est
  * clair mais que la traduction en code bloque) :
  *
- *   - Connection.rollback() (SANS argument, Exercise06) et
- *     Connection.rollback(Savepoint) (Exercise07) sont 2 methodes
+ *   - Connection.rollback() (SANS argument, Exercise08) et
+ *     Connection.rollback(Savepoint) (Exercise09) sont 2 methodes
  *     SURCHARGEES - la version avec Savepoint est UNIQUEMENT partielle.
  */
-public class Exercise07_Savepoints {
+public class Exercise09_Savepoints {
 
     private static void insertLog(Connection conn, String label) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO logs (label) VALUES (?)")) {

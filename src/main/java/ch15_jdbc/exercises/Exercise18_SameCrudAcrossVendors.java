@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EXERCICE 11 - LE MEME code CRUD sur H2, Postgres et MySQL (niveau : difficile, necessite Docker pour 2 des 3)
- * ==================================================================================================================================
+ * EXERCICE 18 - LE MEME code CRUD sur H2, Postgres et MySQL (niveau : difficile, necessite Docker pour 2 des 3)
+ * =============================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
+ * ch15_jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
  *
  * IMPORTANT - Pour les 2 verifications Postgres/MySQL, demarre
- * d'abord les conteneurs (voir Exercise10). H2, lui, ne demande
+ * d'abord les conteneurs (voir Exercise17). H2, lui, ne demande
  * jamais rien.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
@@ -72,10 +72,19 @@ import java.util.List;
  *     Postgres ET MySQL - c'est justement pour ca que ce plan
  *     fonctionne sans adaptation.
  */
-public class Exercise11_SameCrudAcrossVendors {
+public class Exercise18_SameCrudAcrossVendors {
 
     public static List<String> runCrudCycle(Connection conn) throws SQLException {
         throw new UnsupportedOperationException("TODO : implementer runCrudCycle()");
+    }
+
+    public static void main(String[] args) {
+        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice11", "sa", "");
+        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse");
+        checkOrSkip("MySQL (Docker)",
+                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse");
+
+        ExerciseChecker.summary();
     }
 
     private static void checkOrSkip(String label, String url, String user, String password) {
@@ -86,14 +95,5 @@ public class Exercise11_SameCrudAcrossVendors {
             System.out.println("[SAUTE] " + label + " indisponible - lance 'docker compose up -d' dans jdbc-lab/. "
                     + "Detail : " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice11", "sa", "");
-        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse");
-        checkOrSkip("MySQL (Docker)",
-                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse");
-
-        ExerciseChecker.summary();
     }
 }

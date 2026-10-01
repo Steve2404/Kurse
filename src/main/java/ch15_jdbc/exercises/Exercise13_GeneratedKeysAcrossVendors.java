@@ -11,13 +11,13 @@ import java.sql.Statement;
 
 /**
  * EXERCICE 13 - Recuperer une cle auto-generee, MEME SI chaque fournisseur la fabrique differemment (niveau : difficile)
- * ============================================================================================================================
+ * ======================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
+ * ch15_jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
  *
  * IMPORTANT - Pour verifier sur Postgres/MySQL, demarre d'abord les
- * conteneurs (voir Exercise10). H2, lui, ne demande jamais rien.
+ * conteneurs (voir Exercise17). H2, lui, ne demande jamais rien.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -27,7 +27,7 @@ import java.sql.Statement;
  * donnees) a sa PROPRE facon d'ecrire cette regle : H2 et MySQL
  * disent "AUTO_INCREMENT" sur la colonne, Postgres dit "SERIAL". LE
  * CREATE TABLE n'est donc PAS identique partout (contrairement a
- * l'Exercise11 !) - main() te fournit d'ailleurs la bonne phrase SQL
+ * l'Exercise18 !) - main() te fournit d'ailleurs la bonne phrase SQL
  * pour chaque fournisseur, ce n'est pas ton TODO. MAIS, une fois la
  * table creee, la facon de DEMANDER A JAVA "c'est quel numero que tu
  * viens de me donner ?" est, elle, EXACTEMENT LA MEME peu importe le
@@ -87,6 +87,18 @@ public class Exercise13_GeneratedKeysAcrossVendors {
         throw new UnsupportedOperationException("TODO : implementer insertAndReturnGeneratedId()");
     }
 
+    public static void main(String[] args) {
+        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice13", "sa", "",
+                "CREATE TABLE gen_demo (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50))");
+        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse",
+                "CREATE TABLE gen_demo (id SERIAL PRIMARY KEY, name VARCHAR(50))");
+        checkOrSkip("MySQL (Docker)",
+                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse",
+                "CREATE TABLE gen_demo (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50))");
+
+        ExerciseChecker.summary();
+    }
+
     private static void checkOrSkip(String label, String url, String user, String password, String createTableSql) {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             try (Statement ddl = conn.createStatement()) {
@@ -99,17 +111,5 @@ public class Exercise13_GeneratedKeysAcrossVendors {
             System.out.println("[SAUTE] " + label + " indisponible - lance 'docker compose up -d' dans jdbc-lab/. "
                     + "Detail : " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice13", "sa", "",
-                "CREATE TABLE gen_demo (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50))");
-        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse",
-                "CREATE TABLE gen_demo (id SERIAL PRIMARY KEY, name VARCHAR(50))");
-        checkOrSkip("MySQL (Docker)",
-                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse",
-                "CREATE TABLE gen_demo (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50))");
-
-        ExerciseChecker.summary();
     }
 }

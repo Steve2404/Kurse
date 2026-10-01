@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 /**
  * EXERCICE 3 - UPDATE et DELETE avec PreparedStatement (niveau : moyen/difficile)
- * ===============================================================================================
+ * ===============================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.

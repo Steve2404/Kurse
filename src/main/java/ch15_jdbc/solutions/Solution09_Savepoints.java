@@ -6,12 +6,13 @@ import java.sql.SQLException;
 import java.sql.Savepoint;
 
 /**
- * Corrige de l'exercice 7. A ne consulter qu'apres avoir essaye par
- * vous-meme dans jdbc.exercises.Exercise07_Savepoints.
+ * Corrige de l'exercice 9. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch15_jdbc.exercises.Exercise09_Savepoints.
  */
-public class Solution07_Savepoints {
+public class Solution09_Savepoints {
 
     private static void insertLog(Connection conn, String label) throws SQLException {
+        // Boite magique : une ligne de log, avec un ? pour la valeur.
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO logs (label) VALUES (?)")) {
             ps.setString(1, label);
             ps.executeUpdate();
@@ -19,6 +20,7 @@ public class Solution07_Savepoints {
     }
 
     public static void processWithSavepoint(Connection conn) throws SQLException {
+        // rollback(savepoint) n'annule que ce qui suit le savepoint (B) ; A et C sont valides par le commit.
         conn.setAutoCommit(false);
         try {
             insertLog(conn, "A");

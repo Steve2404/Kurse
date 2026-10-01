@@ -5,12 +5,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Corrige de l'exercice 15. A ne consulter qu'apres avoir essaye par
- * vous-meme dans jdbc.exercises.Exercise15_SqlStateAcrossVendors.
+ * Corrige de l'exercice 19. A ne consulter qu'apres avoir essaye par
+ * vous-meme dans ch15_jdbc.exercises.Exercise19_SqlStateAcrossVendors.
  */
-public class Solution15_SqlStateAcrossVendors {
+public class Solution19_SqlStateAcrossVendors {
 
     public static String sqlStateFamilyOfDuplicateKey(Connection conn) throws SQLException {
+        // Le code complet varie (23505 contre 23000) mais la classe "23" (contrainte violee) est commune a tous.
         try (Statement ddl = conn.createStatement()) {
             ddl.execute("DROP TABLE IF EXISTS exc_demo");
             ddl.execute("CREATE TABLE exc_demo (id INT PRIMARY KEY)");

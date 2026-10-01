@@ -8,11 +8,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * EXERCICE 10 - Se connecter a de VRAIES bases Postgres et MySQL (niveau : difficile, necessite Docker)
- * =========================================================================================================================
+ * EXERCICE 17 - Se connecter a de VRAIES bases Postgres et MySQL (niveau : difficile, necessite Docker)
+ * =====================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
+ * ch15_jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
  *
  * IMPORTANT - Avant de lancer cet exercice : demarre les 2 bases
  * Docker depuis jdbc-lab/ :
@@ -65,10 +65,21 @@ import java.sql.SQLException;
  *   - getConnection() ET getMetaData() peuvent tous les deux lancer
  *     SQLException (checked) - a declarer sur la methode.
  */
-public class Exercise10_ConnectToRealDatabases {
+public class Exercise17_ConnectToRealDatabases {
 
     public static String describeDatabase(String url, String user, String password) throws SQLException {
         throw new UnsupportedOperationException("TODO : implementer describeDatabase()");
+    }
+
+    public static void main(String[] args) {
+        checkOrSkip("Connexion reelle a Postgres (Docker)",
+                "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse", "PostgreSQL");
+
+        checkOrSkip("Connexion reelle a MySQL (Docker)",
+                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse",
+                "MySQL");
+
+        ExerciseChecker.summary();
     }
 
     private static void checkOrSkip(String label, String url, String user, String password, String expectedPrefix) {
@@ -81,16 +92,5 @@ public class Exercise10_ConnectToRealDatabases {
             return;
         }
         ExerciseChecker.check(label + " : " + description, description.startsWith(expectedPrefix));
-    }
-
-    public static void main(String[] args) {
-        checkOrSkip("Connexion reelle a Postgres (Docker)",
-                "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse", "PostgreSQL");
-
-        checkOrSkip("Connexion reelle a MySQL (Docker)",
-                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse",
-                "MySQL");
-
-        ExerciseChecker.summary();
     }
 }

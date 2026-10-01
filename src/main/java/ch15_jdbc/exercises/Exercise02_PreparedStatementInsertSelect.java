@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * EXERCICE 2 - Creer, INSERT et SELECT avec PreparedStatement (niveau : difficile)
- * ================================================================================================
+ * ================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.
@@ -82,7 +82,7 @@ import java.util.List;
  * clair mais que la traduction en code bloque) :
  *
  *   - Toujours fermer Statement/PreparedStatement/ResultSet
- *     (try-with-resources) - voir Exercise08 pour le detail complet de
+ *     (try-with-resources) - voir Exercise10 pour le detail complet de
  *     l'ordre de fermeture.
  *   - Les index de colonnes ET les index de parametres bind (?)
  *     commencent TOUS LES DEUX a 1, jamais 0 - un piege classique de

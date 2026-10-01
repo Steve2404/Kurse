@@ -9,8 +9,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * EXERCICE 8 - L'ordre de fermeture des ressources JDBC, et leurs effets en cascade (niveau : difficile)
- * =========================================================================================================================
+ * EXERCICE 10 - L'ordre de fermeture des ressources JDBC, et leurs effets en cascade (niveau : difficile)
+ * =======================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
  * Exercise01_JdbcUrlAndDriverManager.java.
@@ -67,7 +67,7 @@ import java.sql.Statement;
  *
  * Exemple a verifier : voir main().
  */
-public class Exercise08_ResourceClosingOrder {
+public class Exercise10_ResourceClosingOrder {
 
     public static void closeInOrder(ResultSet rs, Statement st, Connection conn) throws SQLException {
         throw new UnsupportedOperationException("TODO : implementer closeInOrder()");

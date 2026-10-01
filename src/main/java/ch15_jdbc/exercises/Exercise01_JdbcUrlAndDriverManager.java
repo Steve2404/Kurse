@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 /**
  * EXERCICE 1 - L'URL JDBC et DriverManager (niveau : moyen)
- * ==========================================================================
+ * =========================================================
  *
  * -- Rappel du decoupage en "boites magiques" --
  *

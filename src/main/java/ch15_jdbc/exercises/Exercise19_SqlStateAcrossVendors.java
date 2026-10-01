@@ -8,18 +8,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * EXERCICE 15 (CAPSTONE) - SQLException, getSQLState() et le seul point VRAIMENT commun entre 3 fournisseurs (niveau : difficile)
- * ======================================================================================================================================
+ * EXERCICE 19 - SQLException, getSQLState() et le seul point VRAIMENT commun entre 3 fournisseurs (niveau : difficile)
+ * ====================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
+ * ch15_jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
  *
  * IMPORTANT - Pour verifier sur Postgres/MySQL, demarre d'abord les
- * conteneurs (voir Exercise10). H2, lui, ne demande jamais rien.
+ * conteneurs (voir Exercise17). H2, lui, ne demande jamais rien.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
- * Ce dernier exercice ferme la boucle ouverte par l'Exercise09 : SI
+ * Ce dernier exercice ferme la boucle ouverte par l'Exercise16 : SI
  * on essaie d'inserer un DEUXIEME eleve avec le MEME numero qu'un
  * eleve deja inscrit (meme cle primaire), CHAQUE base de donnees
  * refuse - mais chacune le dit A SA FACON : H2 ecrit "Eindeutiger
@@ -85,10 +85,19 @@ import java.sql.Statement;
  *     utilise 1062, Postgres n'en fournit meme pas) - contrairement
  *     a la FAMILLE du SQLState, il n'est d'aucune aide ici.
  */
-public class Exercise15_SqlStateAcrossVendors {
+public class Exercise19_SqlStateAcrossVendors {
 
     public static String sqlStateFamilyOfDuplicateKey(Connection conn) throws SQLException {
         throw new UnsupportedOperationException("TODO : implementer sqlStateFamilyOfDuplicateKey()");
+    }
+
+    public static void main(String[] args) {
+        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice15", "sa", "");
+        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse");
+        checkOrSkip("MySQL (Docker)",
+                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse");
+
+        ExerciseChecker.summary();
     }
 
     private static void checkOrSkip(String label, String url, String user, String password) {
@@ -99,14 +108,5 @@ public class Exercise15_SqlStateAcrossVendors {
             System.out.println("[SAUTE] " + label + " indisponible - lance 'docker compose up -d' dans jdbc-lab/. "
                     + "Detail : " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice15", "sa", "");
-        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse");
-        checkOrSkip("MySQL (Docker)",
-                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse");
-
-        ExerciseChecker.summary();
     }
 }

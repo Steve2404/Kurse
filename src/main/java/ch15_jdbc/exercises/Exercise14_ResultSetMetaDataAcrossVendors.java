@@ -13,13 +13,13 @@ import java.util.List;
 
 /**
  * EXERCICE 14 - Decouvrir la structure d'une table SANS la connaitre a l'avance : ResultSetMetaData (niveau : difficile)
- * =============================================================================================================================
+ * ======================================================================================================================
  *
  * Rappel express du decoupage en "boites magiques" : voir
- * jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
+ * ch15_jdbc.exercises.Exercise01_JdbcUrlAndDriverManager.java.
  *
  * IMPORTANT - Pour verifier sur Postgres/MySQL, demarre d'abord les
- * conteneurs (voir Exercise10). H2, lui, ne demande jamais rien.
+ * conteneurs (voir Exercise17). H2, lui, ne demande jamais rien.
  *
  * -- Le probleme, explique comme a un tout petit enfant --
  *
@@ -93,6 +93,15 @@ public class Exercise14_ResultSetMetaDataAcrossVendors {
         throw new UnsupportedOperationException("TODO : implementer describeColumns()");
     }
 
+    public static void main(String[] args) {
+        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice14", "sa", "");
+        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse");
+        checkOrSkip("MySQL (Docker)",
+                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse");
+
+        ExerciseChecker.summary();
+    }
+
     private static void checkOrSkip(String label, String url, String user, String password) {
         try (Connection conn = DriverManager.getConnection(url, user, password)) {
             List<String> columns = describeColumns(conn);
@@ -101,14 +110,5 @@ public class Exercise14_ResultSetMetaDataAcrossVendors {
             System.out.println("[SAUTE] " + label + " indisponible - lance 'docker compose up -d' dans jdbc-lab/. "
                     + "Detail : " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        checkOrSkip("H2 (toujours disponible)", "jdbc:h2:mem:exercice14", "sa", "");
-        checkOrSkip("Postgres (Docker)", "jdbc:postgresql://localhost:15432/kurse", "kurse", "kurse");
-        checkOrSkip("MySQL (Docker)",
-                "jdbc:mysql://localhost:13306/kurse?allowPublicKeyRetrieval=true&useSSL=false", "kurse", "kurse");
-
-        ExerciseChecker.summary();
     }
 }

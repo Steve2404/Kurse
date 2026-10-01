@@ -8,11 +8,12 @@ import java.util.List;
 
 /**
  * Corrige de l'exercice 12. A ne consulter qu'apres avoir essaye par
- * vous-meme dans jdbc.exercises.Exercise12_BatchUpdates.
+ * vous-meme dans ch15_jdbc.exercises.Exercise12_BatchUpdates.
  */
 public class Solution12_BatchUpdates {
 
     public static int[] insertNamesInBatch(Connection conn, List<String> names) throws SQLException {
+        // addBatch accumule, executeBatch envoie tout en un voyage et rend un compte par ordre.
         try (Statement ddl = conn.createStatement()) {
             ddl.execute("DROP TABLE IF EXISTS batch_demo");
             ddl.execute("CREATE TABLE batch_demo (id INT PRIMARY KEY, name VARCHAR(50))");
