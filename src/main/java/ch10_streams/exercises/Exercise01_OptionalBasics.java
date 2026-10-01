@@ -146,15 +146,15 @@ public class Exercise01_OptionalBasics {
     }
 
     public static int valueOrFallback(Optional<Integer> opt, Supplier<Integer> fallback) {
-        throw new UnsupportedOperationException("TODO 3 : implementer valueOrFallback()");
+        return opt.orElseGet(fallback);
     }
 
     public static int requireValue(Optional<Integer> opt) {
-        throw new UnsupportedOperationException("TODO 4 : implementer requireValue()");
+       return opt.orElseThrow(() -> new IllegalStateException("Aucune valeur presente"));
     }
 
     public static void logIfPresent(Optional<Integer> opt, List<String> sink) {
-        throw new UnsupportedOperationException("TODO 5 : implementer logIfPresent()");
+        opt.ifPresent(v -> sink.add("Valeur presente: "+ v));
     }
 
     public static void main(String[] args) {
