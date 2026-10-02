@@ -28,5 +28,7 @@ public class Recall02 {
         int code = c + 1;
         System.out.println("D07 : " + code + " " + (char) code + " " + ('a' - 'A'));
         System.out.println("D08 : " + (1 / 2 + 1.0 / 2) + " " + (2 + 3 * 4 % 5) + " " + (10 - 2 - 3));
+        // Division FLOTTANTE par zero : pas d'exception (seule la division entiere en leve une).
+        System.out.println("D09 : " + 1.0 / 0 + " " + -1.0 / 0 + " " + 0.0 / 0 + " " + (0.0 / 0 == 0.0 / 0) + " " + 5 % 0.0);
     }
 }

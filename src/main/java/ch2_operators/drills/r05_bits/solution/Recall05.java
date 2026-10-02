@@ -27,5 +27,14 @@ public class Recall05 {
         System.out.println("D07 : " + (packed == color) + " " + Integer.toHexString(packed));
         // Pair ou impair sans % : le bit de poids faible.
         System.out.println("D08 : " + (7 & 1) + " " + (10 & 1) + " " + (1 << 1 + 1) + " " + ((1 << 1) + 1));
+        int v = 5;
+        v <<= 3;
+        int w = -64;
+        w >>= 2;
+        int u = -64;
+        u >>>= 28;
+        byte bb = 64;
+        bb <<= 1;            // cast (byte) implicite : 128 deborde
+        System.out.println("D09 : " + v + " " + w + " " + u + " " + bb);
     }
 }

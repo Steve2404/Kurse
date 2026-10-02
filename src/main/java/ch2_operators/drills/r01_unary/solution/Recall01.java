@@ -28,5 +28,10 @@ public class Recall01 {
         double j = 1.5;
         j--;
         System.out.println("D08 : " + i + " " + j);
+        // + unaire : ne change pas la valeur, mais PROMEUT byte/short/char en int.
+        byte small = 7;
+        int promoted = +small;
+        char letter = 'A';
+        System.out.println("D09 : " + promoted + " " + +letter + " " + -letter + " " + +(-3));
     }
 }

@@ -27,12 +27,15 @@
   → `D07 : b 98 c`
 - ☐ **D08.** Un `long` 2, incrémenté ; un `double` 1.5, décrémenté.
   → `D08 : 3 0.5`
+- ☐ **D09.** Un `byte` 7 rangé dans un `int` via le `+` **unaire**. Puis, avec `letter = 'A'` : `+letter`, `-letter`, `+(-3)`.
+  → `D09 : 7 65 -65 -3`
 
 ## Expériences (hors sortie attendue)
 
 1. `int x = 5; x++++;` : lis l'erreur de `javac`. Pourquoi `x++` n'est-il pas une variable ?
 2. `boolean b = !5;` puis `int i = !true;` : lis les deux erreurs.
 3. `final int k = 1; k++;` : que dit `javac` ?
+4. `byte b = 5; byte c = +b;` : pourquoi ce `+` « qui ne fait rien » empêche-t-il la compilation ?
 
 ## Sortie attendue complète
 
@@ -45,6 +48,7 @@ D05 : -4 4 -5 0
 D06 : false true false
 D07 : b 98 c
 D08 : 3 0.5
+D09 : 7 65 -65 -3
 ```
 
 ## Carte mémoire (à lire **après** le drill)

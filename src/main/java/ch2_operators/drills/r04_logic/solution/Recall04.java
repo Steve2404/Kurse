@@ -41,5 +41,8 @@ public class Recall04 {
         Recall04 b = new Recall04();
         Recall04 c = a;
         System.out.println("D08 : " + (a == b) + " " + (a == c) + " " + (a != b));
+        Recall04 none = null;
+        // == null : la reference ne designe aucun objet ; && protege l'acces qui suit.
+        System.out.println("D09 : " + (none == null) + " " + (a != null) + " " + (none != null && none.hashCode() > 0) + " " + (null == null));
     }
 }

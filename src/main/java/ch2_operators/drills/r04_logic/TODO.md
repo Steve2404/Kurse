@@ -31,12 +31,19 @@
   → `D07 : true true false false`
 - ☐ **D08.** Deux `new Recall04()` et une 3e variable qui désigne la 1re. Affiche `a == b`, `a == c`, `a != b`.
   → `D08 : false true true`
+- ☐ **D09.** Une référence `none` qui vaut `null` :
+  - `none == null` ;
+  - `a != null` ;
+  - `none != null && none.hashCode() > 0` (pourquoi pas d'exception ?) ;
+  - `null == null`.
+  → `D09 : true true false true`
 
 ## Expériences (hors sortie attendue)
 
 1. `boolean b = 5 == "5";` : quelle erreur ?
 2. `int x = 3; boolean ok = x = 3;` : quelle erreur ? Et `boolean flag; boolean ok2 = flag = true;` ?
 3. `String s = "a"; boolean bad = s instanceof Integer;` : pourquoi `javac` refuse-t-il ?
+4. Remplace `&&` par `&` dans D09 : que se passe-t-il à l'exécution, et pourquoi ?
 
 ## Sortie attendue complète
 
@@ -49,6 +56,7 @@ D05 : false true true 6
 D06 : true false
 D07 : true true false false
 D08 : false true true
+D09 : true true false true
 ```
 
 ## Carte mémoire (à lire **après** le drill)

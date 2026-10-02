@@ -19,12 +19,14 @@ public class Check {
             "D05 : 3000000000 -1294967296",
             "D06 : 0.33333334 0.3333333333333333",
             "D07 : 66 B 32",
-            "D08 : 0.5 4 5");
+            "D08 : 0.5 4 5",
+            "D09 : Infinity -Infinity NaN false NaN");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "(byte) (", "3000L", "/ 5.0f", "% -5",
-            "'a' - 'A'", "re:\\w+ \\* \\w+;##produit de deux short", "% 2",
+            "'a' - 'A'", "re:\\w+ \\* \\w+;##produit de deux short", "% 2", "1.0 / 0",
+            "0.0 / 0",
             // Crescendo : notions des chapitres 3 a 15, interdites au chapitre 2.
             "!if (", "!if(", "!else", "!for (", "!for(", "!while", "!switch", "!do {",
             "!->", "!StringBuilder", "!String.format", "!.formatted(", "!Math.", "!.length()", "!.substring(", "!.charAt(",

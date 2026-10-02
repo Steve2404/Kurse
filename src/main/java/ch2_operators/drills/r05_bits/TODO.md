@@ -33,6 +33,12 @@
   → `D07 : true ff8800`
 - ☐ **D08.** `7 & 1`, `10 & 1` (pair ou impair sans `%`), puis `1 << 1 + 1` et `(1 << 1) + 1`.
   → `D08 : 1 0 4 3`
+- ☐ **D09.** Les affectations composées de décalage :
+  - `v = 5`, puis `v <<= 3` ;
+  - `w = -64`, puis `w >>= 2` ;
+  - `u = -64`, puis `u >>>= 28` ;
+  - un `byte` 64, puis `<<= 1`.
+  → `D09 : 40 -16 15 -128`
 
 ## Expériences (hors sortie attendue)
 
@@ -50,6 +56,7 @@ D05 : 4 100 true
 D06 : 255 136 0
 D07 : true ff8800
 D08 : 1 0 4 3
+D09 : 40 -16 15 -128
 ```
 
 ## Carte mémoire (à lire **après** le drill)

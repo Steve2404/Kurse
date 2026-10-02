@@ -19,12 +19,13 @@ public class Check {
             "D05 : -4 4 -5 0",
             "D06 : false true false",
             "D07 : b 98 c",
-            "D08 : 3 0.5");
+            "D08 : 3 0.5",
+            "D09 : 7 65 -65 -3");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "2x++", "2x--", "~", "re:![a-z(!]##operateur !",
-            "-(-", "re:\\b(\\w+) = \\1\\+\\+;##le piege x = x++;",
+            "-(-", "re:\\b(\\w+) = \\1\\+\\+;##le piege x = x++;", "re:= \\+\\w##+ unaire (promotion)",
             // Crescendo : notions des chapitres 3 a 15, interdites au chapitre 2.
             "!if (", "!if(", "!else", "!for (", "!for(", "!while", "!switch", "!do {",
             "!->", "!StringBuilder", "!String.format", "!.formatted(", "!Math.", "!.length()", "!.substring(", "!.charAt(",

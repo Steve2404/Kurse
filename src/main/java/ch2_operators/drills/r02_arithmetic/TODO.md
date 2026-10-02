@@ -27,6 +27,8 @@
   → `D07 : 66 B 32`
 - ☐ **D08.** `1 / 2 + 1.0 / 2`, `2 + 3 * 4 % 5`, `10 - 2 - 3`.
   → `D08 : 0.5 4 5`
+- ☐ **D09.** Divisions **flottantes** par zéro : `1.0 / 0`, `-1.0 / 0`, `0.0 / 0`, puis `0.0 / 0 == 0.0 / 0` et `5 % 0.0`.
+  → `D09 : Infinity -Infinity NaN false NaN`
 
 ## Expériences (hors sortie attendue)
 
@@ -45,6 +47,7 @@ D05 : 3000000000 -1294967296
 D06 : 0.33333334 0.3333333333333333
 D07 : 66 B 32
 D08 : 0.5 4 5
+D09 : Infinity -Infinity NaN false NaN
 ```
 
 ## Carte mémoire (à lire **après** le drill)

@@ -19,14 +19,15 @@ public class Check {
             "D05 : 4 100 true",
             "D06 : 255 136 0",
             "D07 : true ff8800",
-            "D08 : 1 0 4 3");
+            "D08 : 1 0 4 3",
+            "D09 : 40 -16 15 -128");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "0b", "0x", " & ", " | ",
             " ^ ", "~", "<<", ">>>",
             "|=", "^=", "&= ~", "Integer.toHexString(",
-            "Integer.toBinaryString(",
+            "Integer.toBinaryString(", "<<=", ">>=", ">>>=",
             // Crescendo : notions des chapitres 3 a 15, interdites au chapitre 2.
             "!if (", "!if(", "!else", "!for (", "!for(", "!while", "!switch", "!do {",
             "!->", "!StringBuilder", "!String.format", "!.formatted(", "!Math.", "!.length()", "!.substring(", "!.charAt(",

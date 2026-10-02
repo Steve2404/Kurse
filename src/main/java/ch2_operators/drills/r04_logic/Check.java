@@ -19,13 +19,14 @@ public class Check {
             "D05 : false true true 6",
             "D06 : true false",
             "D07 : true true false false",
-            "D08 : false true true");
+            "D08 : false true true",
+            "D09 : true true false true");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "&&", "||", ") & ", " | ",
             " ^ ", "instanceof", " == ", " != ",
-            "re:\\w+\\+\\+ > 0##effet de bord n++ dans une condition",
+            "re:\\w+\\+\\+ > 0##effet de bord n++ dans une condition", "== null", "re:\\w+ \\!= null##!= null",
             // Crescendo : notions des chapitres 3 a 15, interdites au chapitre 2.
             "!if (", "!if(", "!else", "!for (", "!for(", "!while", "!switch", "!do {",
             "!->", "!StringBuilder", "!String.format", "!.formatted(", "!Math.", "!.length()", "!.substring(", "!.charAt(",
