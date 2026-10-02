@@ -27,6 +27,8 @@
   → `D07 : 2432902008176640000`
 - ☐ **D08.** Deux `for` imbriqués : `i` va de 0 à 2, et `j` va **de `i`** à 2. Compte les tours.
   → `D08 : 6`
+- ☐ **D09.** Un `for` dont le compteur est déclaré avec **`var`** (de 0 à 2, concaténé), puis un **for-each avec `var`** sur `args` (chaque argument précédé d'une virgule). Quels types `var` déduit-il ?
+  → `D09 : 012,4,8,15,16`
 
 ## Expériences (hors sortie attendue)
 
@@ -46,6 +48,7 @@ D05 : 43
 D06 : 16 15 8 4
 D07 : 2432902008176640000
 D08 : 6
+D09 : 012,4,8,15,16
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -56,7 +59,8 @@ D08 : 6
 - les trois parties sont **facultatives** ; `for ( ; ; )` est une boucle infinie ;
 - **init :** plusieurs variables, mais du **même** type, en une seule déclaration (`int i = 0, j = 6`) ;
 - **mise à jour :** plusieurs expressions séparées par des virgules (`i++, j--`) ;
-- **la portée :** une variable déclarée dans `init` n'existe que dans la boucle.
+- **la portée :** une variable déclarée dans `init` n'existe que dans la boucle ;
+- **`var` est permis** : `for (var i = 0; …)` déduit `int`, et `for (var s : args)` déduit `String`. En revanche, `var i = 0, j = 1` (plusieurs variables) reste interdit.
 
 **Le for-each `for (Type x : source)` :**
 - la source est un **tableau** ou un `Iterable` (une collection, au chapitre 9) ;

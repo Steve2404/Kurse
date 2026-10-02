@@ -21,12 +21,13 @@ public class Check {
             "D05 : 43",
             "D06 : 16 15 8 4",
             "D07 : 2432902008176640000",
-            "D08 : 6");
+            "D08 : 6",
+            "D09 : 012,4,8,15,16");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "for (int i = 0, j = ", "i++, j--", "for (; ", "2xfor (String ",
-            "args.length - 1", "i -= 3",
+            "args.length - 1", "i -= 3", "for (var i = ", "re:for \\(var \\w+ :##for-each avec var",
             // Crescendo : notions des chapitres 4 a 15, interdites au chapitre 3.
             "!StringBuilder", "!String.format", "!String.valueOf", "!.formatted(", "!Math.", "!.length()", "!.substring(", "!.charAt(",
             "!.toUpperCase(", "!.toLowerCase(", "!.equals(", "!.repeat(", "!.strip", "!.trim(", "!.replace(", "!.indexOf(",

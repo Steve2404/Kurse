@@ -19,12 +19,13 @@ public class Check {
             "D05 : 50",
             "D06 : sans accolades, seule la 1re instruction est dans le if",
             "D07 : null n'est jamais une instance",
-            "D08 : doux");
+            "D08 : doux",
+            "D09 : n vaut 42, boxed vaut toujours 41 ; hits = 1");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "3xelse if", "instanceof Integer i &&", "re:!\\(\\w+ instanceof \\w+ \\w+\\)##portee de flux !(o instanceof T v)", "instanceof String s",
-            "re:if \\([^{]*\\)\\s*\\n\\s*System##if sans accolades",
+            "re:if \\([^{]*\\)\\s*\\n\\s*System##if sans accolades", "n = n + 1", "re:if \\([^)]*\\);##if suivi d un ; (instruction vide)",
             // Crescendo : notions des chapitres 4 a 15, interdites au chapitre 3.
             "!StringBuilder", "!String.format", "!String.valueOf", "!.formatted(", "!Math.", "!.length()", "!.substring(", "!.charAt(",
             "!.toUpperCase(", "!.toLowerCase(", "!.equals(", "!.repeat(", "!.strip", "!.trim(", "!.replace(", "!.indexOf(",

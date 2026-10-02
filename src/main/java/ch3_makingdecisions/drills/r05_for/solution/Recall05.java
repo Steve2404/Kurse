@@ -55,5 +55,14 @@ public class Recall05 {
             }
         }
         System.out.println("D08 : " + loops);
+        // var dans une boucle : le type est deduit (int pour 0, String pour un element de args).
+        String withVar = "";
+        for (var i = 0; i < 3; i++) {
+            withVar = withVar + i;
+        }
+        for (var arg : args) {
+            withVar = withVar + "," + arg;
+        }
+        System.out.println("D09 : " + withVar);
     }
 }

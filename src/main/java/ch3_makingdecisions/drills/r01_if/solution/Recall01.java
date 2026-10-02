@@ -65,5 +65,16 @@ public class Recall01 {
         int temp = 18;
         String advice = temp < 0 ? "gel" : temp < 15 ? "froid" : temp < 25 ? "doux" : "chaud";
         System.out.println("D08 : " + advice);
+        Object boxed = 41;
+        String changed = "pas un entier";
+        if (boxed instanceof Integer n) {
+            n = n + 1;              // permis : une variable de pattern n'est pas final
+            changed = "n vaut " + n + ", boxed vaut toujours " + boxed;
+        }
+        int hits = 0;
+        if (hits > 5); {            // le ; TERMINE le if : le bloc qui suit s'execute toujours
+            hits++;
+        }
+        System.out.println("D09 : " + changed + " ; hits = " + hits);
     }
 }

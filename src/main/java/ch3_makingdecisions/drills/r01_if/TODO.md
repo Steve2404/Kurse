@@ -42,6 +42,10 @@
   - `doux` sous 25 ;
   - sinon `chaud`.
   → `D08 : doux`
+- ☐ **D09.** Deux pièges, dans la même ligne :
+  - avec `Object boxed = 41` : dans `if (boxed instanceof Integer n)`, **réaffecte** `n = n + 1`, puis décris `n` et `boxed` ;
+  - avec `hits = 0`, écris **exactement** `if (hits > 5); { hits++; }`. Que vaut `hits` ?
+  → `D09 : n vaut 42, boxed vaut toujours 41 ; hits = 1`
 
 ## Expériences (hors sortie attendue)
 
@@ -61,6 +65,7 @@ D05 : 50
 D06 : sans accolades, seule la 1re instruction est dans le if
 D07 : null n'est jamais une instance
 D08 : doux
+D09 : n vaut 42, boxed vaut toujours 41 ; hits = 1
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -80,6 +85,8 @@ D08 : doux
   - après un `if (!(x instanceof T v)) return;`, jusqu'à la fin du bloc ;
 - `null instanceof T v` vaut toujours `false` ;
 - **erreur de compilation** si `Type` n'est pas plus précis que le type de `x` (Java 17), ou si les types sont incompatibles ;
-- la variable de pattern n'est pas `final`, mais il vaut mieux ne pas la réaffecter.
+- la variable de pattern n'est pas `final` : on **peut** la réaffecter (ça ne change pas l'objet testé), mais c'est déconseillé.
+
+**Le piège `if (cond);` :** le `;` est une instruction vide. C'est **elle**, le corps du `if` ; le bloc `{ }` qui suit s'exécute toujours.
 
 </details>
