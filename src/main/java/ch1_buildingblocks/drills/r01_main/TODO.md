@@ -1,0 +1,98 @@
+# Drill de rappel 1 — `main`, arguments et ligne de commande
+
+> Première fois ? Lis d'abord le mode d'emploi [`ch1_buildingblocks/PARCOURS.md`](../../PARCOURS.md).
+
+**Chrono cible :** 20 min la 1re fois, puis 10 min.
+
+**Règles :**
+- Tout se fait **de mémoire** : ni carte, ni Javadoc, ni solution pendant le drill.
+- Crée la classe **`Recall01`** dans ce paquet, puis le script **`commandes.sh`** dans ce dossier.
+- `Check` lance ton `main` avec les arguments `alpha 42 3.5 TRUE "Bonjour le monde"`.
+- Chapitre 1 seulement : pas de `if`, pas de boucle.
+
+## Défis
+
+- ☐ **D00.** Écris `main` avec un paramètre **à la fois `final` et varargs**.
+- ☐ **D01.** Les deux premiers arguments.
+  → `D01 : alpha puis 42`
+- ☐ **D02.** Le 2e argument converti en `int` plus 8. Puis, **dans la même ligne**, le 2e argument suivi de `8` sans conversion, pour voir la différence.
+  → `D02 : 50 et non 428`
+- ☐ **D03.** Le 3e argument converti en `double`, fois 2.
+  → `D03 : 7.0`
+- ☐ **D04.** Le 4e argument converti en `boolean`, puis le 1er converti de la même façon.
+  → `D04 : true false`
+- ☐ **D05.** Le 5e argument entre crochets.
+  → `D05 : [Bonjour le monde]`
+- ☐ **D06. Le script `commandes.sh`**, lancé depuis la racine du dépôt, enchaîne 4 actions :
+  1. **compiler** ton `Recall01.java` dans `build/ch1-r01` (`javac -d`), puis le **lancer** depuis ce dossier (`java -cp`) avec `un 1 0.25 TRUE "deux mots"` ;
+  2. **créer un jar exécutable** `build/ch1-r01/r01.jar` (point d'entrée : `Recall01`) qui contient tes classes, puis le **lancer** avec `java -jar` et `trois 3 1.5 false "  espaces  "` ;
+  3. **lancer le fichier source directement**, sans `javac`, avec `quatre 4 2 true seul`.
+
+## Expériences (hors sortie attendue)
+
+1. Lance sans arguments : quelle exception, à quelle ligne ?
+2. Écris `main` sans `public`. Ça compile ? Que dit `java` ?
+3. Écris `public static void main(String args)` : que se passe-t-il au lancement ?
+
+## Sortie attendue complète
+
+```
+D01 : alpha puis 42
+D02 : 50 et non 428
+D03 : 7.0
+D04 : true false
+D05 : [Bonjour le monde]
+```
+
+## Sortie attendue du script
+
+```
+D01 : un puis 1
+D02 : 9 et non 18
+D03 : 0.5
+D04 : true false
+D05 : [deux mots]
+D01 : trois puis 3
+D02 : 11 et non 38
+D03 : 3.0
+D04 : false false
+D05 : [  espaces  ]
+D01 : quatre puis 4
+D02 : 12 et non 48
+D03 : 4.0
+D04 : true false
+D05 : [seul]
+```
+
+## Carte mémoire (à lire **après** le drill)
+
+<details><summary>Ouvrir la carte</summary>
+
+**Les signatures valides de `main` :**
+- `public static void main(String[] args)` ;
+- `String args[]` et `String... args` sont équivalents ;
+- `final` est permis, le nom du paramètre est libre ;
+- l'ordre `static public` est permis.
+
+**Les signatures invalides comme point d'entrée** (ça compile, mais `java` refuse de lancer) :
+- pas `public` ;
+- pas `static` ;
+- un retour autre que `void` ;
+- un paramètre qui n'est pas un tableau de `String`.
+
+**Les arguments :**
+- ce sont **toujours** des `String` ;
+- les guillemets du terminal regroupent plusieurs mots en un seul argument ;
+- un argument manquant donne `ArrayIndexOutOfBoundsException`.
+
+| Commande | Rôle |
+|---|---|
+| `javac -d dossier Fichiers.java` | compile ; range les `.class` dans des dossiers qui suivent les paquets |
+| `java -cp dossier nom.complet.Classe args` | lance, avec le nom **complet**, **sans** `.class` |
+| `-cp`, `-classpath`, `--class-path` | trois écritures de la même option |
+| `jar --create --file x.jar -C dossier .` (ou `jar -cf x.jar -C dossier .`) | empaquette |
+| `--main-class` / option `e` | écrit le point d'entrée dans le manifeste |
+| `java -jar x.jar args` | lance un jar exécutable |
+| `java Fichier.java args` | compile en mémoire et lance un programme d'**un seul fichier** |
+
+</details>

@@ -9,21 +9,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Le correcteur des PROJETS (ne pas modifier).
+ * Le correcteur des PROJETS et des DRILLS (ne pas modifier).
  *
- * Dans un projet, c'est TOI qui ecris toute la structure (records, classes,
- * interfaces, methodes, main). Le correcteur ne connait donc rien de ton code
- * sauf le nom de la classe qui contient main. Il verifie deux choses :
+ * Dans un projet, c'est TOI qui ecris toute la structure (classes, methodes,
+ * main...). Le correcteur ne connait donc rien de ton code sauf le nom de la
+ * classe qui contient main. Il verifie :
  *
- *   1. le RESULTAT : il lance ton main, capture ce qu'il affiche, et compare
- *      ligne par ligne avec la sortie attendue (il montre la 1re difference) ;
- *   2. l'API : il lit tes fichiers .java et verifie que chaque methode de l'API
- *      visee par le projet y apparait au moins une fois (le but est de TOUTES
- *      les pratiquer, pas seulement celles qu'on connait deja).
+ *   1. le RESULTAT : il lance ton main (avec des arguments si le projet en
+ *      prevoit), capture ce qu'il affiche, et compare ligne par ligne avec la
+ *      sortie attendue (il montre la 1re difference) ;
+ *   2. l'API : il lit tes fichiers .java (sous-paquets compris, sauf solution/)
+ *      et verifie que chaque element vise y apparait, et qu'aucun element
+ *      interdit (notion d'un chapitre suivant) n'y apparait ;
+ *   3. pour certains projets, un SCRIPT de commandes (javac, java, jar...) que
+ *      tu ecris toi-meme : il l'execute avec bash et compare sa sortie.
  */
 public final class ProjectChecker {
 
@@ -32,47 +37,114 @@ public final class ProjectChecker {
 
     /**
      * @param mainClass   nom complet de la classe qui contient main
-     * @param sourceDir   le dossier des .java a analyser (sous-dossiers exclus)
+     * @param programArgs les arguments passes a ton main
+     * @param sourceDir   le dossier des .java a analyser (sous-dossiers compris, sauf solution/)
      * @param ignored     les fichiers donnes, a ne pas analyser (Data.java, Check.java...)
      * @param expected    la sortie attendue, ligne par ligne
-     * @param requiredApi les appels que tes sources doivent contenir (ex. ".flatMap(") ;
-     *                    prefixe "!" = appel INTERDIT (ex. "!.get()") ;
-     *                    prefixe "3x" = au moins 3 occurrences (ex. "3x.reduce(")
+     * @param requiredApi les elements que tes sources doivent contenir (ex. ".flatMap(") ;
+     *                    prefixe "!" = element INTERDIT (ex. "!.get()") ;
+     *                    prefixe "3x" = au moins 3 occurrences (ex. "3x.reduce(") ;
+     *                    prefixe "re:" = expression reguliere (ex. "re:\\n\\s*\\{")
      */
-    public static void check(String mainClass, Path sourceDir, List<String> ignored,
-                             List<String> expected, List<String> requiredApi) throws IOException {
+    public static boolean check(String mainClass, String[] programArgs, Path sourceDir, List<String> ignored,
+                                List<String> expected, List<String> requiredApi) throws IOException {
         System.out.println("=== Verification de " + mainClass + " ===");
-        List<String> actual = runMain(mainClass);
-        boolean outputOk = compare(expected, actual);
+        List<String> actual = runMain(mainClass, programArgs);
+        boolean outputOk = compare("sortie", expected, actual);
         boolean apiOk = checkApi(sourceDir, ignored, requiredApi);
         System.out.println();
         if (outputOk && apiOk) {
             System.out.println("*** PROJET REUSSI : sortie identique et toute l'API pratiquee. ***");
         } else {
-            System.out.println("*** Pas encore : " + (outputOk ? "" : "la sortie differe. ") + (apiOk ? "" : "il manque des methodes de l'API.") + " ***");
+            System.out.println("*** Pas encore : " + (outputOk ? "" : "la sortie differe. ") + (apiOk ? "" : "il manque des elements de l'API (ou un element interdit est present).") + " ***");
         }
+        return outputOk && apiOk;
+    }
+
+    public static boolean check(String mainClass, Path sourceDir, List<String> ignored,
+                                List<String> expected, List<String> requiredApi) throws IOException {
+        return check(mainClass, new String[0], sourceDir, ignored, expected, requiredApi);
     }
 
     /**
-     * Raccourci pour le Check d'un projet : la classe main s'appelle mainSimpleName
-     * dans le paquet de checkClass ; avec l'argument "solution", on verifie le
-     * sous-paquet solution. Data.java, Check.java et les .md ne sont pas analyses.
+     * Raccourci pour le Check d'un projet : la classe main s'appelle mainName
+     * (ex. "LoanDesk" ou "app.Main") dans le paquet de checkClass ; avec
+     * l'argument "solution", on verifie le sous-paquet solution.
      */
-    public static void check(Class<?> checkClass, String mainSimpleName, String[] args,
-                             List<String> expected, List<String> requiredApi) throws IOException {
-        boolean solution = args.length > 0 && args[0].equals("solution");
-        String pkg = checkClass.getPackageName() + (solution ? ".solution" : "");
-        Path dir = Path.of("src/main/java", pkg.replace('.', '/'));
-        check(pkg + "." + mainSimpleName, dir, List.of("Data.java", "Check.java"), expected, requiredApi);
+    public static boolean check(Class<?> checkClass, String mainName, String[] args, String[] programArgs,
+                                List<String> expected, List<String> requiredApi) throws IOException {
+        String pkg = packageOf(checkClass, args);
+        return check(pkg + "." + mainName, programArgs, dirOf(pkg), List.of("Data.java", "Check.java"), expected, requiredApi);
     }
 
-    private static List<String> runMain(String mainClass) {
+    public static boolean check(Class<?> checkClass, String mainName, String[] args,
+                                List<String> expected, List<String> requiredApi) throws IOException {
+        return check(checkClass, mainName, args, new String[0], expected, requiredApi);
+    }
+
+    /**
+     * Execute ton script de commandes (ex. commandes.sh) avec bash, depuis la
+     * RACINE du depot, et compare sa sortie a la sortie attendue.
+     */
+    public static boolean checkScript(Class<?> checkClass, String scriptName, String[] args, List<String> expected) throws IOException {
+        Path script = dirOf(packageOf(checkClass, args)).resolve(scriptName);
+        System.out.println("=== Verification du script " + script.toString().replace('\\', '/') + " ===");
+        if (!Files.exists(script)) {
+            System.out.println("[ERREUR] script introuvable : cree " + script.toString().replace('\\', '/'));
+            System.out.println("*** Pas encore : le script n'existe pas. ***");
+            return false;
+        }
+        List<String> actual;
+        try {
+            ProcessBuilder builder = new ProcessBuilder(bash(), script.toString().replace('\\', '/')).redirectErrorStream(true);
+            // javac / java / jar du MEME JDK que celui qui lance Check, places en tete du PATH.
+            Path jdkBin = Path.of(System.getProperty("java.home"), "bin");
+            builder.environment().merge("PATH", jdkBin.toString(), (old, jdk) -> jdk + java.io.File.pathSeparator + old);
+            Process process = builder.start();
+            byte[] out = process.getInputStream().readAllBytes();
+            if (!process.waitFor(120, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                System.out.println("[ERREUR] le script ne s'est pas termine en 120 s");
+            }
+            actual = new String(out, StandardCharsets.UTF_8).lines().map(l -> l.replace("\r", "").stripTrailing()).toList();
+        } catch (IOException e) {
+            System.out.println("[SAUTE] bash introuvable sur cette machine (" + e.getMessage() + ") : lance le script a la main.");
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+        boolean ok = compare("script", expected, actual);
+        System.out.println();
+        System.out.println(ok ? "*** SCRIPT REUSSI : les commandes produisent la sortie attendue. ***"
+                : "*** Pas encore : la sortie du script differe (relis tes commandes javac / java / jar). ***");
+        return ok;
+    }
+
+    // Sous Windows, "bash" dans le PATH peut etre celui de WSL : on prefere Git Bash s'il est installe.
+    private static String bash() {
+        return Stream.of("C:/Program Files/Git/bin/bash.exe", "C:/Program Files/Git/usr/bin/bash.exe")
+                .filter(p -> Files.exists(Path.of(p)))
+                .findFirst()
+                .orElse("bash");
+    }
+
+    private static String packageOf(Class<?> checkClass, String[] args) {
+        boolean solution = args.length > 0 && args[0].equals("solution");
+        return checkClass.getPackageName() + (solution ? ".solution" : "");
+    }
+
+    private static Path dirOf(String pkg) {
+        return Path.of("src/main/java", pkg.replace('.', '/'));
+    }
+
+    private static List<String> runMain(String mainClass, String[] programArgs) {
         PrintStream original = System.out;
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         String crash = null;
         System.setOut(new PrintStream(buffer, true, StandardCharsets.UTF_8));
         try {
-            Class.forName(mainClass).getMethod("main", String[].class).invoke(null, (Object) new String[0]);
+            Class.forName(mainClass).getMethod("main", String[].class).invoke(null, (Object) programArgs.clone());
         } catch (ClassNotFoundException e) {
             crash = "classe introuvable : " + mainClass + " (as-tu cree la classe avec ce nom et ce paquet ?)";
         } catch (NoSuchMethodException e) {
@@ -91,50 +163,67 @@ public final class ProjectChecker {
         return lines;
     }
 
-    private static boolean compare(List<String> expected, List<String> actual) {
+    private static boolean compare(String what, List<String> expected, List<String> actual) {
         int same = 0;
         while (same < expected.size() && same < actual.size() && expected.get(same).equals(actual.get(same))) {
             same++;
         }
         if (same == expected.size() && same == actual.size()) {
-            System.out.println("[PASS] sortie : les " + expected.size() + " lignes sont identiques");
+            System.out.println("[PASS] " + what + " : les " + expected.size() + " lignes sont identiques");
             return true;
         }
-        System.out.println("[FAIL] sortie : " + same + "/" + expected.size() + " lignes justes avant la 1re difference (ligne " + (same + 1) + ")");
-        System.out.println("       attendu : " + (same < expected.size() ? expected.get(same) : "(rien de plus)"));
-        System.out.println("       obtenu  : " + (same < actual.size() ? actual.get(same) : "(rien de plus)"));
+        System.out.println("[FAIL] " + what + " : " + same + "/" + expected.size() + " lignes justes avant la 1re difference (ligne " + (same + 1) + ")");
+        System.out.println("       attendu : " + (same < expected.size() ? visible(expected.get(same)) : "(rien de plus)"));
+        System.out.println("       obtenu  : " + (same < actual.size() ? visible(actual.get(same)) : "(rien de plus)"));
         return false;
+    }
+
+    // Les espaces comptent (text blocks !) : on les rend visibles quand une ligne en contient au debut.
+    private static String visible(String line) {
+        return line.startsWith(" ") ? line.replace(' ', '·') + "   (les points sont des espaces)" : line;
     }
 
     private static boolean checkApi(Path sourceDir, List<String> ignored, List<String> requiredApi) throws IOException {
         String code;
-        try (Stream<Path> files = Files.list(sourceDir)) {
+        try (Stream<Path> files = Files.walk(sourceDir)) {
             code = files.filter(p -> p.toString().endsWith(".java") && !ignored.contains(p.getFileName().toString()))
+                    .filter(p -> !sourceDir.relativize(p).toString().replace('\\', '/').startsWith("solution/"))
                     .map(ProjectChecker::readWithoutComments)
                     .collect(Collectors.joining("\n"));
         }
+        // Pour les elements INTERDITS, le contenu des chaines ne compte pas ("+====+" n'est pas un +=).
+        String codeOnly = code.replaceAll("(?s)\"\"\".*?\"\"\"", "\"\"\"\"\"\"").replaceAll("\"(?:[^\"\\\\\\n]|\\\\.)*\"", "\"\"");
         List<String> missing = new ArrayList<>();
         List<String> forbidden = new ArrayList<>();
         for (String api : requiredApi) {
-            if (api.startsWith("!")) {
-                if (code.contains(api.substring(1))) {
-                    forbidden.add(api.substring(1));
-                }
-            } else if (api.matches("\\d+x.+")) {
-                int wanted = Integer.parseInt(api.substring(0, api.indexOf('x')));
-                String token = api.substring(api.indexOf('x') + 1);
-                if (code.split(java.util.regex.Pattern.quote(token), -1).length - 1 < wanted) {
-                    missing.add(token + " (au moins " + wanted + " fois)");
-                }
-            } else if (!code.contains(api)) {
-                missing.add(api);
+            boolean forbid = api.startsWith("!");
+            String rule = forbid ? api.substring(1) : api;
+            String scanned = forbid ? codeOnly : code;
+            int wanted = 1;
+            if (rule.matches("\\d+x.+")) {
+                wanted = Integer.parseInt(rule.substring(0, rule.indexOf('x')));
+                rule = rule.substring(rule.indexOf('x') + 1);
+            }
+            // "re:REGEX##libelle" : expression reguliere, affichee sous son libelle lisible.
+            String label = rule.contains("##") ? rule.substring(rule.indexOf("##") + 2) : rule;
+            String pattern = rule.contains("##") ? rule.substring(0, rule.indexOf("##")) : rule;
+            int found = pattern.startsWith("re:")
+                    ? (int) Pattern.compile(pattern.substring(3)).matcher(scanned).results().count()
+                    : scanned.split(Pattern.quote(pattern), -1).length - 1;
+            if (!rule.contains("##") && rule.startsWith("re:")) {
+                label = rule.substring(3);
+            }
+            if (forbid && found > 0) {
+                forbidden.add(label);
+            } else if (!forbid && found < wanted) {
+                missing.add(label + (wanted > 1 ? " (au moins " + wanted + " fois)" : ""));
             }
         }
         if (!forbidden.isEmpty()) {
             System.out.println("[FAIL] API : interdit ici (Optional.get() ou notion d'un chapitre suivant, voir TODO.md) : " + forbidden);
         }
         if (missing.isEmpty()) {
-            System.out.println("[PASS] API : toutes les methodes visees sont utilisees");
+            System.out.println("[PASS] API : tous les elements vises sont utilises");
         } else {
             System.out.println("[FAIL] API : encore a placer dans ton code : " + missing);
         }
