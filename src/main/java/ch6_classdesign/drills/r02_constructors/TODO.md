@@ -44,6 +44,8 @@
 4. `new Config("x")` depuis `Recall02` : quelle erreur ?
 5. Deux constructeurs qui s'appellent mutuellement avec `this(...)` : que dit `javac` ?
 6. Ajoute `Empty(int n) {}` à `Empty` : `new Empty()` compile-t-il encore ?
+7. Écris `class SubConfig extends Config {}` : pourquoi le constructeur `private` de `Config` l'empêche-t-il ?
+8. Dans une méthode de `Point`, écris `Point(1, 2);` ou `this(1, 2);` : un constructeur peut-il s'appeler comme une méthode ?
 
 ## Sortie attendue complète
 

@@ -39,6 +39,7 @@
 3. Dans `Puppy`, redéfinis `id()` : quelle erreur ?
 4. Dans `Puppy`, lis `id` directement (le champ `private`) : quelle erreur ?
 5. Pourquoi `Animal.count` vaut-il 2 et pas 3 à D04 ?
+6. Mets `private class Rock` ou `protected class Rock` au premier niveau du fichier : quelle erreur ? (Une classe de premier niveau est `public` ou package-private.)
 
 ## Sortie attendue complète
 
