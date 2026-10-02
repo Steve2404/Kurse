@@ -20,6 +20,10 @@
 | `Circle`, `Square` | `record Circle(double r) implements Shape`, `record Square(double side) implements Shape` |
 | `Animal` | `sealed interface Animal` **sans permits**, avec `String sound();` |
 | `Dog`, `Cat` | `final class Dog implements Animal` (`ouaf`), `final class Cat implements Animal` (`miaou`) |
+| `Fuel` | `sealed interface Fuel permits Electric, Liquid` |
+| `Electric` | `non-sealed interface Electric extends Fuel`, avec `default String plug()` qui rend `prise` |
+| `Liquid` | `sealed interface Liquid extends Fuel permits Diesel` |
+| `Diesel`, `Tesla` | `record Diesel(int litres) implements Liquid` ; `class Tesla implements Electric` |
 
 - Dans `Recall05` :
   - `static String describe(Vehicle v)` : une chaîne d'`instanceof`, du plus précis au plus général (`EBike` avant `Bike`) ;
@@ -40,6 +44,12 @@
   → `D04 : true true`
 - ☐ **D05.** `new Lorry() instanceof Truck`, puis `new Dog().sound()` et `new Cat().sound()`.
   → `D05 : true ouaf miaou`
+- ☐ **D06.** `Fuel f = new Diesel(40);`. Affiche :
+  - `new Tesla().plug()` ;
+  - `Fuel.class.getPermittedSubclasses().length` ;
+  - `f instanceof Liquid` ;
+  - `Electric.class.isSealed()` et `Liquid.class.isSealed()`.
+  → `D06 : prise 2 true false true`
 
 ## Expériences (hors sortie attendue)
 
@@ -48,6 +58,7 @@
 3. Retire `EBike` de la liste `permits` de `Bike` : quelle erreur ?
 4. `sealed class X` sans aucune sous-classe : quelle erreur ?
 5. Pourquoi `Animal` peut-il omettre `permits` ? Que se passerait-il si `Dog` était dans un autre fichier ?
+6. Retire `non-sealed` de `Electric` : quelle erreur ? (Une sous-interface d'une interface scellée doit être `sealed` ou `non-sealed`, jamais `final`.)
 
 ## Sortie attendue complète
 
@@ -57,6 +68,7 @@ D02 : 3.14 9.0
 D03 : true 3 false true 2
 D04 : true true
 D05 : true ouaf miaou
+D06 : prise 2 true false true
 ```
 
 ## Carte mémoire (à lire **après** le drill)

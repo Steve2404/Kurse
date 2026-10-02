@@ -39,6 +39,9 @@ public class Recall05 {
                 + Bike.class.isSealed() + " " + Animal.class.getPermittedSubclasses().length);
         System.out.println("D04 : " + java.lang.reflect.Modifier.isFinal(Circle.class.getModifiers()) + " " + java.lang.reflect.Modifier.isFinal(Car.class.getModifiers()));
         System.out.println("D05 : " + (new Lorry() instanceof Truck) + " " + new Dog().sound() + " " + new Cat().sound());
+        Fuel f = new Diesel(40);
+        System.out.println("D06 : " + new Tesla().plug() + " " + Fuel.class.getPermittedSubclasses().length + " " + (f instanceof Liquid) + " "
+                + Electric.class.isSealed() + " " + Liquid.class.isSealed());
     }
 }
 
@@ -90,4 +93,24 @@ final class Cat implements Animal {
     public String sound() {
         return "miaou";
     }
+}
+
+// Une interface scellee peut etre ETENDUE par des interfaces : chacune doit etre sealed ou non-sealed.
+sealed interface Fuel permits Electric, Liquid {
+}
+
+non-sealed interface Electric extends Fuel {
+    default String plug() {
+        return "prise";
+    }
+}
+
+sealed interface Liquid extends Fuel permits Diesel {
+}
+
+record Diesel(int litres) implements Liquid {
+}
+
+// Electric est non-sealed : n'importe quelle classe peut l'implementer.
+class Tesla implements Electric {
 }

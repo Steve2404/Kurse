@@ -43,6 +43,8 @@
 4. Une méthode `default` sans corps, ou une `default` dans une **classe** : quelles erreurs ?
 5. Dans `Duck`, écris `Walker.super.label()` : quelle erreur ?
 6. Pourquoi `Frog` n'a-t-il pas besoin de redéfinir `move()`, alors que `Duck` le doit ?
+7. Écris `interface Runner extends Walker {}` puis `Runner.info()` : quelle erreur ? (Une méthode `static` d'interface n'est héritée ni par les classes, ni par les sous-interfaces.)
+8. `static default String x()` ou `private default String y()` : quelles erreurs ?
 
 ## Sortie attendue complète
 

@@ -43,6 +43,7 @@
 4. `new Shape()` : quelle erreur ?
 5. `interface Polygon implements Shape` : que dit `javac` ?
 6. Ajoute `int name();` à `Named` : quelle erreur dans `Base` ? (Même nom, mêmes paramètres, mais un retour incompatible.)
+7. Dans `Shape`, essaie tour à tour `protected double area();`, `final double area();`, `private double area();` (sans corps) et un constructeur `Shape() {}` : quelles erreurs ?
 
 ## Sortie attendue complète
 
