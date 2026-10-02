@@ -191,6 +191,49 @@ public final class ProjectChecker {
                     .map(ProjectChecker::readWithoutComments)
                     .collect(Collectors.joining("\n"));
         }
+        return evaluateApi(code, requiredApi);
+    }
+
+    /**
+     * Pour les projets de MODULES (chapitre 12) : les sources sont HORS de src/main/java (un module-info.java
+     * par module casserait la compilation Maven). Lance ton script de commandes, compare sa sortie, puis
+     * verifie l'API dans tous les .java et .txt de moduleDir (module-info.java compris) et dans le script.
+     *
+     * @param moduleDir le dossier de tes modules, depuis la racine du depot (ex. "ch12_modules/p01_library") ;
+     *                  avec l'argument "solution", on analyse moduleDir/solution
+     */
+    public static boolean checkModules(Class<?> checkClass, String scriptName, String moduleDir, String[] args,
+                                       List<String> expected, List<String> requiredApi) throws IOException {
+        boolean solution = args.length > 0 && args[0].equals("solution");
+        boolean scriptOk = checkScript(checkClass, scriptName, args, expected);
+        Path tree = solution ? Path.of(moduleDir, "solution") : Path.of(moduleDir);
+        Path script = dirOf(packageOf(checkClass, args)).resolve(scriptName);
+        System.out.println();
+        System.out.println("=== Verification des sources de " + tree.toString().replace('\\', '/') + " et du script ===");
+        StringBuilder code = new StringBuilder();
+        if (Files.isDirectory(tree)) {
+            try (Stream<Path> files = Files.walk(tree)) {
+                // Les .java (module-info compris) et les .txt (un manifeste, par exemple).
+                code.append(files.filter(p -> p.toString().endsWith(".java") || p.toString().endsWith(".txt"))
+                        .filter(p -> solution || !tree.relativize(p).toString().replace('\\', '/').startsWith("solution/"))
+                        .map(ProjectChecker::readWithoutComments)
+                        .collect(Collectors.joining("\n")));
+            }
+        } else {
+            System.out.println("[ERREUR] dossier introuvable : cree " + tree.toString().replace('\\', '/'));
+        }
+        if (Files.exists(script)) {
+            // Dans un script, les commentaires commencent par # (en debut de ligne ou apres un espace).
+            code.append('\n').append(Files.readString(script).replaceAll("(?m)(^|\\s)#[^\n]*", "$1"));
+        }
+        boolean apiOk = evaluateApi(code.toString(), requiredApi);
+        System.out.println();
+        System.out.println(scriptOk && apiOk ? "*** PROJET REUSSI : sortie identique et toute l'API pratiquee. ***"
+                : "*** Pas encore : " + (scriptOk ? "" : "la sortie du script differe. ") + (apiOk ? "" : "il manque des elements de l'API (ou un element interdit est present).") + " ***");
+        return scriptOk && apiOk;
+    }
+
+    private static boolean evaluateApi(String code, List<String> requiredApi) {
         // Pour les elements INTERDITS, le contenu des chaines ne compte pas ("+====+" n'est pas un +=).
         String codeOnly = code.replaceAll("(?s)\"\"\".*?\"\"\"", "\"\"\"\"\"\"").replaceAll("\"(?:[^\"\\\\\\n]|\\\\.)*\"", "\"\"");
         List<String> missing = new ArrayList<>();
