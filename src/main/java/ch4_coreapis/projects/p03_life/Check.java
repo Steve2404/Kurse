@@ -58,7 +58,7 @@ public class Check {
 
     static final List<String> API = List.of(
             "re:new boolean\\[[^\\]]+\\]\\[[^\\]]+\\]##tableau 2D boolean[][]", "Arrays.deepEquals(", "Arrays.equals(", "Arrays.toString(",
-            "re:\\.length\\b(?!\\()##.length d\\'un tableau", "grid[r][c]", "continue;", "re:for \\(boolean\\[\\] \\w+ :##for-each sur les lignes",
+            "re:\\.length\\b(?!\\()##.length d’un tableau", "grid[r][c]", "continue;", "re:for \\(boolean\\[\\] \\w+ :##for-each sur les lignes",
             // Crescendo : notions des chapitres 5 a 15, interdites au chapitre 4.
             "!List", "!Map", "!Set<", "!ArrayList", "!::", "!record ", "!enum ", "!interface ",
             "!extends ", "!implements ", "!catch", "!throw ", "!Locale", "!DateTimeFormatter", "!NumberFormat", "!this(##appel this(...) (chapitre 6)",

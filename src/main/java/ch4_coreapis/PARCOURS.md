@@ -10,10 +10,10 @@ Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est 
 
 | | Projets (`projects/`) | Drills de rappel (`drills/`) |
 |---|---|---|
-| Combien | 6 | 10 |
+| Combien | 8 | 13 |
 | But | comprendre, concevoir, produire une sortie exacte | retrouver vite et sans aide |
 | Durée | 2 à 4 h chacun | 12 à 20 min chacun |
-| Combien de fois | une fois ; p06 refait 2 à 3 semaines plus tard | 6 fois chacun (J0, J+1, J+3, J+7, J+14, J+30) |
+| Combien de fois | une fois ; p06 et p07 refaits 2 à 3 semaines plus tard | 6 fois chacun (J0, J+1, J+3, J+7, J+14, J+30) |
 | Aide autorisée | Javadoc, papier, réflexion | **aucune** pendant le drill |
 
 ---
@@ -31,8 +31,11 @@ Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est 
 
 **Le grand changement :** les **tableaux** te donnent enfin une mémoire. Place aux algorithmes classiques :
 - tri, recherche dichotomique, fusion ;
-- grilles 2D et simulation ;
-- fréquences et planning.
+- deux pointeurs, sommes préfixes, fenêtre glissante, Kadane, crible ;
+- grilles 2D, simulation, parcours en largeur ;
+- fréquences, chiffrements, grands nombres, palindromes, justification de texte.
+
+Les projets p07 et p08 sont des **laboratoires d'algorithmes** : ils te rendent à l'aise en algorithmique, avec seulement les outils du chapitre 4.
 
 Tu peux écrire des méthodes `static` simples pour découper ton `main`. Le chapitre 5 les étudiera en détail.
 
@@ -67,8 +70,10 @@ p01 → r01 r02
 p02 → r03 r04
 p03 → r05
 p04 → r06 r07
-p05 → r08 r09
-p06 → r10 (test final)
+p05 → r08 r09 r11
+p06 → r10
+p07 → r12
+p08 → r13 (test final)
 ```
 
 Les **répétitions** des drills déjà faits passent toujours **avant** le travail du jour (voir `drills/README.md`).
@@ -81,7 +86,7 @@ Les **répétitions** des drills déjà faits passent toujours **avant** le trav
 ch4_coreapis/
 ├── PARCOURS.md              ← ce fichier
 ├── projects/
-│   ├── README.md            ← la liste des 6 projets, à cocher
+│   ├── README.md            ← la liste des 8 projets, à cocher
 │   └── p01_textstats/
 │       ├── TODO.md          ← L'ÉNONCÉ : tu le lis
 │       ├── Data.java        ← les données d'entrée (texte, tableaux) : tu les LIS, tu ne les modifies pas
@@ -187,9 +192,9 @@ L'argument `solution` (Run → Edit Configurations → Program arguments) vérif
 
 ## 7. Comment savoir que le chapitre 4 est acquis
 
-- [ ] Les 6 projets affichent `PROJET REUSSI`, et toutes les questions ont une réponse écrite.
-- [ ] Les 10 drills ont passé la répétition R3 (J+7, sans carte).
-- [ ] r10 passe en moins de 20 minutes, sans carte.
+- [ ] Les 8 projets affichent `PROJET REUSSI`, et toutes les questions ont une réponse écrite.
+- [ ] Les 13 drills ont passé la répétition R3 (J+7, sans carte).
+- [ ] r12 (les algorithmes) passe en moins de 10 minutes, et r13 en moins de 20 minutes, sans carte.
 - [ ] Tu sais dire, sans hésiter :
   - quelles méthodes **modifient** l'objet (`StringBuilder`) et lesquelles en rendent un **nouveau** (`String`, dates) ;
   - quand deux `String` sont `==` (le pool, les constantes de compilation) ;
@@ -197,4 +202,5 @@ L'argument `solution` (Run → Edit Configurations → Program arguments) vérif
   - le type de retour de `Math.round` ;
   - ce que fait `plusMonths` un 31 ;
   - la différence entre `Period` et `Duration`.
-- [ ] p06 a été refait **depuis un dossier vide**, 2 à 3 semaines plus tard.
+- [ ] Tu sais écrire sans aide : une dichotomie, un tri par insertion, deux pointeurs, des sommes préfixes, Kadane, un crible, une spirale, un BFS sur grille, une addition de grands nombres.
+- [ ] p06 et p07 ont été refaits **depuis un dossier vide**, 2 à 3 semaines plus tard.

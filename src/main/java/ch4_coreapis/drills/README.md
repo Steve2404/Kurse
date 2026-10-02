@@ -40,8 +40,10 @@ C'est ce que l'examen mesure.
 | p02 `Editor` | r03, r04 |
 | p03 `Life` | r05 |
 | p04 `Scores` | r06, r07 |
-| p05 `Calendar` | r08, r09 |
-| p06 `Hotel` | r10 (test final) |
+| p05 `Calendar` | r08, r09, r11 |
+| p06 `Hotel` | r10 |
+| p07 `AlgoLab` | r12 |
+| p08 `TextLab` | r13 (test final) |
 
 ## Tableau de suivi
 
@@ -58,4 +60,7 @@ Note la date et le temps (par exemple `03/10 · 12 min · 1✗`).
 | r07 | La classe `Math` (dont `random`) | | | | | | |
 | r08 | `LocalDate`, `LocalTime`, `Period` | | | | | | |
 | r09 | `Duration`, `Instant`, fuseaux, changement d'heure | | | | | | |
-| r10 | Kata mixte (test final) | | | | | | |
+| r10 | Méthodes moins fréquentes : regex, `setCharAt`, `capacity`, `Math.signum`/`hypot`, `char` | | | | | | |
+| r11 | Dates, la suite : `parse`, `atTime`, epoch, unités, `until`, `ZoneOffset` | | | | | | |
+| r12 | Algorithmes classiques de mémoire | | | | | | |
+| r13 | Kata mixte (test final) | | | | | | |

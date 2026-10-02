@@ -1,4 +1,4 @@
-# Drill de rappel 10 — Kata mixte chronométré (tout le chapitre 4)
+# Drill de rappel 13 — Kata mixte chronométré (tout le chapitre 4)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch4_coreapis/PARCOURS.md`](../../PARCOURS.md).
 
@@ -6,7 +6,7 @@
 
 **Règles :**
 - Tout se fait de mémoire.
-- Crée la classe **`Recall10`** dans le paquet `ch4_coreapis.drills.r10_kata`.
+- Crée la classe **`Recall13`** dans le paquet `ch4_coreapis.drills.r13_kata`.
 
 ## Défis
 

@@ -1,4 +1,4 @@
-package ch4_coreapis.drills.r10_kata.solution;
+package ch4_coreapis.drills.r13_kata.solution;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -6,9 +6,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 /**
- * SOLUTION du drill de rappel 10 - kata mixte chronometre.
+ * SOLUTION du drill de rappel 13 - kata mixte chronometre.
  */
-public class Recall10 {
+public class Recall13 {
 
     public static void main(String[] args) {
         String sentence = "  le Java est un Langage  ";
