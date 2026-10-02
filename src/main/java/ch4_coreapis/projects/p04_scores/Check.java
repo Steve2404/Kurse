@@ -30,7 +30,7 @@ public class Check {
             "Arrays.compare(", "Arrays.mismatch(", "Arrays.fill(", "Arrays.toString(",
             "Math.min(", "Math.max(", "Math.pow(", "Math.sqrt(",
             "Math.round(", "Math.ceil(", "Math.floor(", "Math.abs(",
-            "re:\\[\\]\\[\\]##tableau 2D", "re:\\[\\w+\\]\\[0\\]##tableau irregulier [i][0]", "re:-\\(\\w+ \\+ 1\\)##convention -(point d’insertion) - 1", "re:new int\\[\\w+\\.length \\+ \\w+\\.length\\]##fusion dans un nouveau tableau",
+            "re:\\[\\]\\[\\]##tableau 2D", "re:\\[\\w+\\]\\[0\\]##tableau irregulier [i][0]", "re:-\\(\\w+ \\+ 1\\)##convention -(point insertion) - 1", "re:new int\\[\\w+\\.length \\+ \\w+\\.length\\]##fusion dans un nouveau tableau",
             // Crescendo : notions des chapitres 5 a 15, interdites au chapitre 4.
             "!List", "!Map", "!Set<", "!ArrayList", "!::", "!record ", "!enum ", "!interface ",
             "!extends ", "!implements ", "!catch", "!throw ", "!Locale", "!DateTimeFormatter", "!NumberFormat", "!this(##appel this(...) (chapitre 6)",

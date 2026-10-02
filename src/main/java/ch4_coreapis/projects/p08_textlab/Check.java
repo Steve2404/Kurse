@@ -39,7 +39,7 @@ public class Check {
             ".insert(0, ", ".compareToIgnoreCase(", ".startsWith(", ".concat(",
             ".contains(", "String.join(", "Arrays.copyOfRange(", ".toCharArray()",
             "Integer.toBinaryString(", "Integer.toHexString(", "Integer.parseInt(", "String.valueOf(",
-            ".repeat(", "re:indexOf\\(\\w+, \\w+ \\+ 1\\)##indexOf(texte, depart + 1) (chevauchement)", "re:\\(char\\) \\(##cast (char) d’un calcul",
+            ".repeat(", "re:indexOf\\(\\w+, \\w+ \\+ 1\\)##indexOf(texte, depart + 1) (chevauchement)", "re:\\(char\\) \\(##cast (char) sur un calcul",
             // Crescendo : notions des chapitres 5 a 15, interdites au chapitre 4.
             "!List", "!Map", "!Set<", "!ArrayList", "!::", "!record ", "!enum ", "!interface ",
             "!extends ", "!implements ", "!catch", "!throw ", "!Locale", "!DateTimeFormatter", "!NumberFormat", "!this(##appel this(...) (chapitre 6)",

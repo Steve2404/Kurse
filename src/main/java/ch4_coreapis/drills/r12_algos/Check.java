@@ -23,7 +23,7 @@ public class Check {
             // EXPECTED-END
 
     static final List<String> API = List.of(
-            ">>> 1", "re:-\\(\\w+ \\+ 1\\)##-(point d’insertion) - 1", "new boolean[101]", "new int[26]",
+            ">>> 1", "re:-\\(\\w+ \\+ 1\\)##-(point insertion) - 1", "new boolean[101]", "new int[26]",
             ".reverse()", "Math.max(", "re:\\[r\\]\\[c\\] \\+= ##produit de matrices", "re:% \\w+\\.length\\]##rotation modulo",
             "Arrays.binarySearch(", "!Arrays.sort(##Arrays.sort (ce drill trie A LA MAIN)",
             // Crescendo : notions des chapitres 5 a 15, interdites au chapitre 4.
