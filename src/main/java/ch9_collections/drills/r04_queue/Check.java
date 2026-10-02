@@ -17,7 +17,8 @@ public class Check {
             "D03 : [3, 2, 1] 3 3 [2, 1]",
             "D04 : [a, b, c, d] ad ad [b, c] b c",
             "D05 : 1245 54 2",
-            "D06 : a aa bb 1");
+            "D06 : a aa bb 1",
+            "D07 : zyx true true [x, z]");
             // EXPECTED-END
 
     static final List<String> API = List.of(
@@ -26,7 +27,7 @@ public class Check {
             ".pop()", ".offerFirst(", ".offerLast(", ".addFirst(",
             ".addLast(", ".peekFirst()", ".peekLast()", ".pollFirst()",
             ".pollLast()", ".removeFirst()", ".getLast()", "new PriorityQueue<>(",
-            "Collections.reverseOrder()",
+            "Collections.reverseOrder()", ".descendingIterator()", ".removeLastOccurrence(",
             // Crescendo : notions des chapitres 10 a 15, interdites au chapitre 9.
             "!.stream(", "!Stream.", "!Stream<", "!Collectors", "!IntStream", "!LongStream", "!DoubleStream", "!.lines()",
             "!Optional", "!.chars()", "!catch", "!throw ", "!Locale", "!DateTimeFormatter", "!NumberFormat", "!.now()",

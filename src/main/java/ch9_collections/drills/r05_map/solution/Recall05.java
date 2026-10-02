@@ -3,6 +3,7 @@ package ch9_collections.drills.r05_map.solution;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 
 /**
@@ -49,5 +50,15 @@ public class Recall05 {
         nulls.put(null, 0);
         nulls.put("k", null);
         System.out.println("D06 : " + insertion + " " + hash.size() + " " + nulls.get(null) + " " + nulls.containsKey("k") + " " + nulls.get("k"));
+        Map<String, Integer> prices = new TreeMap<>(Map.of("pain", 2));
+        prices.putAll(Map.of("lait", 1, "pain", 3));        // putAll ecrase les cles existantes
+        Integer was = prices.replace("lait", 4);             // replace(k, v) : seulement si la cle EXISTE
+        Integer none = prices.replace("riz", 9);
+        boolean swapped = prices.replace("pain", 99, 5);    // replace(k, ancien, nouveau) : seulement si la valeur correspond
+        Map<String, Integer> frozen = Map.copyOf(prices);
+        System.out.println("D07 : " + prices + " " + was + " " + none + " " + swapped + " " + frozen.size() + " " + frozen.get("lait"));
+        NavigableMap<Integer, String> levels = new TreeMap<>(Map.of(10, "bronze", 50, "argent", 100, "or", 500, "platine"));
+        System.out.println("D08 : " + levels.firstKey() + " " + levels.lastEntry() + " " + levels.ceilingEntry(60) + " " + levels.floorEntry(9)
+                + " " + levels.descendingKeySet() + " " + levels.navigableKeySet().headSet(100) + " " + levels.pollFirstEntry() + " " + levels);
     }
 }

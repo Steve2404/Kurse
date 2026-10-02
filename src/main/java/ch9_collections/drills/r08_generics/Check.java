@@ -17,13 +17,19 @@ public class Check {
             "D03 : 2.5 contient Double",
             "D04 : Holder[key=k, value=1] Holder[key=1, value=k]",
             "D05 : true ArrayList",
-            "D06 : 2 c");
+            "D06 : 2 c",
+            "D07 : 7.0 1.5",
+            "D08 : [1, x] 5 2",
+            "D09 : Integer brut contient String",
+            "D10 : abc");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "static <T> T first(", "static <T extends Comparable<T>> T larger(", "static <K, V> String entry(", "class Box<T>",
             "<R> Box<R> map(", "interface Container<T>", "implements Container<Double>", "record Holder<K, V>",
-            "Recall08.<Integer>first(", "new Box<>(",
+            "Recall08.<Integer>first(", "new Box<>(", "<T extends Number & Comparable<T>>", "var guess = new ArrayList<>()",
+            "<T> T echo(", "List rawList = new ArrayList()", "implements Container {", "implements Iterable<T>",
+            "Iterator<T> iterator()",
             // Crescendo : notions des chapitres 10 a 15, interdites au chapitre 9.
             "!.stream(", "!Stream.", "!Stream<", "!Collectors", "!IntStream", "!LongStream", "!DoubleStream", "!.lines()",
             "!Optional", "!.chars()", "!catch", "!throw ", "!Locale", "!DateTimeFormatter", "!NumberFormat", "!.now()",

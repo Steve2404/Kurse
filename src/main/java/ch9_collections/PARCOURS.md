@@ -181,6 +181,7 @@ L'argument `solution` vérifie la solution, pour voir à quoi ressemble un proje
   - dire ce qui est modifiable dans `Arrays.asList`, `List.of`, `copyOf` et `unmodifiableList` ;
   - écrire un `Comparator` composé, et expliquer le piège du `TreeSet` (`compare == 0`) ;
   - dire si une affectation avec `? extends` ou `? super` compile, et ce qu'on peut y lire et y ajouter ;
-  - lister ce que l'effacement de type interdit.
+  - lister ce que l'effacement de type interdit ;
+  - expliquer le contrat `equals`/`hashCode` d'un `HashSet`, et ce que provoque un type brut (pollution, `ClassCastException` différée).
 - [ ] Tu sais écrire sans aide : un parcours en largeur, Dijkstra avec une `PriorityQueue`, un tri topologique, un top-k avec un tas, un cache LRU (`LinkedHashMap`), une classe générique bornée.
 - [ ] p04 et p07 ont été refaits **depuis un dossier vide**, 2 à 3 semaines plus tard.

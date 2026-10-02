@@ -17,7 +17,8 @@ public class Check {
             "D03 : [5, 10] [15, 20, 30] [5, 10, 15] [5, 10, 15] [30, 20, 15, 10, 5]",
             "D04 : 5 30 [10, 15, 20]",
             "D05 : [1, 2, 3, 4, 5] [3, 4] [1, 2]",
-            "D06 : [h, ab, efg] 3 true");
+            "D06 : [h, ab, efg] 3 true",
+            "D07 : 2 1 false true");
             // EXPECTED-END
 
     static final List<String> API = List.of(
@@ -25,7 +26,8 @@ public class Check {
             ".first()", ".last()", ".floor(", ".ceiling(",
             ".lower(", ".higher(", ".headSet(", ".tailSet(",
             ".subSet(", ".descendingSet()", ".pollFirst()", ".pollLast()",
-            ".retainAll(", ".removeAll(", "Set.of(",
+            ".retainAll(", ".removeAll(", "Set.of(", "class Spot",
+            "record Place(", "Set<Spot>",
             // Crescendo : notions des chapitres 10 a 15, interdites au chapitre 9.
             "!.stream(", "!Stream.", "!Stream<", "!Collectors", "!IntStream", "!LongStream", "!DoubleStream", "!.lines()",
             "!Optional", "!.chars()", "!catch", "!throw ", "!Locale", "!DateTimeFormatter", "!NumberFormat", "!.now()",

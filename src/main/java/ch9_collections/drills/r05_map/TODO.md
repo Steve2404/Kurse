@@ -2,7 +2,7 @@
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch9_collections/PARCOURS.md`](../../PARCOURS.md).
 
-**Chrono cible :** 12 min, puis 6 min.
+**Chrono cible :** 15 min, puis 8 min.
 
 **Règles :**
 - Tout se fait de mémoire, **imports compris**.
@@ -46,6 +46,21 @@
   
   Affiche `insertion`, la taille de la copie, `nulls.get(null)`, `nulls.containsKey("k")`, puis `nulls.get("k")`.
   → `D06 : {z=1, a=2, m=3} 3 0 true null`
+- ☐ **D07.** `prices = new TreeMap<>(Map.of("pain", 2))`, puis :
+  1. `putAll(Map.of("lait", 1, "pain", 3))` ;
+  2. `was = replace("lait", 4)` ;
+  3. `none = replace("riz", 9)` ;
+  4. `swapped = replace("pain", 99, 5)` ;
+  5. `frozen = Map.copyOf(prices)`.
+
+  Affiche `prices`, `was`, `none`, `swapped`, `frozen.size()`, puis `frozen.get("lait")`.
+  → `D07 : {lait=4, pain=3} 1 null false 2 4`
+- ☐ **D08.** `NavigableMap<Integer, String> levels = new TreeMap<>(Map.of(10, "bronze", 50, "argent", 100, "or", 500, "platine"))`. Affiche, dans cet ordre :
+  - `firstKey()`, `lastEntry()` ;
+  - `ceilingEntry(60)`, `floorEntry(9)` ;
+  - `descendingKeySet()`, `navigableKeySet().headSet(100)` ;
+  - `pollFirstEntry()`, puis `levels`.
+  → `D08 : 10 500=platine 100=or null [500, 100, 50, 10] [10, 50] 10=bronze {50=argent, 100=or, 500=platine}`
 
 ## Expériences (hors sortie attendue)
 
@@ -62,6 +77,8 @@ D03 : {chat=1, chien=1, et=2, le=3, rat=1}
 D04 : {chat=100, chien=1, le=0, loup=4, rat=11}
 D05 : c100c1l0l4r11 45243 [chat, chien, le, loup, rat] [100, 1, 0, 4, 11]
 D06 : {z=1, a=2, m=3} 3 0 true null
+D07 : {lait=4, pain=3} 1 null false 2 4
+D08 : 10 500=platine 100=or null [500, 100, 50, 10] [10, 50] 10=bronze {50=argent, 100=or, 500=platine}
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -78,6 +95,16 @@ D06 : {z=1, a=2, m=3} 3 0 true null
 | `computeIfAbsent(k, f)` | `f(k)` si absente |
 | `computeIfPresent(k, f)` | `f(k, v)` si présente |
 | `replaceAll(f)` | `f(k, v)` pour chaque entrée |
+| `putAll(m)` | copie toutes les entrées de m (écrase les clés existantes) |
+| `replace(k, v)` | n'écrit que si la clé **existe** ; rend l'ancienne valeur ou `null` |
+| `replace(k, ancien, nouveau)` | n'écrit que si la valeur actuelle vaut `ancien` ; rend un `boolean` |
+| `Map.copyOf(m)` | copie **immuable** (ni clé ni valeur `null`) |
+
+**`NavigableMap`** (`TreeMap`) :
+- `firstKey`/`lastKey` lèvent une exception si la map est vide ; `firstEntry`/`lastEntry` rendent `null` ;
+- `lowerEntry`, `floorEntry`, `ceilingEntry`, `higherEntry` (et leurs versions `…Key`) ;
+- `pollFirstEntry`, `pollLastEntry` retirent l'entrée ;
+- `navigableKeySet`, `descendingKeySet`, `descendingMap`, `headMap`, `tailMap`, `subMap` sont des vues.
 
 **Les `null` :** `HashMap` accepte une clé `null` et des valeurs `null`. `TreeMap` refuse une clé `null`.
 

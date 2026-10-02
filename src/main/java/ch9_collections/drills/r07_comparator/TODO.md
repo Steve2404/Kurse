@@ -32,12 +32,20 @@
   
   Affiche les deux, puis `new Dog("Rex", 1).compareTo(new Dog("Ace", 1))`.
   → `D06 : [null, a, b] [b, a, null] 17`
+- ☐ **D07.** `fruits = new ArrayList<>(List.of("kiwi", "fig", "banana", "plum"))`.
+  1. `byWeight = Comparator.comparingDouble((String f) -> f.length() * 1.5).thenComparingInt(f -> f.charAt(0))` ;
+  2. `Collections.sort(fruits, byWeight)`.
+
+  Affiche `fruits`, `Collections.binarySearch(fruits, "plum", byWeight)`, puis `Collections.binarySearch(fruits, "date", byWeight)`.
+  → `D07 : [fig, kiwi, plum, banana] 2 -2`
 
 ## Expériences (hors sortie attendue)
 
 1. Pourquoi `CASE_INSENSITIVE_ORDER` garde-t-il `b` avant `B` ?
 2. Que rendrait `Collections.sort` sur une liste de records qui n'implémentent **pas** `Comparable` ? Compilation, ou exécution ?
 3. `Comparator.comparing(Dog::age)` compile-t-il ? Quelle différence avec `comparingInt` ?
+4. `Collections.binarySearch(fruits, "plum")`, **sans** le comparateur : pourquoi le résultat n'est-il pas fiable ?
+5. Pourquoi faut-il écrire `(String f) ->` dans `comparingDouble`, alors que `thenComparingInt(f -> …)` s'en passe ?
 
 ## Sortie attendue complète
 
@@ -48,6 +56,7 @@ D03 : [Ace9, Max5, Rex5, Bob2]
 D04 : [Rex5, Max5, Bob2, Ace9]
 D05 : [A, B, b, c] [A, b, B, c] [c, b, B, A]
 D06 : [null, a, b] [b, a, null] 17
+D07 : [fig, kiwi, plum, banana] 2 -2
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -63,7 +72,8 @@ D06 : [null, a, b] [b, a, null] 17
 - **Signe du résultat :** négatif si a < b, zéro si égaux, positif si a > b.
 - **`String.compareTo`** rend la différence entre les caractères : `'R' - 'A'` = 17.
 - **Les fabriques :** `comparing`, `comparingInt`, `comparingLong`, `comparingDouble`, `naturalOrder`, `reverseOrder`, `nullsFirst`, `nullsLast`.
-- **Les méthodes d'instance :** `reversed`, `thenComparing`, `thenComparingInt`.
+- **Les méthodes d'instance :** `reversed`, `thenComparing`, `thenComparingInt`, `thenComparingLong`, `thenComparingDouble`.
+- **`Collections.binarySearch(liste, clé, comparateur)`** : la liste doit être triée avec **le même** ordre. Absent → `-(point d'insertion) - 1`.
 - **`reversed()`** inverse **toute** la chaîne écrite avant lui.
 - **Le tri** de `List.sort` et `Collections.sort` est **stable**.
 

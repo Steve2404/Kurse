@@ -35,7 +35,7 @@ Côté algorithmes :
 mots distincts 20, java 2, python null, getOrDefault(python) 0, containsKey(set) true, containsValue(4) false
 ordre d'apparition : java aime collections liste map set associe cle ...
 ```
-- **`static List<String> tokens(String text, Set<String> stop)`** : en minuscules, découpe sur `[^a-z]+`, et ignore les mots vides et les mots de `stop`.
+- **`static List<String> tokens(String text, Set<String> stop)`** : en minuscules, découpe sur `[^a-z]+`, et ignore les chaînes vides (`isEmpty()`) et les mots de `stop`.
   - `stop` est un `HashSet` construit depuis `Arrays.asList(Data.STOP)`.
 - **Pour chaque document d (numéroté à partir de 1) et chaque mot w :**
   - `freq.merge(w, 1, Integer::sum)`, dans une `HashMap` ;
@@ -58,7 +58,7 @@ requete java & collections -> [1, 3]
   - copie le tas dans une liste, triée par `weakestFirst.reversed()`.
   - **Question :** pourquoi un tas de taille k plutôt qu'un tri complet ? Quelle complexité ?
 - **L'index :** les mots présents dans **plus d'un** document, sous la forme `mot[docs]`.
-- **Les requêtes** `mot1 OP mot2` :
+- **Les requêtes** `mot1 OP mot2` de `Data.QUERIES` (découpées sur l'espace), chacune affichée sous la forme `requete <texte> -> <résultat>` :
   1. une **copie** `new TreeSet<>(index.getOrDefault(mot1, Set.of()))` ;
   2. `&` → `retainAll`, `|` → `addAll`, `-` → `removeAll`.
 
@@ -70,7 +70,7 @@ merge/compute : {java=20, set=12}, remove(set, 999) false, entry k=1, ofEntries 
 sets : hash 4 elements, linked [set, map, java, liste], tree [java, liste, map, set], add en double false
 ```
 - **Les anagrammes :**
-  - une `TreeMap<String, List<String>>` dont la clé est le mot aux lettres triées ;
+  - pour chaque mot distinct (`freq.keySet()`), une `TreeMap<String, List<String>>` dont la clé est le mot aux lettres triées (`toCharArray`, `Arrays.sort`, `new String(c)`) ;
   - puis `groups.values().removeIf(g -> g.size() < 2)` (on modifie la map à travers sa **vue**) ;
   - chaque groupe est trié avec `sort(null)`.
 - **La ligne `merge/compute`**, sur `stock = new TreeMap<>(Map.of("java", 2, "map", 1))`, dans cet ordre :

@@ -3,6 +3,7 @@ package ch9_collections.drills.r04_queue.solution;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -43,5 +44,12 @@ public class Recall04 {
         PriorityQueue<String> byLen = new PriorityQueue<>((x, y) -> x.length() != y.length() ? x.length() - y.length() : x.compareTo(y));
         byLen.addAll(List.of("ccc", "a", "bb", "aa"));
         System.out.println("D06 : " + byLen.poll() + " " + byLen.poll() + " " + byLen.poll() + " " + byLen.size());
+        Deque<String> trail = new ArrayDeque<>(List.of("x", "y", "z"));
+        StringBuilder back = new StringBuilder();
+        Iterator<String> rev = trail.descendingIterator();   // de la queue vers la tete
+        while (rev.hasNext()) {
+            back.append(rev.next());
+        }
+        System.out.println("D07 : " + back + " " + trail.contains("y") + " " + trail.removeLastOccurrence("y") + " " + trail);
     }
 }

@@ -33,6 +33,11 @@ public class Recall07 {
         List<String> lastNulls = new ArrayList<>(withNulls);
         lastNulls.sort(Comparator.nullsLast(Comparator.reverseOrder()));
         System.out.println("D06 : " + withNulls + " " + lastNulls + " " + new Dog("Rex", 1).compareTo(new Dog("Ace", 1)));
+        List<String> fruits = new ArrayList<>(List.of("kiwi", "fig", "banana", "plum"));
+        Comparator<String> byWeight = Comparator.comparingDouble((String f) -> f.length() * 1.5).thenComparingInt(f -> f.charAt(0));
+        Collections.sort(fruits, byWeight);
+        // binarySearch avec comparateur : la liste DOIT etre triee selon CE comparateur.
+        System.out.println("D07 : " + fruits + " " + Collections.binarySearch(fruits, "plum", byWeight) + " " + Collections.binarySearch(fruits, "date", byWeight));
     }
 }
 

@@ -38,6 +38,10 @@
 
   Affiche trois `poll()`, puis `size()`.
   → `D06 : a aa bb 1`
+- ☐ **D07.** `Deque<String> trail = new ArrayDeque<>(List.of("x", "y", "z"))`.
+  1. Parcours-la à l'envers avec `descendingIterator()`, en concaténant les éléments ;
+  2. affiche la concaténation, `contains("y")`, `removeLastOccurrence("y")`, puis `trail`.
+  → `D07 : zyx true true [x, z]`
 
 ## Expériences (hors sortie attendue)
 
@@ -54,6 +58,7 @@ D03 : [3, 2, 1] 3 3 [2, 1]
 D04 : [a, b, c, d] ad ad [b, c] b c
 D05 : 1245 54 2
 D06 : a aa bb 1
+D07 : zyx true true [x, z]
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -70,6 +75,8 @@ D06 : a aa bb 1
 - versions `First` et `Last` de chaque méthode : `addFirst`/`offerFirst`, `removeFirst`/`pollFirst`, `getFirst`/`peekFirst` ;
 - **la pile** : `push` = `addFirst`, `pop` = `removeFirst` (exception si vide), `peek` = `peekFirst` ;
 - `ArrayDeque` refuse `null`.
+
+**Parcourir une `Deque` à l'envers :** `descendingIterator()`. `removeFirstOccurrence` et `removeLastOccurrence` retirent une valeur précise.
 
 **`PriorityQueue`** : la **tête** est le plus petit élément (selon l'ordre), mais l'itération et le `toString` ne sont **pas** triés. Pour un tas max : `Collections.reverseOrder()`.
 

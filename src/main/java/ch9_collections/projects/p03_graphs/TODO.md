@@ -59,9 +59,11 @@ composantes : [[Ajaccio, Bastia], [Bordeaux, Bruxelles, Geneve, Lille, Lyon, Mar
 - **`dijkstra(g, from, to)`** :
   - `PriorityQueue<Step>` triée par `Comparator.comparingInt(Step::km).thenComparing(Step::city)` ;
   - on ignore une entrée périmée (`km > dist`) ;
-  - on compte les villes fixées, et on s'arrête à l'arrivée.
+  - on retire avec `remove()` et on ajoute avec `add()` (la famille « exception » de `Queue`) ;
+  - chaque entrée non périmée compte une ville fixée, **arrivée comprise** ; on s'arrête après avoir fixé l'arrivée.
   - Affiche `A > B > … = N km (M villes fixees)`.
 - **`components(g)`** : pour chaque ville non visitée (`visited.add(x)` rend `true`), un parcours avec `pollFirst` et `offerLast`. Les villes vont dans un `TreeSet`.
+- **Les appels du `main` :** `g.get("Lyon")`, `dfs(g, "Paris")`, `bfs(g, Data.FROM, Data.TO)`, `dijkstra(g, Data.FROM, Data.TO)`, `components(g)`.
 - **Question :** pourquoi le parcours en largeur et Dijkstra donnent-ils deux chemins différents ?
 
 ### ☐ Étape 3 — Fenêtre glissante et API `Deque`
@@ -75,6 +77,7 @@ deque : sommet z, pop z, pollLast c, reste [a, b], peekLast b ; vide : poll null
   2. retire en queue ceux dont la valeur est `<= a[i]` (`peekLast`, `pollLast`) ;
   3. `offerLast(i)` ;
   4. dès que `i >= k - 1`, le maximum est `a[peekFirst()]`.
+  - Appel : `windowMax(Data.MEASURES, Data.WINDOW)`.
   - **Question :** pourquoi est-ce O(n), et non O(n·k) ?
 - **La démonstration de l'API** :
   1. `offerFirst("b")`, `offerFirst("a")`, `offerLast("c")`, puis `push("z")` ;

@@ -60,12 +60,13 @@ tri fusion : [map, set, deque, lambda, generique, collection] [1, 3, 7, 11, 19, 
 - **`class Heap<T>`** :
   - `private final List<T> items` et `private final Comparator<? super T> order` ;
   - `push`, `pop`, `size`, `isEmpty`.
+  - **Les données :** `numbers`, une `ArrayList<Integer>` remplie depuis `Data.NUMBERS`, et `words = Arrays.asList(Data.WORDS)`.
   - Un `Heap<Integer>` avec `Comparator.naturalOrder()`, et un `Heap<String>` avec `comparingInt(String::length).thenComparing(Comparator.reverseOrder())`.
-  - Remplis-les avec `numbers.forEach(minHeap::push)`, puis vide-les.
+  - Remplis-les avec `numbers.forEach(minHeap::push)` et `words.forEach(…)`, puis vide-les avec `pop` : les valeurs sont séparées par une espace, et les deux tas par ` | `.
 - **Dans `final class Algos`**, avec un constructeur privé :
   - `public static <T> List<T> mergeSort(List<T> list, Comparator<? super T> cmp)`, récursif et stable (`<= 0`) ;
-  - `public static <T> int binarySearch(List<? extends T> sorted, T key, Comparator<? super T> cmp)`.
-  - Trie les mots par longueur, puis les nombres. Cherche 25, puis 20, dans les nombres triés.
+  - `public static <T> int binarySearch(List<? extends T> sorted, T key, Comparator<? super T> cmp)`, qui rend l'indice, ou `-(lo + 1)` si la clé est absente (la même convention que `Collections.binarySearch`).
+  - Trie `words` par `comparingInt(String::length)`, puis `numbers` par `naturalOrder()`. Cherche 25, puis 20, dans les nombres triés.
 
 ### ☐ Étape 3 — Bornes et jokers
 
@@ -79,11 +80,11 @@ jokers : [1, 4, 9, 16] [1, 4, 9, 16, texte] | 5 elements : Integer Integer Integ
   - `double sum(Collection<? extends Number>)` ;
   - `void fillSquares(List<? super Integer> target, int n)` ;
   - `<T> void copy(List<? super T> dst, List<? extends T> src)` ;
-  - `String describe(Collection<?> c)` ;
+  - `String describe(Collection<?> c)`, qui rend `N elements :` suivi du nom simple de la classe de chaque élément (précédé d'une espace) ;
   - `<T> List<T> repeat(T value, int times)`.
 - **Les appels :**
   - `max(numbers)` et `max(words)` ;
-  - `argMax` d'une `TreeMap` mot → longueur ;
+  - `argMax` d'une `TreeMap` mot → longueur, remplie depuis `words` ;
   - `sum(numbers)` et `sum(List.of(1.5, 2.5))` ;
   - `fillSquares(squares, 4)`, avec une **`List<Number>`** ;
   - `Algos.<Number>copy(all, squares)`, avec une **`List<Object>`**, puis `all.add("texte")` ;
@@ -101,9 +102,11 @@ transformer : ********* ; effacement : true
 - **`class Cache<K, V> extends LinkedHashMap<K, V>`** :
   - le constructeur appelle `super(16, 0.75f, true)` : l'ordre devient celui des **accès** ;
   - `removeEldestEntry` rend `size() > capacity` ;
-  - `V load(K key, Function<? super K, ? extends V> loader)` compte succès et échecs ;
-  - `stats()`.
-  - Pour chaque accès de `Data.ACCESSES`, appelle `load(key, String::length)` et affiche `keySet()`.
+  - `V load(K key, Function<? super K, ? extends V> loader)` :
+    - si `containsKey(key)` : un succès, et `return get(key)`. C'est `get` qui remet la clé en dernier (`containsKey` ne compte pas comme un accès) ;
+    - sinon : un échec, `loader.apply(key)`, puis `put` ;
+  - `stats()` rend `N succes, M echecs`.
+  - Crée `new Cache<>(Data.CAPACITY)`. Pour chaque accès de `Data.ACCESSES`, appelle `load(key, String::length)`, et ajoute `keySet()` à la trace (séparés par une espace). Termine par ` -> ` et `stats()`.
 - **`@FunctionalInterface interface Transformer<A, B>`** :
   - `B transform(A)` ;
   - `default <C> Transformer<A, C> then(Transformer<? super B, ? extends C> next)`.

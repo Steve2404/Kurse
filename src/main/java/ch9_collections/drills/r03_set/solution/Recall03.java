@@ -35,5 +35,24 @@ public class Recall03 {
         Set<String> byLength = new TreeSet<>((x, y) -> x.length() - y.length());   // compare == 0 : consideres EGAUX
         byLength.addAll(List.of("ab", "cd", "efg", "h"));
         System.out.println("D06 : " + byLength + " " + byLength.size() + " " + byLength.contains("zz"));
+        // HashSet s'appuie sur hashCode PUIS equals : sans les redefinir, deux objets "egaux" sont deux elements.
+        Set<Spot> spots = new HashSet<>(List.of(new Spot(1, 2), new Spot(1, 2)));
+        Set<Place> places = new HashSet<>(List.of(new Place(1, 2), new Place(1, 2)));
+        System.out.println("D07 : " + spots.size() + " " + places.size() + " " + new Spot(1, 2).equals(new Spot(1, 2)) + " " + places.contains(new Place(1, 2)));
     }
+}
+
+// Une classe sans equals ni hashCode : l'egalite est l'IDENTITE (Object.equals).
+class Spot {
+    final int x;
+    final int y;
+
+    Spot(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+// Un record : equals et hashCode sont generes a partir des composants.
+record Place(int x, int y) {
 }

@@ -2,7 +2,7 @@
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch9_collections/PARCOURS.md`](../../PARCOURS.md).
 
-**Chrono cible :** 12 min, puis 6 min.
+**Chrono cible :** 15 min, puis 8 min.
 
 **Règles :**
 - Tout se fait de mémoire, **imports compris**.
@@ -17,10 +17,14 @@
     - `default String describe()`, qui rend `"contient " + nom simple de la classe du contenu`.
   - **`class NumberBox implements Container<Double>`**, construite avec un `double`.
   - **`record Holder<K, V>(K key, V value)`**, avec `Holder<V, K> swap()`.
+  - **`class RawContainer implements Container`** (type **brut**) : `content()` rend `"brut"`.
+  - **`class Trio<T> implements Iterable<T>`**, construite avec trois `T` gardés dans une `List.of`, dont `iterator()` rend l'itérateur de cette liste.
+- Dans `Box<T>`, ajoute aussi `<T> T echo(T other)`, qui rend `other`. Ce `<T>` **masque** celui de la classe.
 - Dans `Recall08`, trois méthodes `static` génériques :
   - `<T> T first(List<T>)` ;
   - `<T extends Comparable<T>> T larger(T a, T b)`, qui rend a si a ≥ b ;
-  - `<K, V> String entry(K, V)`, qui rend `"k=v"`.
+  - `<K, V> String entry(K, V)`, qui rend `"k=v"` ;
+  - `<T extends Number & Comparable<T>> double spread(T a, T b)`, qui rend le plus grand moins le plus petit (en `doubleValue()`).
 
 ## Défis
 
@@ -44,6 +48,20 @@
   → `D05 : true ArrayList`
 - ☐ **D06.** `var inferred = new Box<>(List.of(1, 2))`. Affiche `inferred.get().size()`, puis `new Box<>('c').get()`.
   → `D06 : 2 c`
+- ☐ **D07.** `spread(3, 10)`, puis `spread(2.5, 1.0)`.
+  → `D07 : 7.0 1.5`
+- ☐ **D08.** `var guess = new ArrayList<>()`, puis `add(1)` et `add("x")`. Affiche `guess`, `s.echo(5)`, puis `s.echo("ok").length()`.
+  → `D08 : [1, x] 5 2`
+- ☐ **D09.** Les types bruts :
+  1. `List rawList = new ArrayList()`, puis `rawList.add(7)` ;
+  2. `List<String> typed = rawList` ;
+  3. `Object polluted = typed.get(0)` ;
+  4. `Container rawContainer = new RawContainer()`.
+
+  Affiche le nom simple de la classe de `polluted`, `rawContainer.content()`, puis `rawContainer.describe()`.
+  → `D09 : Integer brut contient String`
+- ☐ **D10.** Une boucle for-each sur `new Trio<>("a", "b", "c")` concatène les éléments.
+  → `D10 : abc`
 
 ## Expériences (hors sortie attendue)
 
@@ -54,7 +72,10 @@ Pour chaque ligne, dis si elle **compile** :
 3. `static T cached;` dans `Box<T>` ;
 4. `Box<int> b;` ;
 5. `if (s instanceof Box<String>) { }`, puis la même ligne avec `Box<?>` ;
-6. deux surcharges `void f(Box<String>)` et `void f(Box<Integer>)`.
+6. deux surcharges `void f(Box<String>)` et `void f(Box<Integer>)` ;
+7. `String bad = typed.get(0);` après D09 : compile-t-il ? Que se passe-t-il à l'exécution, et à quelle ligne ?
+8. `spread("a", "b")` ;
+9. `<T extends Comparable<T> & Number>` (l'interface avant la classe).
 
 ## Sortie attendue complète
 
@@ -65,6 +86,10 @@ D03 : 2.5 contient Double
 D04 : Holder[key=k, value=1] Holder[key=1, value=k]
 D05 : true ArrayList
 D06 : 2 c
+D07 : 7.0 1.5
+D08 : [1, x] 5 2
+D09 : Integer brut contient String
+D10 : abc
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -76,7 +101,12 @@ D06 : 2 c
   - méthode générique : `<T>` **avant** le type de retour (`static <T> T first(…)`) ;
   - appel explicite : `Recall08.<Integer>first(…)`.
 - **Implémenter une interface générique :** on fixe le type (`implements Container<Double>`), ou on le garde (`class Box2<T> implements Container<T>`).
-- **Les bornes :** `<T extends Comparable<T>>`. Plusieurs bornes : `<T extends Number & Comparable<T>>` (la classe d'abord).
+- **Les bornes :** `<T extends Comparable<T>>`. Plusieurs bornes : `<T extends Number & Comparable<T>>` (la classe d'abord, une seule classe).
+- **Implémenter une interface générique, 3 façons :** fixer le type (`implements Container<Double>`), garder le paramètre (`class Box2<T> implements Container<T>`), ou le type **brut** (`implements Container` : T devient `Object`).
+- **`var` + diamant :** `var l = new ArrayList<>()` est une `ArrayList<Object>`.
+- **Masquage :** `<T> T echo(T)` dans `Box<T>` déclare un **nouveau** T, sans lien avec celui de la classe.
+- **Types bruts :** ils compilent avec un avertissement *unchecked*. La « pollution » explose plus tard, à la ligne qui caste (`ClassCastException`).
+- **`Iterable<T>`** : `Iterator<T> iterator()` suffit pour une boucle for-each.
 - **L'effacement de type :** à l'exécution, `T` devient sa borne (`Object` par défaut). D'où les interdits :
   - `new T()` et `new T[]` ;
   - un champ `static T` ;

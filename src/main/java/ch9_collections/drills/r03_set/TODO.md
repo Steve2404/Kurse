@@ -7,6 +7,9 @@
 **Règles :**
 - Tout se fait de mémoire, **imports compris**.
 - Crée la classe **`Recall03`** dans le paquet `ch9_collections.drills.r03_set`.
+- Dans le **même fichier**, crée deux types package-private :
+  - une classe **`Spot`** avec deux champs `final int x, y` et un constructeur, **sans** `equals` ni `hashCode` ;
+  - un record **`Place(int x, int y)`**.
 
 ## Défis
 
@@ -32,12 +35,22 @@
 
   Affiche l'ensemble, sa taille, puis `contains("zz")`.
   → `D06 : [h, ab, efg] 3 true`
+- ☐ **D07.** Le contrat `equals`/`hashCode` :
+  - `Set<Spot> spots = new HashSet<>(List.of(new Spot(1, 2), new Spot(1, 2)))` ;
+  - la même chose avec deux `Place(1, 2)`.
+
+  Affiche :
+  - les deux tailles ;
+  - `new Spot(1, 2).equals(new Spot(1, 2))` ;
+  - `places.contains(new Place(1, 2))`.
+  → `D07 : 2 1 false true`
 
 ## Expériences (hors sortie attendue)
 
 1. Pourquoi `contains("zz")` rend-il `true` alors que `"zz"` n'a jamais été ajouté ?
 2. `new TreeSet<Object>().add(new Object())` : quelle exception ?
 3. `new TreeSet<String>().add(null)` contre `new HashSet<String>().add(null)`.
+4. Redéfinis seulement `equals` dans `Spot` (sans `hashCode`) : que vaut la taille de `spots` ? Pourquoi est-ce « probablement 2 » ?
 
 ## Sortie attendue complète
 
@@ -48,6 +61,7 @@ D03 : [5, 10] [15, 20, 30] [5, 10, 15] [5, 10, 15] [30, 20, 15, 10, 5]
 D04 : 5 30 [10, 15, 20]
 D05 : [1, 2, 3, 4, 5] [3, 4] [1, 2]
 D06 : [h, ab, efg] 3 true
+D07 : 2 1 false true
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -66,5 +80,11 @@ D06 : [h, ab, efg] 3 true
 - ces ensembles sont des **vues**.
 
 **Le piège :** un `TreeSet` utilise `compare`, et non `equals`. `compare == 0` signifie un doublon.
+
+**Le contrat de `HashSet` et `HashMap` :**
+- `hashCode` choisit le compartiment, puis `equals` tranche ;
+- deux objets `equals` **doivent** avoir le même `hashCode` ;
+- sans redéfinition, c'est l'identité : `new Spot(1, 2)` n'est égal qu'à lui-même ;
+- un record génère `equals` et `hashCode` à partir de ses composants.
 
 </details>

@@ -53,14 +53,15 @@ REDO  =>  retabli SET -> [// debut, int x = (a + b);, list.add(map.get(k));]
   - `ADD` ajoute en fin (le texte est `command.substring(4)`) ;
   - `INSERT i texte`, `SET i texte`, `DELETE i` ;
   - `UNDO` : `undo.poll()` (`rien a annuler` si `null`), applique à l'envers, puis `redo.push` ;
-  - `REDO` : le symétrique ;
+  - `REDO` : le symétrique (`rien a retablir`, puis `undo.push`) ;
+  - après `UNDO` ou `REDO`, rends `annule TYPE -> lignes` ou `retabli TYPE -> lignes` ;
   - une modification rend `type en minuscules -> lignes (annulables N)`.
 - **`OPEN f`** :
   - `computeIfAbsent(f, k -> new ArrayList<>())` ;
   - vide les deux piles ;
   - `recent.removeFirstOccurrence(f)`, puis `addFirst(f)`, puis `removeLast()` au-delà de `Data.RECENT` ;
   - rend `ouvert f (N lignes), recents [...]`.
-- Chaque ligne de sortie est `commande  =>  résultat`.
+- **Le `main`** crée un `Editor` et, pour chaque commande de `Data.COMMANDS`, affiche `commande  =>  run(commande)` (deux espaces de chaque côté de `=>`).
 
 ### ☐ Étape 2 — Compléter
 
@@ -81,10 +82,10 @@ dictionnaire : premier add, dernier set, avant list int, apres list listiterator
 ```
 - **`static String brackets(String line)`**, une pile `Deque<Character>` :
   - un ouvrant `([{` → `push` ;
-  - un fermant → la pile ne doit pas être vide et `pop` doit correspondre, sinon `erreur colonne i` ;
-  - à la fin : `ok`, ou `non ferme X`.
+  - un fermant → la pile ne doit pas être vide et `pop` doit correspondre, sinon `erreur colonne i` (i est l'indice **à partir de 0**) ;
+  - à la fin : `ok`, ou `non ferme X` (X = `peek()`).
 - Pour chaque fichier (dans l'ordre de la `TreeMap`) : `nom : N lignes`, suivi de `[résultat]` pour chaque ligne.
-- **`static Set<String> suggestions(String word, Set<String> dict)`** :
+- **`static Set<String> suggestions(String word, Set<String> dict)`**, appelée pour chaque mot de `Data.TYPOS` avec le dictionnaire, sous la forme `mot->[suggestions]` :
   1. si le mot est connu, rends-le seul ;
   2. sinon, génère dans un `TreeSet` toutes les variantes à **une** modification près : supprimer une lettre, échanger deux voisines, remplacer une lettre par a–z, insérer une lettre a–z ;
   3. puis `candidates.retainAll(dict)`.

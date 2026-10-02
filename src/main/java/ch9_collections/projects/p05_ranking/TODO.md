@@ -62,8 +62,9 @@ ages : [25, 29, 31, 37, 42], first 25, last 42, floor(30) 29, ceiling(30) 31, he
 ```
 - **Le piège :** `new TreeSet<>(Comparator.comparingInt(Player::score))`, puis `addAll(players)`.
   - **Question :** pourquoi n'en reste-t-il que 4 ? Lesquels sont gardés ?
-- **`NavigableMap<Integer, List<String>> byScore = new TreeMap<>()`**, remplie avec `computeIfAbsent`. Appelle chaque méthode de navigation **dans l'ordre affiché**.
-- **`NavigableSet<Integer> ages`** : la même chose, puis affiche l'ensemble **après** `pollFirst()`.
+- **`NavigableMap<Integer, List<String>> byScore = new TreeMap<>()`** : score → noms, remplie avec `computeIfAbsent` en parcourant `players` (dans l'ordre du classement). Appelle chaque méthode de navigation **dans l'ordre affiché**.
+  - Sur la ligne `vues`, `headMap(1200)` est affichée entière ; pour `tailMap`, `subMap` et `descendingMap`, n'affiche que `.keySet()`.
+- **`NavigableSet<Integer> ages`** (un `TreeSet` des âges des joueurs) : appelle les méthodes dans l'ordre affiché, puis affiche l'ensemble **après** `pollFirst()`.
   - L'ensemble est affiché en début de ligne, donc avant `pollFirst` : la concaténation s'évalue de gauche à droite.
 
 ### ☐ Étape 3 — Intervalles et médiane
@@ -72,12 +73,12 @@ ages : [25, 29, 31, 37, 42], first 25, last 42, floor(30) 29, ceiling(30) 31, he
 intervalles tries [[1,3], [2,6], [5,7], [8,10], [9,12], [15,18], [17,20]] -> fusion [[1,7], [8,12], [15,20]] ; planning max [[1,3], [5,7], [8,10], [15,18]]
 medianes : 5.0 10.0 5.0 4.0 5.0 6.0 7.0 7.5 8.0 7.5
 ```
-- **`record Interval(int start, int end) implements Comparable<Interval>`** : le début, puis la fin ; `toString()` = `[a,b]`.
+- **`record Interval(int start, int end) implements Comparable<Interval>`** : le début, puis la fin ; `toString()` = `[a,b]`. La liste est remplie depuis `Data.INTERVALS`.
 - **La fusion :** trie (`Collections.sort`). Si le dernier intervalle fusionné chevauche (`end >= start`), retire-le, puis ajoute l'union.
 - **Le planning :** trie une copie **par fin** (`comparingInt(Interval::end)`), et garde chaque intervalle qui commence **après** la fin du dernier gardé.
   - **Question :** pourquoi trier par fin, et non par début ?
-- **La médiane glissante :** `low`, un tas **max** (`new PriorityQueue<>(Collections.reverseOrder())`), et `high`, un tas min.
-  1. Range x dans `low` s'il est ≤ `low.peek()` (ou si `low` est vide), sinon dans `high` ;
+- **La médiane glissante**, sur chaque valeur de `Data.STREAM` : `low`, un tas **max** (`new PriorityQueue<>(Collections.reverseOrder())`), et `high`, un tas min.
+  1. Range x dans `low` s'il est ≤ `low.peek()` (ou si `low` est vide), sinon dans `high` (`offer`) ;
   2. rééquilibre pour que `low` ait autant d'éléments que `high`, ou un de plus ;
   3. la médiane vaut `low.peek()`, ou la moyenne des deux sommets.
 
