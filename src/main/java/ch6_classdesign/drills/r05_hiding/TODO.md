@@ -46,6 +46,8 @@ D05 : 1 2 1 2
 
 ## Carte mémoire (à lire **après** le drill)
 
+<details><summary>Ouvrir la carte</summary>
+
 | Membre | Mécanisme | Choisi d'après | Moment |
 |---|---|---|---|
 | méthode d'instance | **redéfinition** | le type de l'**objet** | exécution |
