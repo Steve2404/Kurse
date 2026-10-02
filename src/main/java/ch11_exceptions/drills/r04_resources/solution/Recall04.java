@@ -48,6 +48,11 @@ public class Recall04 {
         IllegalStateException primary = new IllegalStateException("principale");
         primary.addSuppressed(new IllegalArgumentException("a la main"));
         System.out.println("D06 : " + primary.getSuppressed().length + " " + primary.getSuppressed()[0].getMessage());
+        LOG.clear();
+        try (var door = new Door("v", false)) {                     // var est permis pour une ressource declaree dans le try
+            LOG.add("type " + door.getClass().getSimpleName());
+        }
+        System.out.println("D07 : " + LOG);
     }
 }
 

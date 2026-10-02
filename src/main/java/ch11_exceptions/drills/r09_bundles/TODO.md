@@ -50,6 +50,8 @@
   → `D05 : en_CA en-CA true en Canada Japanisch fr_FR`
 - ☐ **D06.** `Locale.setDefault(Locale.Category.DISPLAY, Locale.GERMANY)`. Affiche `Locale.FRANCE.getDisplayName()`, ` | `, puis `Locale.getDefault()`, la catégorie `DISPLAY` et la catégorie `FORMAT`.
   → `D06 : Französisch (Frankreich) | fr_FR de_DE fr_FR`
+- ☐ **D07.** `byDefault = ResourceBundle.getBundle(BASE)` (**sans** locale). Affiche `show(byDefault)`, ` | `, puis le nom simple de la classe de `byDefault.getObject("hello")`.
+  → `D07 : [fr] Bonjour / colour / taille racine | String`
 
 ## Expériences (hors sortie attendue)
 
@@ -67,6 +69,7 @@ D03 : [fr] Bonjour / colour / taille racine
 D04 : [color, hello, only, size] true seulement ici | MissingResourceException nope
 D05 : en_CA en-CA true en Canada Japanisch fr_FR
 D06 : Französisch (Frankreich) | fr_FR de_DE fr_FR
+D07 : [fr] Bonjour / colour / taille racine | String
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -91,6 +94,8 @@ On s'arrête au **premier fichier trouvé**. La locale par défaut ne sert que s
 - `new Locale.Builder().setLanguage().setRegion().build()` (valide les valeurs) ;
 - `Locale.forLanguageTag("fr-CA")` ;
 - `toString()` donne `fr_CA` ; `toLanguageTag()` donne `fr-CA`.
+
+**Sans locale,** `getBundle(base)` utilise `Locale.getDefault()`. `getObject(clé)` rend un `Object` ; `getString` = `(String) getObject`.
 
 **Les catégories :** `setDefault(Locale.Category.FORMAT, …)` règle les nombres et les dates ; `DISPLAY` règle les noms affichés. `setDefault(locale)` règle tout.
 

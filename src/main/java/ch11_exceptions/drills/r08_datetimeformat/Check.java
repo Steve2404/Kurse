@@ -17,13 +17,15 @@ public class Check {
             "D03 : Le 04 a 15h05 | 03 o'clock",
             "D04 : 7/4/26 | 4 juillet 2026 | Jul 4, 2026, 3:05:09 PM | 15:05",
             "D05 : 15:05 CEST Europe/Paris +02:00 | 2026-07-04 | 15:05:09",
-            "D06 : UnsupportedTemporalTypeException | index 2 | 2026-07-04");
+            "D06 : UnsupportedTemporalTypeException | index 2 | 2026-07-04",
+            "D07 : 7/4/26, 3:05:09 PM | July 4, 2026 at 3:05:09 PM CEST");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "DateTimeFormatter.ofPattern(", ".withLocale(", "ofLocalizedDate(FormatStyle.SHORT)", "ofLocalizedDate(FormatStyle.LONG)",
             "ofLocalizedDateTime(FormatStyle.MEDIUM)", "ofLocalizedTime(FormatStyle.SHORT)", "ZoneId.of(", "DateTimeFormatter.ISO_LOCAL_DATE",
-            "catch (DateTimeException", "catch (DateTimeParseException", ".getErrorIndex()",
+            "catch (DateTimeException", "catch (DateTimeParseException", ".getErrorIndex()", "ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)",
+            "ofLocalizedDateTime(FormatStyle.LONG)",
             // Crescendo : notions des chapitres 12 a 15 (threads, E/S, JDBC) ou System.exit / printStackTrace, interdits au chapitre 11.
             "!Thread", "!Executor", "!synchronized", "!Atomic", "!parallel", "!CompletableFuture", "!Files.", "!Path.of",
             "!Paths.", "!new File(", "!FileReader", "!FileWriter", "!BufferedReader", "!BufferedWriter", "!InputStream", "!OutputStream",

@@ -37,6 +37,8 @@
   - `LocalDate.parse("04/07/2026", ofPattern("dd-MM-yyyy"))` → `catch (DateTimeParseException e)` : `index <getErrorIndex()>` ;
   - la même date avec `"dd/MM/yyyy"`.
   → `D06 : UnsupportedTemporalTypeException | index 2 | 2026-07-04`
+- ☐ **D07.** `ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM)` en `Locale.US` sur `t` ; puis `ofLocalizedDateTime(FormatStyle.LONG)` en `Locale.US` sur `z`. La ligne passe par `v`.
+  → `D07 : 7/4/26, 3:05:09 PM | July 4, 2026 at 3:05:09 PM CEST`
 
 ## Expériences (hors sortie attendue)
 
@@ -54,6 +56,7 @@ D03 : Le 04 a 15h05 | 03 o'clock
 D04 : 7/4/26 | 4 juillet 2026 | Jul 4, 2026, 3:05:09 PM | 15:05
 D05 : 15:05 CEST Europe/Paris +02:00 | 2026-07-04 | 15:05:09
 D06 : UnsupportedTemporalTypeException | index 2 | 2026-07-04
+D07 : 7/4/26, 3:05:09 PM | July 4, 2026 at 3:05:09 PM CEST
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -74,7 +77,8 @@ D06 : UnsupportedTemporalTypeException | index 2 | 2026-07-04
 
 - **Les deux sens marchent :** `t.format(f)` et `f.format(t)`.
 - **Champ absent du type** (heure sur une `LocalDate`) : `UnsupportedTemporalTypeException`.
-- **`FormatStyle.LONG` et `FULL`** pour une heure exigent un fuseau : `DateTimeException`.
+- **`FormatStyle.LONG` et `FULL`** pour une heure exigent un fuseau (`ZonedDateTime`), sinon `DateTimeException`.
+- **`ofLocalizedDateTime(styleDate, styleHeure)`** combine deux styles.
 - **Lecture ratée :** `DateTimeParseException` (non vérifiée), avec `getErrorIndex()`.
 
 </details>

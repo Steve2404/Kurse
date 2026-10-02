@@ -48,5 +48,8 @@ public class Recall08 {
         }
         String c = LocalDate.parse("04/07/2026", DateTimeFormatter.ofPattern("dd/MM/yyyy")).toString();
         System.out.println("D06 : " + a + " | " + b + " | " + c);
+        // Deux styles : date SHORT, heure MEDIUM. LONG pour l'heure exige un fuseau : un ZonedDateTime convient.
+        System.out.println(v("D07 : " + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.MEDIUM).withLocale(Locale.US).format(t) + " | "
+                + DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG).withLocale(Locale.US).format(z)));
     }
 }

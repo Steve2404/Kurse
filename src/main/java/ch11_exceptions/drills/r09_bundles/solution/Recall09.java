@@ -38,5 +38,9 @@ public class Recall09 {
         Locale.setDefault(Locale.Category.DISPLAY, Locale.GERMANY);
         System.out.println("D06 : " + Locale.FRANCE.getDisplayName() + " | " + Locale.getDefault() + " " + Locale.getDefault(Locale.Category.DISPLAY) + " "
                 + Locale.getDefault(Locale.Category.FORMAT));
+        // Sans locale : getBundle utilise Locale.getDefault() (ici fr_FR). getObject rend un Object (une String pour un .properties).
+        ResourceBundle byDefault = ResourceBundle.getBundle(BASE);
+        Object raw = byDefault.getObject("hello");
+        System.out.println("D07 : " + show(byDefault) + " | " + raw.getClass().getSimpleName());
     }
 }

@@ -40,6 +40,8 @@
 2. Appelle `initCause` deux fois sur la même exception. Que se passe-t-il ?
 3. Affiche `new ConfigException("x")` (son `toString()`) : pourquoi le nom de **paquet** y apparaît-il ?
 4. Une classe qui étend `Throwable` directement : est-elle vérifiée ?
+5. Dans une classe à part, affiche une même exception de trois façons : `System.out.println(e)`, `e.getMessage()` et `e.printStackTrace()`. Où sort la 3e ? Que contient-elle de plus ?
+6. `catch (IllegalStateException | IllegalArgumentException e) { e = new IllegalStateException(); }` : quelle erreur ? Et dans un `catch` à un seul type ?
 
 ## Sortie attendue complète
 
@@ -60,6 +62,8 @@ D06 : quota 120/100 ; depassement 20 ; true
 - **Les 4 constructeurs habituels :** `()`, `(String)`, `(Throwable)`, `(String, Throwable)`. Ils ne sont **pas hérités** : il faut les écrire.
 - **`super(cause)`** seul : `getMessage()` vaut `cause.toString()`.
 - **`toString()`** = nom **complet** + `": "` + message (ou le nom seul, si le message est `null`).
+- **Afficher une exception :** `println(e)` (= `toString()`), `getMessage()`, ou `printStackTrace()` (sur `System.err`, avec la pile d'appels et les `Caused by:`).
+- **Le paramètre d'un multi-catch** est implicitement `final` (pas de réaffectation) ; celui d'un `catch` à un seul type peut être réaffecté (mais ne le fais pas).
 - **Chaîner :** `new X(message, cause)` ou `initCause` (une seule fois). `getCause()` remonte la chaîne.
 - **Relance précise (Java 7) :** `catch (Exception e) { throw e; }` relance seulement ce que le `try` peut lever. Il faut que `e` reste effectivement finale.
 

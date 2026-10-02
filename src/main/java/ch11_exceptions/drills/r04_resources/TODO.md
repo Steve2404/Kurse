@@ -29,6 +29,8 @@ Vide `LOG` entre deux défis.
   → `D05 : [corps, ferme lambda]`
 - ☐ **D06.** `primary = new IllegalStateException("principale")`, puis `primary.addSuppressed(new IllegalArgumentException("a la main"))`. Affiche le nombre de supprimées, puis le message de la première.
   → `D06 : 1 a la main`
+- ☐ **D07.** `try (var door = new Door("v", false))` ; le corps note `type ` + le nom simple de la classe de `door`.
+  → `D07 : [ouvre v, type Door, ferme v]`
 
 ## Expériences (hors sortie attendue)
 
@@ -36,6 +38,7 @@ Vide `LOG` entre deux défis.
 2. `try (String s = "x") { }` : quelle erreur ?
 3. Pourquoi D05 exige-t-il `catch (Exception e)`, et pas D01 ?
 4. Déclare `Door shared` sans `final`, puis réaffecte-la avant `try (shared)` : quelle erreur ?
+5. Dans D07, réaffecte `door = null;` dans le corps : quelle erreur ? (Une ressource est implicitement `final`.)
 
 ## Sortie attendue complète
 
@@ -46,6 +49,7 @@ D03 : [ouvre a, corps, ferme a, catch close a 0]
 D04 : [ouvre partagee, corps true, ferme partagee]
 D05 : [corps, ferme lambda]
 D06 : 1 a la main
+D07 : [ouvre v, type Door, ferme v]
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -54,7 +58,7 @@ D06 : 1 a la main
 
 - **Les ressources** implémentent `AutoCloseable` (`void close() throws Exception`). `Closeable` (java.io) l'étend : `close() throws IOException`, et doit être **idempotent**.
 - **L'ordre :** ouverture de gauche à droite ; fermeture dans l'ordre **inverse**, **avant** `catch` et `finally`.
-- **Portée :** la variable n'existe que dans le bloc `try`.
+- **Portée :** la variable n'existe que dans le bloc `try`. Elle est implicitement `final`, et peut être déclarée avec `var`.
 - **Les exceptions de `close()`** :
   - s'il y a déjà une exception, elles lui sont ajoutées comme **supprimées** (`getSuppressed()`) ;
   - sinon, la première devient la principale.
