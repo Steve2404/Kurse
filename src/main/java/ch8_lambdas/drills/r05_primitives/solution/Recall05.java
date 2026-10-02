@@ -1,6 +1,19 @@
 package ch8_lambdas.drills.r05_primitives.solution;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleConsumer;
+import java.util.function.DoublePredicate;
+import java.util.function.DoubleToLongFunction;
+import java.util.function.IntConsumer;
+import java.util.function.LongBinaryOperator;
+import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
+import java.util.function.LongToDoubleFunction;
+import java.util.function.LongToIntFunction;
+import java.util.function.ObjDoubleConsumer;
+import java.util.function.ObjLongConsumer;
+import java.util.function.ToDoubleBiFunction;
+import java.util.function.ToLongBiFunction;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleToIntFunction;
 import java.util.function.IntBinaryOperator;
@@ -43,5 +56,35 @@ public class Recall05 {
             append.accept(sb, i * i);
         }
         System.out.println("D05 : " + sb);
+        // Les consommateurs primitifs, chaines par andThen, ecrivent dans le meme StringBuilder.
+        StringBuilder log = new StringBuilder();
+        IntConsumer i = n -> log.append('i').append(n);
+        LongConsumer l = n -> log.append(" l").append(n);
+        DoubleConsumer d = x -> log.append(" d").append(x);
+        ObjLongConsumer<StringBuilder> ol = (b, n) -> b.append(" ol").append(n);
+        ObjDoubleConsumer<StringBuilder> od = (b, x) -> b.append(" od").append(x);
+        i.andThen(n -> log.append('+')).accept(1);
+        l.accept(2L);
+        d.accept(3.5);
+        ol.accept(log, 4L);
+        od.accept(log, 5.5);
+        System.out.println("D06 : " + log);
+        DoublePredicate positive = x -> x > 0;
+        LongBinaryOperator gcd = (a, b) -> {
+            while (b != 0) {
+                long t = a % b;
+                a = b;
+                b = t;
+            }
+            return a;
+        };
+        LongFunction<String> hex = Long::toHexString;
+        LongToIntFunction digits = n -> String.valueOf(n).length();
+        LongToDoubleFunction kilo = n -> n / 1000.0;
+        DoubleToLongFunction round = Math::round;
+        ToLongBiFunction<String, String> totalLength = (a, b) -> (long) a.length() + b.length();
+        ToDoubleBiFunction<Integer, Integer> ratio = (a, b) -> (double) a / b;
+        System.out.println("D07 : " + positive.negate().test(-1.5) + " " + gcd.applyAsLong(84, 36) + " " + hex.apply(255L) + " " + digits.applyAsInt(123456L) + " "
+                + kilo.applyAsDouble(1500L) + " " + round.applyAsLong(2.5) + " " + totalLength.applyAsLong("ab", "cde") + " " + ratio.applyAsDouble(1, 4));
     }
 }

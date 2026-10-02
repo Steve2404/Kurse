@@ -35,6 +35,25 @@
   → `D04 : 3.5 -3 3.5`
 - ☐ **D05.** `ObjIntConsumer<StringBuilder> append = (s, n) -> s.append(n).append(',')`, appelé pour i de 1 à 3 avec i².
   → `D05 : 1,4,9,`
+- ☐ **D06.** Les consommateurs primitifs, qui écrivent tous dans un `StringBuilder log` :
+  - `IntConsumer i` ajoute `i` + n, chaîné par `andThen(n -> log.append('+'))`, puis `accept(1)` ;
+  - `LongConsumer l` ajoute ` l` + n, puis `accept(2L)` ;
+  - `DoubleConsumer d` ajoute ` d` + x, puis `accept(3.5)` ;
+  - `ObjLongConsumer<StringBuilder> ol` ajoute ` ol` + n, avec `(log, 4L)` ;
+  - `ObjDoubleConsumer<StringBuilder> od` ajoute ` od` + x, avec `(log, 5.5)`.
+  
+  Affiche `log`.
+  → `D06 : i1+ l2 d3.5 ol4 od5.5`
+- ☐ **D07.** Huit interfaces, une seule ligne :
+  - `DoublePredicate positive`, puis `positive.negate().test(-1.5)` ;
+  - `LongBinaryOperator gcd` (Euclide en boucle), sur (84, 36) ;
+  - `LongFunction<String> hex = Long::toHexString`, sur 255 ;
+  - `LongToIntFunction digits` (nombre de chiffres), sur 123456 ;
+  - `LongToDoubleFunction kilo = n -> n / 1000.0`, sur 1500 ;
+  - `DoubleToLongFunction round = Math::round`, sur 2.5 ;
+  - `ToLongBiFunction<String, String> totalLength`, sur `("ab", "cde")` ;
+  - `ToDoubleBiFunction<Integer, Integer> ratio`, sur (1, 4).
+  → `D07 : true 12 ff 6 1.5 3 5 0.25`
 
 ## Expériences (hors sortie attendue)
 
@@ -42,6 +61,7 @@
 2. `IntFunction<String> f` utilise `apply`, mais `ToIntFunction<String>` utilise `applyAsInt` : pourquoi cette différence de nom ?
 3. Existe-t-il une `BooleanUnaryOperator` ou une `CharPredicate` dans le JDK ?
 4. `IntPredicate p = Integer::isEven;` : quelle erreur ? (Cette méthode n'existe pas.)
+5. `DoubleToLongFunction r = Math::round;` compile, mais `DoubleToIntFunction r = Math::round;` ? Pourquoi ? (`Math.round(double)` rend un `long`.)
 
 ## Sortie attendue complète
 
@@ -51,6 +71,8 @@ D02 : false true 81 10 9
 D03 : 6 5 ****
 D04 : 3.5 -3 3.5
 D05 : 1,4,9,
+D06 : i1+ l2 d3.5 ol4 od5.5
+D07 : true 12 ff 6 1.5 3 5 0.25
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -72,7 +94,12 @@ Les versions primitives existent pour **`int`, `long` et `double`** (et `Boolean
 
 **La règle des noms :** la méthode s'appelle `applyAsX` / `getAsX` quand le **résultat** est un primitif X.
 
-**Pour `long` et `double` :** le même schéma (`LongSupplier`, `DoubleUnaryOperator`, `ToDoubleFunction`…).
+**Pour `long` et `double` :** le même schéma :
+- `LongConsumer`, `DoublePredicate`, `LongFunction<R>` ;
+- `LongBinaryOperator`, `ToLongBiFunction`, `ToDoubleBiFunction` ;
+- `ObjLongConsumer`, `ObjDoubleConsumer`.
+
+**Les conversions entre primitifs :** `IntToLong`, `IntToDouble`, `LongToInt`, `LongToDouble`, `DoubleToInt` et `DoubleToLong` (+ `Function`). Il n'en existe aucune vers ou depuis `boolean`.
 
 **`boolean` :** seulement `BooleanSupplier` (`getAsBoolean`).
 
