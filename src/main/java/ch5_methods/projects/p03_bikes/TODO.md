@@ -47,6 +47,7 @@ Gare -> Parc : 5 km, diametre 9 km, voisin le plus proche du Parc 3 km
   - initialise `DIST` à 0 sur la diagonale et à `INF = 1_000` ailleurs ;
   - remplis les routes de `Data.ROADS`, dans les deux sens (découpe avec `split("[- ]")`) ;
   - pour chaque k, puis i, puis j : si passer par k est plus court, mets à jour (et compte).
+- La ligne `Gare -> Parc` appelle `km(index("Gare"), index("Parc"))`, `diameter()` et `closest(2)` (le Parc).
 - Les traces de `Network` apparaissent **après** `main commence` : la classe n'est chargée qu'à son premier usage.
 - Méthodes `static` à écrire : `index(String)`, `km(int, int)`, `diameter()` (la plus grande distance) et `closest(int)` (la plus petite distance vers une autre station). `closest` utilise `min`, importé avec `import static java.lang.Math.min;`.
 - **Expériences :**
@@ -106,7 +107,7 @@ static via null : 5 stations, Campus (#4 sur 5)
 - **Le `static` via `null`** : `Station nothing = null;`, puis `nothing.count()`.
   - Ça marche : Java ne regarde que le **type déclaré** pour un membre `static`. `javac` affiche un avertissement : c'est voulu.
   - **Question :** et `nothing.describe()`, une méthode d'instance ?
-- `describe()` est une méthode **d'instance** : elle lit `name`, `id` et le `static` `created`.
+- `describe()` est une méthode **d'instance** : elle lit `name`, `id` et le `static` `created`. La dernière ligne l'appelle sur `Station.get(4)`.
 
 ---
 

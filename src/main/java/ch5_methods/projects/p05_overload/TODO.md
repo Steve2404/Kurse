@@ -85,10 +85,14 @@ type declare Object : "7" 7 "sept" null
   - **`toJson(String)`** : `null` → `null` ; sinon entre guillemets. Échappe d'abord `\` en `\\`, puis `"` en `\"`, puis le saut de ligne en `\n`.
     - **Question :** pourquoi l'ordre des `replace` compte-t-il ?
   - **`toJson(int[][])`** réutilise `toJson(int[])` pour chaque ligne.
+- **Les données des trois premières lignes :**
+  - ligne 1 : `toJson(42)`, `toJson(true)`, `toJson(2.5)` et `toJson("il dit \"oui\"\\non")`. Dans le code Java, ce texte contient de vrais guillemets et un antislash suivi de `non` ;
+  - ligne 2 : `toJson(new int[] {1, 2, 3})`, `toJson(new int[][] {{1, 2}, {}, {3}})` et `toJson(new String[] {"a", "b\"c"})` ;
+  - ligne 3 : `naive(number)`, `toJson(number)`, `toJson(text)` (avec `Object text = "sept"`) et `toJson((Object) null)`.
 - **Le piège :** `Object number = 7;` puis `Json.toJson(number)` appelle **`toJson(Object)`**, pas `toJson(int)`.
   - Une méthode `naive(Object o)`, qui fait `"\"" + o + "\""`, montre le mauvais résultat `"7"`.
   - `toJson(Object)` doit donc **redistribuer** à la main avec `instanceof` et le pattern matching (chapitre 3) : `String`, `Integer`, `Boolean`, `Double`, `int[]`, `String[]`, `null`.
-- **`array(Object... values)`** : chaque élément est un `Object`, donc il passe par `toJson(Object)`.
+- **`array(Object... values)`** : chaque élément est un `Object`, donc il passe par `toJson(Object)`. Appelle-la avec `1, "deux", 3.0, false, null, new int[] {4, 5}, new String[] {"six"}`.
 - **`field(String key, String json)`** et **`object(String... fields)`** construisent un objet JSON. Ils s'emboîtent : un objet peut contenir un objet, et `object()` sans argument donne `{}`.
 
 ---

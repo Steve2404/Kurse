@@ -40,6 +40,7 @@
 4. `static int h() { return 1L; }` et `static byte k() { return 200; }` : pourquoi refusées ?
 5. `var` comme paramètre ou comme type de retour : que dit `javac` ?
 6. Dans D06, retire le `else` : quelle erreur ?
+7. **Effectively final.** Ajoute `final` devant **chaque** paramètre et chaque variable locale de `value2`, `firstNegative` et `_twice`. Celles qui compilent encore étaient *effectively final* : jamais réaffectées. Lesquelles cassent, et pourquoi (`v += 2`, `i++`) ?
 
 ## Sortie attendue complète
 

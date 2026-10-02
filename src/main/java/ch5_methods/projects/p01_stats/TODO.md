@@ -54,6 +54,9 @@ moyenne juste : 14.9, max 25, max d'un seul -3
 - `static double average(int first, int... rest)` : le paramètre `first` **impose** au moins une valeur.
   - **Expérience :** `average()` ne compile pas. Lis le message.
 - **Le piège :** `average(t[0], t)` compte la première valeur deux fois. Fais l'appel juste avec `Arrays.copyOfRange(t, 1, t.length)`.
+- **Les appels exacts** (avec `t = Data.TEMPS` et `rest`, la copie sans la première case) :
+  - 1re ligne : `average(t[0], t)`, le texte du piège, `average(5)` et `average(4, 5, 6)` ;
+  - 2e ligne : `average(t[0], rest)`, `max(t[0], rest)` et `max(-3)`.
 - `static int max(int first, int... rest)`.
 - L'arrondi à 2 décimales passe par une méthode **`private static double round2(double)`** : personne d'autre n'en a besoin.
 - **Questions :**
@@ -78,6 +81,11 @@ moyenne glissante (3) : [12.0, 15.33, 16.33, 18.33, 13.33, 15.67, 15.67, 17.0]
   3. Ne continue que du côté qui contient la position k − 1.
   - L'échange de deux cases est une méthode `private static void swap(int[], int, int)`.
   - **Question :** pourquoi l'échange se voit-il chez l'appelant, alors que Java passe tout par valeur ?
+- **Les appels exacts :**
+  - `median(t)` et `median(3, 1, 2)`, puis `Arrays.toString(t)` ;
+  - `modes(t)` et `modes(1, 1, 2, 2, 3)` ;
+  - `kth(1, t)`, `kth(3, t)` et `kth(10, t)`, puis `t[0] == 12` ;
+  - `movingAverage(3, t)`.
 - **`movingAverage(int window, int... values)`** rend un **`double[]`** de taille `n - window + 1`, calculé par fenêtre glissante (ajoute l'entrant, retire le sortant).
 
 ### ☐ Étape 4 — Varargs de tableaux et d'objets
@@ -87,8 +95,11 @@ concat : [3, 8, 1, 9, 4] 0
 join : a, b, c |  | lun/mar/mer/jeu/ven
 describe : 4 element(s) : 1 deux 3.0 c | 0 element(s) : | 1 element(s) : null | tableau null | true
 ```
-- `static int[] concat(int[]... arrays)` : chaque argument est un `int[]`. Recopie-les avec `System.arraycopy`. `concat()` rend un tableau vide.
-- `static String join(String separator, String... parts)` : écris la boucle toi-même. `join("-")` donne `""`. Un `String[]` (`Data.LABELS`) passe directement.
+- `static int[] concat(int[]... arrays)` : chaque argument est un `int[]`. Recopie-les avec `System.arraycopy`.
+  - Appelle-la avec `Data.SHOP_A, Data.SHOP_B, Data.SHOP_C`, puis affiche la longueur de `concat()`.
+- `static String join(String separator, String... parts)` : écris la boucle toi-même.
+  - Appelle-la avec `", ", "a", "b", "c"`, puis `"-"` seul (le résultat est `""`), puis `"/", Data.LABELS` (un `String[]` passe directement).
+  - Les trois résultats sont séparés par ` | `.
 - `static String describe(Object... items)` : le nombre d'éléments suivi de chacun, ou `tableau null`.
   - `describe(1, "deux", 3.0, 'c')` : chaque primitif est **emballé** (`Integer`, `Double`, `Character`).
   - `(Object) null` : **un** élément qui vaut `null`.

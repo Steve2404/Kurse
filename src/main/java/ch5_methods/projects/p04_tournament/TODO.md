@@ -42,6 +42,14 @@ immuables : Lions 5, resultat ignore 5, resultat garde 6
 - `static void reassign(int[] arr)`, qui fait `arr = new int[] {…}`, et `static void mutate(int[] arr)`, qui fait `arr[0] *= 10`.
 - `static void tryChange(String s, Integer n)` fait `s += "!"` et `n++` : ni `s` ni `n` ne changent chez l'appelant.
 - `static int increment(int n)` : appelle-la une fois **en ignorant** le résultat, puis une fois en le gardant.
+- **Les valeurs de départ :**
+  - `a = 1`, `b = 2`, `pair = {1, 2}` ;
+  - `sb1 = "Lions"`, `sb2 = "Ours"`, `numbers = {1, 2, 3}` ;
+  - `s = "Lions"`, `Integer n = 5`, `counter = 5`.
+- **L'ordre des appels :**
+  1. `reassign(numbers)`, puis note `Arrays.toString(numbers)` (la valeur `reassigne`) ;
+  2. `mutate(numbers)` ;
+  3. `increment(counter)` sans affecter le résultat, puis `int returned = increment(counter)`.
 - **Pour chaque ligne, dessine** les variables de l'appelant et de la méthode (deux colonnes), avec des flèches vers les objets.
 
 ### ☐ Étape 2 — L'autoboxing
@@ -55,9 +63,10 @@ unboxing : total 7, AB, Integer.valueOf("42") + 1 = 43, Double 5.0
   - `five.equals(5)` est faux : le 5 devient un `Integer`, pas un `Long` ;
   - `five == 5` est vrai : unboxing, puis comparaison numérique.
 - `big1 < 200` : l'unboxing est automatique avec `<`.
-- **Un `Integer[]` avec un `null`** : additionne en sautant le `null`.
+- **Un `Integer[]` avec un `null`**, `{3, null, 4}` : additionne en sautant le `null`.
   - **Expérience :** retire le test. Quelle exception ?
 - `Character letter = 'A';` puis `(char) (letter + 1)`.
+- Affiche aussi `Integer.valueOf("42") + 1` (un `Integer` unboxé pour l'addition).
 - `Double.valueOf(5)` compile (un `int` passé à une méthode qui attend un `double`), mais `Double d = 5;` non.
   - **Expérience :** vérifie-le, puis explique pourquoi.
 
