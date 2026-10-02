@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,14 +72,6 @@ public class BusNetwork {
         }
     }
 
-    static class Refusal extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        Refusal(String reason) {
-            super(reason);
-        }
-    }
-
     private final Map<String, Line> lines = new LinkedHashMap<>();
     private int ticketCounter;
 
@@ -87,8 +79,18 @@ public class BusNetwork {
         lineData.stream().map(Line::parse).forEach(l -> lines.put(l.id(), l));
     }
 
-    Line line(String id) throws Refusal {
-        return Optional.ofNullable(lines.get(id)).orElseThrow(() -> new Refusal("ligne inconnue " + id));
+    Optional<Line> findLine(String id) {
+        return Optional.ofNullable(lines.get(id));
+    }
+
+    // Un refus est une reponse : la chaine Optional rend le resultat OU "REFUS : ...", sans if ni exception.
+    // Le traitement (BiFunction, chapitre 8) n'est appele que si la ligne existe ET dessert l'arret.
+    String withLineAndStop(String id, String stopName, BiFunction<Line, Stop, String> action) {
+        return findLine(id)
+                .map(l -> l.stop(stopName)
+                        .map(s -> action.apply(l, s))
+                        .orElse("REFUS : " + id + " ne dessert pas " + stopName))
+                .orElse("REFUS : ligne inconnue " + id);
     }
 
     // flatMap : chaque ligne devient le flux de ses arrets ; distinct + sorted sur le flux aplati.
@@ -125,30 +127,27 @@ public class BusNetwork {
                 .collect(Collectors.joining(" -> ")));
     }
 
-    // peek compte les departs REELLEMENT generes : filter + findFirst arretent la generation au 1er trouve.
-    void next(String id, String stopName, LocalTime time) throws Refusal {
-        Line l = line(id);
-        Stop s = l.stop(stopName).orElseThrow(() -> new Refusal(id + " ne dessert pas " + stopName));
-        AtomicInteger generated = new AtomicInteger();
+    // peek note les departs REELLEMENT generes : filter + findFirst arretent la generation au 1er trouve.
+    // La lambda ne peut pas modifier une variable locale (effectivement finale) : elle remplit une liste.
+    String next(Line l, Stop s, LocalTime time) {
+        List<LocalTime> generated = new ArrayList<>();
         Optional<LocalTime> next = l.departures()
-                .peek(d -> generated.incrementAndGet())
+                .peek(generated::add)
                 .map(d -> d.plusMinutes(s.offset()))
                 .filter(a -> !a.isBefore(time))
                 .findFirst();
-        System.out.println("PROCHAIN " + id + " a " + stopName + " : " + next.map(LocalTime::toString).orElse("plus de bus")
-                + " (" + generated.get() + " horaires calcules)");
+        return "PROCHAIN " + l.id() + " a " + s.name() + " : " + next.map(LocalTime::toString).orElse("plus de bus")
+                + " (" + generated.size() + " horaires calcules)";
     }
 
     // dropWhile/takeWhile : la liste est TRIEE, donc "avant from" est un prefixe et "apres to" un suffixe.
-    void timetable(String id, String stopName, LocalTime from, LocalTime to) throws Refusal {
-        Line l = line(id);
-        Stop s = l.stop(stopName).orElseThrow(() -> new Refusal(id + " ne dessert pas " + stopName));
-        System.out.println("HORAIRES " + id + " a " + stopName + " : " + l.departures()
+    String timetable(Line l, Stop s, LocalTime from, LocalTime to) {
+        return "HORAIRES " + l.id() + " a " + s.name() + " : " + l.departures()
                 .map(d -> d.plusMinutes(s.offset()))
                 .dropWhile(a -> a.isBefore(from))
                 .takeWhile(a -> !a.isAfter(to))
                 .map(LocalTime::toString)
-                .collect(Collectors.joining(" ")));
+                .collect(Collectors.joining(" "));
     }
 
     static final Comparator<Trip> BY_ARRIVAL = Comparator.comparing(Trip::arrival);
@@ -188,11 +187,10 @@ public class BusNetwork {
     }
 
     // noneMatch pour la reponse, puis filter pour nommer les coupables.
-    void accessible(String id) throws Refusal {
-        Line l = line(id);
+    String accessible(Line l) {
         boolean ok = l.stops().stream().map(Stop::name).noneMatch(Data.NOT_ACCESSIBLE::contains);
-        System.out.println("ACCESSIBLE " + id + " : " + (ok ? "oui" : "non (" + l.stops().stream().map(Stop::name)
-                .filter(Data.NOT_ACCESSIBLE::contains).collect(Collectors.joining(", ")) + ")"));
+        return "ACCESSIBLE " + l.id() + " : " + (ok ? "oui" : "non (" + l.stops().stream().map(Stop::name)
+                .filter(Data.NOT_ACCESSIBLE::contains).collect(Collectors.joining(", ")) + ")");
     }
 
     // generate : source INFINIE et sans etat propre ; le compteur vit dans l'objet, donc la numerotation continue.
@@ -217,23 +215,20 @@ public class BusNetwork {
 
     void execute(String command) {
         String[] p = command.split(" ");
-        try {
-            switch (p[0]) {
-                case "ARRETS" -> stops();
-                case "PAGE" -> page(Integer.parseInt(p[1]), Integer.parseInt(p[2]));
-                case "LIGNES" -> linesByComplexity();
-                case "CIRCUIT" -> circuit(p[1], p[2]);
-                case "PROCHAIN" -> next(p[1], p[2], LocalTime.parse(p[3]));
-                case "HORAIRES" -> timetable(p[1], p[2], LocalTime.parse(p[3]), LocalTime.parse(p[4]));
-                case "DIRECT" -> direct(p[1], p[2], LocalTime.parse(p[3]));
-                case "CORRESPONDANCE" -> connection(p[1], p[2], LocalTime.parse(p[3]));
-                case "ACCESSIBLE" -> accessible(p[1]);
-                case "TICKETS" -> tickets(Integer.parseInt(p[1]));
-                case "RESEAU" -> network();
-                default -> throw new Refusal("commande inconnue " + p[0]);
-            }
-        } catch (Refusal e) {
-            System.out.println("REFUS : " + e.getMessage());
+        switch (p[0]) {
+            case "ARRETS" -> stops();
+            case "PAGE" -> page(Integer.parseInt(p[1]), Integer.parseInt(p[2]));
+            case "LIGNES" -> linesByComplexity();
+            case "CIRCUIT" -> circuit(p[1], p[2]);
+            case "PROCHAIN" -> System.out.println(withLineAndStop(p[1], p[2], (l, s) -> next(l, s, LocalTime.parse(p[3]))));
+            case "HORAIRES" -> System.out.println(withLineAndStop(p[1], p[2],
+                    (l, s) -> timetable(l, s, LocalTime.parse(p[3]), LocalTime.parse(p[4]))));
+            case "DIRECT" -> direct(p[1], p[2], LocalTime.parse(p[3]));
+            case "CORRESPONDANCE" -> connection(p[1], p[2], LocalTime.parse(p[3]));
+            case "ACCESSIBLE" -> System.out.println(findLine(p[1]).map(this::accessible).orElse("REFUS : ligne inconnue " + p[1]));
+            case "TICKETS" -> tickets(Integer.parseInt(p[1]));
+            case "RESEAU" -> network();
+            default -> System.out.println("REFUS : commande inconnue " + p[0]);
         }
     }
 

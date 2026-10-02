@@ -1,4 +1,4 @@
-# Drill de rappel 12 — Kata mixte chronométré (tout le chapitre)
+# Drill de rappel 11 — Kata mixte chronométré (tout le chapitre)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch10_streams/PARCOURS.md`](../../PARCOURS.md) : comment lire cette fiche, lancer `Check`, quoi faire en cas de blocage.
 
@@ -6,13 +6,13 @@
 
 **Règles :**
 - Tout se fait de mémoire.
-- Crée la classe **`Recall12`** et ton record pour `Data.BOOKS`.
+- Crée la classe **`Recall11`** et ton record pour `Data.BOOKS`.
 - Chaque défi tient en **une** chaîne de stream, éventuellement suivie d'une 2e sur le résultat.
 - Écris une ligne `Dxx : ` par défi.
 
 ## Défis
 
-- ☐ **D01.** Le genre dont le prix **moyen** est le plus élevé, avec cette moyenne (2 décimales).
+- ☐ **D01.** Le genre dont le prix **moyen** est le plus élevé, avec cette moyenne (arrondie à 2 décimales avec `Math.round`).
   → `D01 : Fantasy 9.95`
 - ☐ **D02.** L'auteur qui totalise le plus de pages, via une `Map` auteur → pages construite par `toMap`.
   → `D02 : Zola`
@@ -24,7 +24,7 @@
   → `D05 : Hyperion`
 - ☐ **D06.** La longueur minimale, la longueur maximale et la somme des longueurs des titres, en un seul passage.
   → `D06 : 4 15 76`
-- ☐ **D07.** Les pages moyennes des livres SF et celles des autres livres, en un seul passage (1 décimale).
+- ☐ **D07.** Les pages moyennes des livres SF et celles des autres livres, en un seul passage (arrondies à 1 décimale).
   → `D07 : SF 355.0 / autres 444.8`
 - ☐ **D08.** Les 2 mots les plus fréquents de `WORDS`. À égalité, l'ordre alphabétique décide. Affiche `mot=nombre`.
   → `D08 : java=2, stream=2`

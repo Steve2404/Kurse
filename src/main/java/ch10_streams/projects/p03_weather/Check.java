@@ -43,7 +43,10 @@ public class Check {
             "IntStream.of(", "IntStream.range(", "IntStream.rangeClosed(", "IntStream.iterate(",
             ".chars()", ".mapToInt(", ".mapToLong(", ".mapToDouble(", ".mapToObj(", ".flatMapToInt(",
             ".boxed()", ".asDoubleStream()", ".toArray()", ".summaryStatistics()", "IntSummaryStatistics",
-            ".average()", ".getAsDouble()", ".sum()", ".max()");
+            ".average()", ".getAsDouble()", ".sum()", ".max()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "WeatherStation", args, EXPECTED, API);

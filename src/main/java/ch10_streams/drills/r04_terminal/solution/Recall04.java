@@ -46,17 +46,13 @@ public class Recall04 {
         System.out.println("D05 : " + objects.getClass().getSimpleName() + " " + objects.length + " / "
                 + strings.getClass().getSimpleName() + " " + strings.length);
 
+        // Les deux listes ont le meme contenu ; seule celle de Collectors.toList() accepte un ajout
+        // (toList() du stream rend une liste NON modifiable : add lancerait UnsupportedOperationException).
         List<String> fixed = BOOKS.stream().map(Book::title).toList();
         List<String> mutable = BOOKS.stream().map(Book::title).collect(Collectors.toList());
-        String fixedAdd;
-        try {
-            fixed.add("x");
-            fixedAdd = "ajout ok";
-        } catch (UnsupportedOperationException e) {
-            fixedAdd = e.getClass().getSimpleName();
-        }
+        boolean same = fixed.equals(mutable);
         mutable.add("x");
-        System.out.println("D06 : toList() -> " + fixedAdd + ", Collectors.toList() -> " + mutable.size() + " elements");
+        System.out.println("D06 : meme contenu " + same + ", Collectors.toList() apres ajout -> " + mutable.size() + " elements");
 
         System.out.println("D07 : " + BOOKS.stream().map(Book::pages).reduce(0, Integer::sum) + " "
                 + BOOKS.stream().map(Book::year).reduce(Integer::max).orElse(0) + " "

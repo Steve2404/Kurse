@@ -5,11 +5,11 @@ import ch10_streams.projects.p04_league.Data;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
 
 /**
  * SOLUTION du projet 4 - une conception possible (sans la classe Collectors, interdite ici).
@@ -116,26 +116,31 @@ public class League {
         matches = lines.stream().map(Match::parse).toList();
     }
 
-    // collect a 3 arguments : le combiner doit AUSSI poser le separateur, sinon le resultat parallele colle les morceaux.
-    String results(Stream<Match> stream) {
-        return stream.collect(StringBuilder::new,
-                (sb, m) -> {
-                    if (sb.length() > 0) {
-                        sb.append(" | ");
-                    }
-                    sb.append(m);
-                },
-                (left, right) -> {
-                    if (left.length() > 0 && right.length() > 0) {
-                        left.append(" | ");
-                    }
-                    left.append(right);
-                }).toString();
+    // collect a 3 arguments : les trois morceaux sont NOMMES (chapitre 8) pour pouvoir verifier le combiner a la main.
+    static final BiConsumer<StringBuilder, Match> RESULTS_ACCUMULATOR = (sb, m) -> {
+        if (sb.length() > 0) {
+            sb.append(" | ");
+        }
+        sb.append(m);
+    };
+
+    // Le combiner doit AUSSI poser le separateur, sinon deux morceaux se collent.
+    static final BiConsumer<StringBuilder, StringBuilder> RESULTS_COMBINER = (left, right) -> {
+        if (left.length() > 0 && right.length() > 0) {
+            left.append(" | ");
+        }
+        left.append(right);
+    };
+
+    static StringBuilder results(List<Match> part) {
+        return part.stream().collect(StringBuilder::new, RESULTS_ACCUMULATOR, RESULTS_COMBINER);
     }
 
     // reduce a 3 arguments : le resultat (int) n'est pas du type des elements (Match) -> il faut un combiner.
-    int goals(Stream<Match> stream) {
-        return stream.reduce(0, (sum, m) -> sum + m.goals(), Integer::sum);
+    static final BinaryOperator<Integer> GOALS_COMBINER = Integer::sum;
+
+    static int goals(List<Match> part) {
+        return part.stream().reduce(0, (sum, m) -> sum + m.goals(), GOALS_COMBINER);
     }
 
     // reduce sans identite -> Optional (saison vide) ; ">" strict garde le PREMIER a egalite, et reste associatif.
@@ -148,30 +153,43 @@ public class League {
         return matches.stream().filter(m -> m.involves(team)).map(m -> m.statsFor(team)).reduce(Stats.ZERO, Stats::plus);
     }
 
-    int unbeatenStreak(Stream<Match> stream, String team) {
-        return stream.filter(m -> m.involves(team))
-                .reduce(Segment.EMPTY, (seg, m) -> seg.plus(Segment.of(m.statsFor(team).lost() == 0)), Segment::plus)
-                .best();
+    static Segment unbeaten(List<Match> part, String team) {
+        return part.stream().filter(m -> m.involves(team))
+                .reduce(Segment.EMPTY, (seg, m) -> seg.plus(Segment.of(m.statsFor(team).lost() == 0)), Segment::plus);
     }
 
     record Streak(String team, int best) {
     }
 
-    String streaks(boolean parallel, List<Row> table) {
+    String streaks(List<Row> table) {
         return table.stream()
-                .map(r -> new Streak(r.team(), unbeatenStreak(parallel ? matches.parallelStream() : matches.stream(), r.team())))
+                .map(r -> new Streak(r.team(), unbeaten(matches, r.team()).best()))
                 .sorted(Comparator.comparingInt(Streak::best).reversed().thenComparing(Streak::team))
                 .map(st -> st.team() + " " + st.best())
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("");
     }
 
+    // Applique un Collector A LA MAIN sur un morceau : supplier, puis accumulator pour chaque element.
+    static <A> A partial(Collector<Match, A, ?> collector, List<Match> part) {
+        A container = collector.supplier().get();
+        part.forEach(m -> collector.accumulator().accept(container, m));
+        return container;
+    }
+
+    // Une deux morceaux comme le ferait un decoupage : combiner, puis finisher.
+    static <A, R> R combined(Collector<Match, A, R> collector, List<Match> left, List<Match> right) {
+        return collector.finisher().apply(collector.combiner().apply(partial(collector, left), partial(collector, right)));
+    }
+
     void report() {
-        String results = results(matches.stream());
+        String results = results(matches).toString();
         System.out.println("RESULTATS : " + results);
 
-        int goals = goals(matches.stream());
-        System.out.println(String.format(Locale.US, "BUTS : %d en %d matchs, moyenne %.2f", goals, matches.size(), (double) goals / matches.size()));
+        int goals = goals(matches);
+        // Math.round(x * 100) / 100.0 : deux decimales sans Locale (Double.toString ecrit un point).
+        System.out.println("BUTS : " + goals + " en " + matches.size() + " matchs, moyenne "
+                + Math.round((double) goals / matches.size() * 100) / 100.0);
 
         System.out.println("PLUS LARGE VICTOIRE : " + biggestWin()
                 .map(m -> m.round() + " " + m + " (ecart " + m.margin() + ")")
@@ -189,8 +207,7 @@ public class League {
         System.out.println("BILAN Lions (reduce) : " + lions.played() + " matchs, " + lions.points()
                 + " pts, identique au classement : " + yesNo(table.stream().anyMatch(r -> r.stats().equals(lions))));
 
-        String streaks = streaks(false, table);
-        System.out.println("SERIES SANS DEFAITE : " + streaks);
+        System.out.println("SERIES SANS DEFAITE : " + streaks(table));
 
         // Controle croise : les points distribues ne dependent que du nombre de victoires et de nuls.
         int points = table.stream().reduce(0, (sum, r) -> sum + r.stats().points(), Integer::sum);
@@ -199,11 +216,18 @@ public class League {
         System.out.println("CONTROLE : " + points + " points distribues = " + wins + " victoires x " + Data.POINTS_WIN
                 + " + " + draws + " nuls x " + (2 * Data.POINTS_DRAW) + " : " + yesNo(points == wins * Data.POINTS_WIN + draws * 2 * Data.POINTS_DRAW));
 
-        // Le meme calcul en parallele doit donner exactement le meme resultat si identite, accumulateur et combiner sont corrects.
-        System.out.println("PARALLELE : resultats " + yesNo(results.equals(results(matches.parallelStream())))
-                + ", buts " + yesNo(goals == goals(matches.parallelStream()))
-                + ", classement " + yesNo(table.equals(matches.parallelStream().collect(TABLE)))
-                + ", series " + yesNo(streaks.equals(streaks(true, table))));
+        // Preuve du combiner : on reduit DEUX morceaux inegaux de la saison, puis on les fusionne avec le combiner.
+        // Si identite, accumulateur et combiner sont corrects, on retrouve exactement le resultat d'un seul passage.
+        List<Match> left = matches.subList(0, Data.SPLIT_AT);
+        List<Match> right = matches.subList(Data.SPLIT_AT, matches.size());
+        StringBuilder joined = results(left);
+        RESULTS_COMBINER.accept(joined, results(right));
+        boolean streaksOk = table.stream()
+                .allMatch(r -> unbeaten(left, r.team()).plus(unbeaten(right, r.team())).best() == unbeaten(matches, r.team()).best());
+        System.out.println("COMBINER (" + left.size() + " + " + right.size() + " matchs) : resultats " + yesNo(results.equals(joined.toString()))
+                + ", buts " + yesNo(goals == GOALS_COMBINER.apply(goals(left), goals(right)))
+                + ", classement " + yesNo(table.equals(combined(TABLE, left, right)))
+                + ", series " + yesNo(streaksOk));
     }
 
     static String yesNo(boolean b) {

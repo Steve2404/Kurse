@@ -2,10 +2,11 @@ package ch10_streams.drills.r02_sources.solution;
 
 import ch10_streams.drills.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.StringJoiner;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,33 +33,27 @@ public class Recall02 {
         System.out.println("D06 : " + "java".chars().mapToObj(c -> String.valueOf((char) c)).collect(Collectors.joining("-")));
 
         // Paresse : chaque element traverse TOUT le pipeline avant le suivant ; findFirst arrete tout.
-        AtomicInteger seen = new AtomicInteger();
-        String first = Data.WORDS.stream().peek(w -> seen.incrementAndGet()).filter(w -> w.length() > 6).findFirst().orElse("-");
-        System.out.println("D07 : " + first + " apres " + seen + " elements examines");
+        List<String> seen = new ArrayList<>();
+        String first = Data.WORDS.stream().peek(seen::add).filter(w -> w.length() > 6).findFirst().orElse("-");
+        System.out.println("D07 : " + first + " apres " + seen.size() + " elements examines");
 
         // Sans operation terminale, rien ne s'execute.
-        AtomicInteger calls = new AtomicInteger();
-        Stream<String> neverRun = Data.WORDS.stream().peek(w -> calls.incrementAndGet()).map(String::toUpperCase);
-        System.out.println("D08 : sans operation terminale : " + calls + " appel");
+        List<String> calls = new ArrayList<>();
+        Stream<String> neverRun = Data.WORDS.stream().peek(calls::add).map(String::toUpperCase);
+        System.out.println("D08 : sans operation terminale : " + calls.size() + " appel");
 
-        Stream<String> once = Data.WORDS.stream();
-        once.count();
-        String reuse;
-        try {
-            once.count();
-            reuse = "rien";
-        } catch (IllegalStateException e) {
-            reuse = e.getClass().getSimpleName();
-        }
-        System.out.println("D09 : " + reuse);
+        // Un stream est a usage unique (un 2e count() lancerait IllegalStateException) :
+        // le remede est un Supplier qui fabrique un flux NEUF a chaque appel.
+        Supplier<Stream<String>> fresh = Data.WORDS::stream;
+        System.out.println("D09 : " + fresh.get().count() + " " + fresh.get().distinct().count());
 
         // iterator() : operation terminale qui rend un Iterator classique.
         Iterator<String> it = Data.WORDS.stream().iterator();
-        StringJoiner three = new StringJoiner(" ");
+        List<String> three = new ArrayList<>();
         for (int i = 0; i < 3 && it.hasNext(); i++) {
             three.add(it.next());
         }
-        System.out.println("D10 : " + three);
+        System.out.println("D10 : " + String.join(" ", three));
 
         // Piege : Stream.of(int[]) est un Stream<int[]> d'UN element ; Arrays.stream(int[]) est un IntStream.
         System.out.println("D11 : " + Stream.of(Data.NUMBERS).count() + " " + Arrays.stream(Data.NUMBERS).count());

@@ -17,7 +17,7 @@ public class Check {
             "D03 : true false true | vide : false true true",
             "D04 : HASTGZ",
             "D05 : Object[] 8 / String[] 8",
-            "D06 : toList() -> UnsupportedOperationException, Collectors.toList() -> 9 elements",
+            "D06 : meme contenu true, Collectors.toList() apres ajout -> 9 elements",
             "D07 : 3199 1989 SF/Fantasy/Classique",
             "D08 : Optional.empty 5",
             "D09 : true false",
@@ -28,7 +28,9 @@ public class Check {
             ".count()", ".min(", ".max(", ".findFirst()", ".findAny()",
             ".anyMatch(", ".allMatch(", ".noneMatch(", ".forEach(", ".toArray()",
             ".toArray(String[]::new)", ".toList()", "Collectors.toList()", ".reduce(", "Stream.generate(",
-            "UnsupportedOperationException");
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall04", args, EXPECTED, API);

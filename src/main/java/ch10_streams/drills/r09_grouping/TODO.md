@@ -40,7 +40,7 @@
   → `D09 : {Classique={1800=2}, Fantasy={1900=2}, SF={1900=4}}`
 - ☐ **D10.** En **un seul** passage, la moyenne des pages (division entière) et le nombre de livres, mis en phrase.
   → `D10 : 399 pages en moyenne sur 8`
-- ☐ **D11.** Le nombre de livres par auteur, calculé **en parallèle** dans une `Map` concurrente, affiché trié. Puis le nombre de genres distincts, collectés en ensemble.
+- ☐ **D11.** Le nombre de livres par auteur, trié par auteur. Puis le nombre de genres distincts, collectés en ensemble.
   → `D11 : {Asimov=1, Gibson=1, Herbert=1, Simmons=1, Tolkien=2, Zola=2} 3`
 - ☐ **D12.** Les titres **non** SF joints par `/`, en passant par une partition.
   → `D12 : Le Hobbit/Le Silmarillion/Germinal/L'Assommoir`
@@ -71,7 +71,6 @@ D12 : Le Hobbit/Le Silmarillion/Germinal/L'Assommoir
 | `groupingBy(f)` | `Map<K, List<T>>` (un `HashMap` en pratique, sans garantie) |
 | `groupingBy(f, downstream)` | `Map<K, D>` |
 | `groupingBy(f, mapFactory, downstream)` | la `Map` fournie, par exemple `TreeMap::new` |
-| `groupingByConcurrent(…)` | `ConcurrentMap` ; pour les flux parallèles non ordonnés |
 | `partitioningBy(pred)` | `Map<Boolean, List<T>>` ; contient **toujours** `false` et `true` |
 | `partitioningBy(pred, downstream)` | `Map<Boolean, D>` ; pas de fabrique de `Map` |
 

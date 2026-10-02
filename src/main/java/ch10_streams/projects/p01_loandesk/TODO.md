@@ -4,7 +4,7 @@
 
 **API visée :** `Optional`, `OptionalInt`, `OptionalDouble`  
 **Ce qui est donné :** `Data.java` (les données brutes) et `Check.java` (le correcteur). C'est tout.  
-**Ce que TU crées :** tous les fichiers `.java` du programme, dans ce paquet `ch10_streams.projects.p01_loandesk`. Les records, les classes, l'interface, l'exception, les méthodes et le `main`. Tu choisis les noms, sauf un : la classe qui contient `main` s'appelle **`LoanDesk`**, parce que c'est elle que `Check` lance.
+**Ce que TU crées :** tous les fichiers `.java` du programme, dans ce paquet `ch10_streams.projects.p01_loandesk`. Les records, les classes, l'interface, les méthodes et le `main`. Tu choisis les noms, sauf un : la classe qui contient `main` s'appelle **`LoanDesk`**, parce que c'est elle que `Check` lance.
 
 **Pour vérifier :** lance `Check.java`. Il exécute ton `main`, compare ta sortie à la sortie attendue (en bas de ce fichier) et te montre la première ligne fausse. Il lit aussi tes sources : il liste les méthodes d'`Optional` que tu n'as pas encore utilisées et refuse tout appel à `Optional.get()`.  
 Ne regarde `solution/` qu'à la fin.
@@ -38,9 +38,8 @@ Sur papier d'abord : quels types ? record, classe, interface ? quels champs ? da
   - `"M4;Tom;  "` : un email fait d'espaces n'est pas un email.
 - Le reste du programme lit l'email comme un `Optional<String>`. Règle de conception : `Optional` sert de **type de retour**, pas de champ ni de paramètre. Tu ne stockes donc pas d'`Optional` : tu le fabriques dans une méthode, en une seule chaîne et **sans `if`**.
 - Il te faudra aussi un **emprunt** (qui a pris quoi) et un **retour** (qui, quel livre, combien de jours de retard, quelle pénalité), car le BILAN en a besoin.
-- Une **exception vérifiée à toi**, qui porte la raison d'un refus.
-
-> Question à trancher toi-même : pourquoi une exception *vérifiée* plutôt qu'une `RuntimeException` ici ?
+- **Les montants sont en centimes**, dans un `int` : 50 centimes par jour, plafond 1000. Pour l'affichage `1.50`, écris une petite méthode avec `/` et `%` (chapitre 2) et `String.format("%d.%02d", …)` (chapitre 4).
+  - **Question :** pourquoi ne pas utiliser un `double` (0.50, 10.00) ? Pense à l'arrondi et à l'affichage.
 
 ### ☐ Étape 2 — Une interface de recherche de livres
 
@@ -75,7 +74,9 @@ REFUS : membre inconnu M9
 REFUS : livre inconnu B7
 REFUS : Lea a deja Dune
 ```
-- Les deux premiers refus se lancent avec `orElseThrow(Supplier)`, directement sur tes recherches.
+- **Un refus est une réponse normale, pas une erreur.** Ta méthode rend la ligne à afficher : soit le résultat, soit `REFUS : …`.
+  - **Contrainte :** les deux premiers refus s'écrivent **sans `if`**, en imbriquant tes recherches : `recherche membre` → `map(…)` → `recherche livre` → `map(…)` → `orElse("REFUS : …")`.
+  - **Conception (chapitre 8) :** EMPRUNT et RETOUR ont tous les deux besoin d'un membre **et** d'un livre. Écris **une** méthode « avec membre et livre » qui reçoit le traitement à faire sous forme de `BiFunction<…>`, et qui gère les deux refus une seule fois.
 - Pour « a déjà », tu ne **lis** pas l'emprunt trouvé, tu testes seulement s'il existe. C'est le seul endroit du projet où `isPresent()` est le bon outil.
 
 Plus d'exemplaire : le membre entre dans la file du livre.
@@ -91,10 +92,10 @@ OK : Lea emprunte Dune (reste 2)
 
 - Jusqu'à 3 jours de retard : rien.
 - Au-delà : 0,50 par jour **au-delà des 3**, plafonné à 10,00.
-- La méthode rend un `Optional<Double>`, **vide** quand il n'y a pas de pénalité. Ici tu construis l'`Optional` toi-même, avec `Optional.empty()` et `Optional.of(...)`.
-- Calcule à la main **avant** de coder : 0 → vide, 6 → 1.50, 20 → 8.50, 40 → 10.00.
+- La méthode rend un `Optional<Integer>` (centimes), **vide** quand il n'y a pas de pénalité. Ici tu construis l'`Optional` toi-même, avec `Optional.empty()` et `Optional.of(...)`.
+- Calcule à la main **avant** de coder : 0 → vide, 6 → 150, 20 → 850, 40 → 1000.
 
-> Pourquoi un `Optional` vide plutôt que `0.0` ?
+> Pourquoi un `Optional` vide plutôt que `0` ?
 
 ### ☐ Étape 6 — `RETOUR <membre> <isbn> <jours de retard>`
 
@@ -108,7 +109,8 @@ RETOUR : Hugo rend Le Petit Prince, penalite 1.50
 RETOUR : Lea rend Dune, sans penalite
 ```
 - La fin de la ligne s'écrit en **une expression** sur l'`Optional` de l'étape 5.
-- Écris le montant avec `String.format(Locale.US, "%.2f", …)`. Sinon, la JVM allemande écrit `1,50`.
+- Le montant s'affiche avec ta méthode de l'étape 1 (centimes → `1.50`).
+- **Le stock d'un livre :** chaque livre chargé a forcément un stock. S'il manquait, ce serait un **bug** du programme, pas un refus. Lis-le avec `orElseThrow(Supplier)` en fournissant une `IllegalStateException` avec un message clair. Ce cas ne se produit jamais avec ces données : c'est un garde-fou.
 
 Ensuite, si quelqu'un attend ce livre, le **premier de la file** l'emprunte aussitôt (même ligne `OK : …` qu'à l'étape 4), puis on le prévient :
 ```
@@ -137,6 +139,7 @@ REFUS : aucun livre pour Silmarillion
 ```
 - Utilise la méthode `default` de l'étape 2.
 - Attention, un titre peut contenir des espaces : `INFO Le Petit Prince`.
+- Un livre introuvable donne la ligne `REFUS`, toujours sans `if`.
 - **Le nombre en attente :** la file d'un livre que personne n'a jamais attendu peut ne pas exister du tout. Écris-le avec une chaîne `Optional`, sans `if` ni `getOrDefault`.
 
 ### ☐ Étape 9 — `BILAN` (4 lignes)
@@ -172,7 +175,7 @@ BILAN : 0 emprunt(s) en cours
 
 - Il charge les données, puis exécute chaque commande de `Data.COMMANDS`.
 - Toute autre commande produit `REFUS : commande inconnue RENOUVELER`.
-- Il entoure **chaque** commande d'un `try/catch` de **ton** exception, pour qu'un refus n'arrête pas les suivantes.
+- Chaque commande affiche sa réponse : un refus n'arrête pas les suivantes. Une `switch` (chapitre 3) choisit le traitement.
 - Ensuite, lance `Check.java`.
 
 ---
@@ -188,7 +191,7 @@ BILAN : 0 emprunt(s) en cours
 | `or` | 2 | ☐ |
 | `orElse` | 6, 7 | ☐ |
 | `orElseGet` | 6 | ☐ |
-| `orElseThrow(Supplier)` | 4, 6, 8 | ☐ |
+| `orElseThrow(Supplier)` | 6 (garde-fou du stock) | ☐ |
 | `orElseThrow()` | 9 | ☐ |
 | `ifPresent` | 6 | ☐ |
 | `ifPresentOrElse` | 7 | ☐ |

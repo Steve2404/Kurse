@@ -23,7 +23,7 @@ public class Check {
             "D09 : [Hyperion, L'Assommoir, Le Hobbit]",
             "D10 : [5, 3, 8, 1] [9, 2, 8, 7]",
             "D11 : count 9 -> peek 0 fois ; avec filter count 9 -> peek 9 fois",
-            "D12 : sorted() sans Comparable -> ClassCastException",
+            "D12 : [map, java, java, stream, lambda, stream, filter, optional, collector]",
             "D13 : map [2, 0, 1], flatMap [a, b, c]");
             // EXPECTED-END
 
@@ -31,7 +31,10 @@ public class Check {
             ".filter(", ".map(", ".flatMap(", ".distinct()", ".sorted()",
             "Comparator.comparing(", "Comparator.comparingInt(", "Comparator.comparingDouble(", ".thenComparing(", ".reversed()",
             "Comparator.reverseOrder()", "Comparator.naturalOrder()", "Comparator.nullsFirst(", "Comparator.nullsLast(", ".skip(",
-            ".limit(", ".takeWhile(", ".dropWhile(", ".peek(", "ClassCastException");
+            ".limit(", ".takeWhile(", ".dropWhile(", ".peek(", "Comparator.comparingInt(String::length)",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall03", args, EXPECTED, API);

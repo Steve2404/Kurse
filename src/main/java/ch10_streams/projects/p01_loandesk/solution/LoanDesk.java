@@ -9,11 +9,11 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
+import java.util.function.BiFunction;
 
 /**
  * SOLUTION du projet 1 - une conception possible parmi d'autres : le
@@ -22,22 +22,14 @@ import java.util.OptionalInt;
 public class LoanDesk implements Catalog {
 
     static final int GRACE_DAYS = 3;
-    static final double FEE_PER_DAY = 0.50;
-    static final double FEE_CAP = 10.00;
-
-    // TODO 4 : verifiee pour que le compilateur force le catch dans la boucle des commandes.
-    static class Refusal extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        Refusal(String reason) {
-            super(reason);
-        }
-    }
+    static final int FEE_CENTS_PER_DAY = 50;
+    static final int FEE_CAP_CENTS = 1000;
 
     record Loan(String memberId, String isbn) {
     }
 
-    record Return(Member member, Book book, int days, double fee) {
+    // Les montants en centimes (int) : pas d'arrondi flottant, et un affichage exact sans Locale.
+    record Return(Member member, Book book, int days, int feeCents) {
     }
 
     // TODO 5 : LinkedHashMap garde l'ordre de Data (la liste des emails du BILAN en depend).
@@ -76,75 +68,88 @@ public class LoanDesk implements Catalog {
         return loans.stream().filter(l -> l.memberId().equals(m.id()) && l.isbn().equals(b.isbn())).findFirst();
     }
 
-    // orElseThrow(Supplier) : l'exception n'est construite que si l'Optional est vide.
-    Member member(String id) throws Refusal {
-        return findMember(id).orElseThrow(() -> new Refusal("membre inconnu " + id));
+    // orElseThrow(Supplier) pour un INVARIANT : chaque livre charge a un stock ; sinon c'est un bug
+    // du programme (pas un refus metier) et on veut qu'il s'arrete net, avec un message clair.
+    int available(Book b) {
+        return Optional.ofNullable(stock.get(b.isbn()))
+                .orElseThrow(() -> new IllegalStateException("stock absent pour " + b.isbn()));
     }
 
-    Book book(String isbn) throws Refusal {
-        return byIsbn(isbn).orElseThrow(() -> new Refusal("livre inconnu " + isbn));
+    static String money(int cents) {
+        return String.format("%d.%02d", cents / 100, cents % 100);
+    }
+
+    // TODO 4 : un refus est une REPONSE, pas une erreur -> la chaine Optional rend le resultat OU "REFUS : ...".
+    // Le traitement (une BiFunction, chapitre 8) n'est appele que si le membre ET le livre existent.
+    String withMemberAndBook(String memberId, String isbn, BiFunction<Member, Book, String> action) {
+        return findMember(memberId)
+                .map(m -> byIsbn(isbn)
+                        .map(b -> action.apply(m, b))
+                        .orElse("REFUS : livre inconnu " + isbn))
+                .orElse("REFUS : membre inconnu " + memberId);
     }
 
     // TODO 6
-    void borrow(String memberId, String isbn) throws Refusal {
-        Member m = member(memberId);
-        Book b = book(isbn);
+    String borrow(Member m, Book b) {
         // isPresent : on ne lit pas l'emprunt, on teste seulement son existence.
         if (findLoan(m, b).isPresent()) {
-            throw new Refusal(m.name() + " a deja " + b.title());
+            return "REFUS : " + m.name() + " a deja " + b.title();
         }
-        if (stock.get(isbn) == 0) {
-            Deque<String> queue = waitlists.computeIfAbsent(isbn, k -> new ArrayDeque<>());
+        if (available(b) == 0) {
+            Deque<String> queue = waitlists.computeIfAbsent(b.isbn(), k -> new ArrayDeque<>());
             queue.addLast(m.id());
-            System.out.println("ATTENTE : " + m.name() + " en position " + queue.size() + " pour " + b.title());
-            return;
+            return "ATTENTE : " + m.name() + " en position " + queue.size() + " pour " + b.title();
         }
-        lend(m, b);
+        return lend(m, b);
     }
 
-    private void lend(Member m, Book b) {
+    private String lend(Member m, Book b) {
         int left = stock.merge(b.isbn(), -1, Integer::sum);
         loans.add(new Loan(m.id(), b.isbn()));
-        System.out.println("OK : " + m.name() + " emprunte " + b.title() + " (reste " + left + ")");
+        return "OK : " + m.name() + " emprunte " + b.title() + " (reste " + left + ")";
     }
 
-    // TODO 7 : l'absence de penalite est une vraie absence (pas 0.0 magique) -> Optional vide.
-    static Optional<Double> fee(int daysLate) {
+    // TODO 7 : l'absence de penalite est une vraie absence (pas un 0 magique) -> Optional vide.
+    static Optional<Integer> fee(int daysLate) {
         if (daysLate <= GRACE_DAYS) {
             return Optional.empty();
         }
-        return Optional.of(Math.min((daysLate - GRACE_DAYS) * FEE_PER_DAY, FEE_CAP));
+        return Optional.of(Math.min((daysLate - GRACE_DAYS) * FEE_CENTS_PER_DAY, FEE_CAP_CENTS));
     }
 
     // TODO 8
-    void giveBack(String memberId, String isbn, int daysLate) throws Refusal {
-        Member m = member(memberId);
-        Book b = book(isbn);
-        Loan loan = findLoan(m, b).orElseThrow(() -> new Refusal(m.name() + " n'a pas " + b.title()));
+    String giveBack(Member m, Book b, int daysLate) {
+        return findLoan(m, b)
+                .map(loan -> giveBack(m, b, loan, daysLate))
+                .orElse("REFUS : " + m.name() + " n'a pas " + b.title());
+    }
+
+    private String giveBack(Member m, Book b, Loan loan, int daysLate) {
+        List<String> lines = new ArrayList<>();
         loans.remove(loan);
-        stock.merge(isbn, 1, Integer::sum);
-        Optional<Double> fee = fee(daysLate);
-        returns.add(new Return(m, b, daysLate, fee.orElse(0.0)));
-        System.out.println("RETOUR : " + m.name() + " rend " + b.title() + ", "
-                + fee.map(f -> String.format(Locale.US, "penalite %.2f", f)).orElse("sans penalite"));
+        stock.merge(b.isbn(), 1, Integer::sum);
+        Optional<Integer> fee = fee(daysLate);
+        returns.add(new Return(m, b, daysLate, fee.orElse(0)));
+        lines.add("RETOUR : " + m.name() + " rend " + b.title() + ", " + fee.map(c -> "penalite " + money(c)).orElse("sans penalite"));
 
         // flatMap et pas map : findMember rend deja un Optional -> map donnerait Optional<Optional<Member>>.
-        Optional.ofNullable(waitlists.get(isbn))
+        Optional.ofNullable(waitlists.get(b.isbn()))
                 .map(Deque::pollFirst)
                 .flatMap(this::findMember)
                 .ifPresent(next -> {
-                    lend(next, b);
-                    notifyMember(next, b.title() + " vous attend");
+                    lines.add(lend(next, b));
+                    lines.add(notice(next, b.title() + " vous attend"));
                 });
+        return String.join("\n", lines);
     }
 
     // orElseGet : le texte "par courrier" n'est construit que si l'email manque (orElse le construirait toujours).
-    private void notifyMember(Member m, String text) {
-        System.out.println(m.email().map(e -> "AVIS " + e + " : " + text)
-                .orElseGet(() -> "AVIS par courrier a " + m.name() + " : " + text));
+    private String notice(Member m, String text) {
+        return m.email().map(e -> "AVIS " + e + " : " + text)
+                .orElseGet(() -> "AVIS par courrier a " + m.name() + " : " + text);
     }
 
-    // TODO 9 : les deux branches en un appel, sans exception ni if.
+    // TODO 9 : les deux branches en un appel, sans if.
     void contact(String memberId) {
         findMember(memberId).ifPresentOrElse(
                 m -> System.out.println("CONTACT " + m.name() + " : " + m.email().orElse("par courrier")),
@@ -152,18 +157,17 @@ public class LoanDesk implements Catalog {
     }
 
     // TODO 10 : map(Deque::size) sur une file absente reste vide -> orElse(0).
-    void info(String query) throws Refusal {
-        Book b = find(query).orElseThrow(() -> new Refusal("aucun livre pour " + query));
-        int waiting = Optional.ofNullable(waitlists.get(b.isbn())).map(Deque::size).orElse(0);
-        System.out.println("INFO " + b.isbn() + " " + b.title() + " (" + b.author() + ") : "
-                + stock.get(b.isbn()) + " disponible(s), " + waiting + " en attente");
+    String info(String query) {
+        return find(query)
+                .map(b -> "INFO " + b.isbn() + " " + b.title() + " (" + b.author() + ") : " + available(b) + " disponible(s), "
+                        + Optional.ofNullable(waitlists.get(b.isbn())).map(Deque::size).orElse(0) + " en attente")
+                .orElse("REFUS : aucun livre pour " + query);
     }
 
     // TODO 11
     void report() {
-        List<Double> fees = returns.stream().map(Return::fee).filter(f -> f > 0).toList();
-        System.out.println(String.format(Locale.US, "BILAN : %d penalite(s), total %.2f",
-                fees.size(), fees.stream().mapToDouble(Double::doubleValue).sum()));
+        List<Integer> fees = returns.stream().map(Return::feeCents).filter(c -> c > 0).toList();
+        System.out.println("BILAN : " + fees.size() + " penalite(s), total " + money(fees.stream().mapToInt(Integer::intValue).sum()));
 
         // OptionalInt n'a pas de map : il donne le nombre, le max sur les Return donne le membre.
         OptionalInt maxDays = returns.stream().mapToInt(Return::days).max();
@@ -172,9 +176,10 @@ public class LoanDesk implements Catalog {
         if (worst.isEmpty()) {
             System.out.println("BILAN : aucun retour");
         } else {
-            // orElseThrow() sans argument = get() au nom honnete : il lance NoSuchElementException si vide.
-            System.out.println(String.format(Locale.US, "BILAN : retard max %d jour(s) (%s), moyen %.1f jour(s)",
-                    maxDays.getAsInt(), worst.orElseThrow().member().name(), average.orElse(0)));
+            // orElseThrow() sans argument = get() au nom honnete (NoSuchElementException si vide).
+            // Math.round(x * 10) / 10.0 : une decimale ; Double.toString ecrit toujours un point.
+            System.out.println("BILAN : retard max " + maxDays.getAsInt() + " jour(s) (" + worst.orElseThrow().member().name()
+                    + "), moyen " + Math.round(average.orElse(0) * 10) / 10.0 + " jour(s)");
         }
 
         // Optional::stream : 0 ou 1 element -> flatMap ne garde que les emails presents.
@@ -183,21 +188,17 @@ public class LoanDesk implements Catalog {
         System.out.println("BILAN : " + loans.size() + " emprunt(s) en cours");
     }
 
-    // TODO 12 : un catch par commande -> un refus n'arrete pas la suite.
+    // TODO 12 : chaque commande produit sa reponse ; un refus n'arrete pas les suivantes.
     void execute(String command) {
         String[] p = command.split(" ");
-        try {
-            switch (p[0]) {
-                case "EMPRUNT" -> borrow(p[1], p[2]);
-                case "RETOUR" -> giveBack(p[1], p[2], Integer.parseInt(p[3]));
-                case "CONTACT" -> contact(p[1]);
-                // Le titre peut contenir des espaces : on prend tout apres "INFO ", pas p[1].
-                case "INFO" -> info(command.substring("INFO ".length()));
-                case "BILAN" -> report();
-                default -> throw new Refusal("commande inconnue " + p[0]);
-            }
-        } catch (Refusal e) {
-            System.out.println("REFUS : " + e.getMessage());
+        switch (p[0]) {
+            case "EMPRUNT" -> System.out.println(withMemberAndBook(p[1], p[2], this::borrow));
+            case "RETOUR" -> System.out.println(withMemberAndBook(p[1], p[2], (m, b) -> giveBack(m, b, Integer.parseInt(p[3]))));
+            case "CONTACT" -> contact(p[1]);
+            // Le titre peut contenir des espaces : on prend tout apres "INFO ", pas p[1].
+            case "INFO" -> System.out.println(info(command.substring("INFO ".length())));
+            case "BILAN" -> report();
+            default -> System.out.println("REFUS : commande inconnue " + p[0]);
         }
     }
 

@@ -112,7 +112,7 @@ public class Warehouse {
             .thenComparing(r -> r.order().date())
             .thenComparing(r -> r.order().id());
 
-    // L'allocation MODIFIE le stock et depend de l'ordre de passage : une boucle sequentielle, pas un stream parallele.
+    // L'allocation MODIFIE le stock et depend de l'ordre de passage : une boucle, pas un map() avec effet de bord.
     Result allocate(Order o, Customer c) {
         List<Allocation> allocations = new ArrayList<>();
         List<String> unknown = new ArrayList<>();

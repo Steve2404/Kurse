@@ -13,13 +13,13 @@ public class Check {
     static final List<String> EXPECTED = List.of(
             // EXPECTED-BEGIN
             "D01 : Optional[Dune] Optional.empty",
-            "D02 : true NullPointerException",
+            "D02 : true true",
             "D03 : Germinal | inconnu",
             "D04 : orElse appelle 1 fois, orElseGet 0 fois",
             "D05 : Le Messie de Dune | aucune suite",
             "D06 : Optional[Le Hobbit]",
             "D07 : trouve 1965 absent",
-            "D08 : NoSuchElementException IllegalArgumentException",
+            "D08 : Herbert 1885",
             "D09 : [Le Messie de Dune, Le Seigneur des Anneaux]",
             "D10 : 592 1989 8.89 -1",
             "D11 : true Optional.empty",
@@ -32,7 +32,10 @@ public class Check {
             ".orElse(", ".orElseGet(", ".orElseThrow()", ".orElseThrow(", ".map(",
             ".flatMap(", ".filter(", ".or(", ".ifPresent(", ".ifPresentOrElse(",
             "Optional::stream", "OptionalInt", "OptionalLong", "OptionalDouble", ".getAsInt()",
-            ".getAsLong()", ".getAsDouble()", "!.get()");
+            ".getAsLong()", ".getAsDouble()", "!.get()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall01", args, EXPECTED, API);

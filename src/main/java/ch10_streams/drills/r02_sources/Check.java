@@ -20,7 +20,7 @@ public class Check {
             "D06 : j-a-v-a",
             "D07 : optional apres 3 elements examines",
             "D08 : sans operation terminale : 0 appel",
-            "D09 : IllegalStateException",
+            "D09 : 9 7",
             "D10 : stream lambda optional",
             "D11 : 1 8",
             "D12 : [1, 2, 3, 4, 5, 6, 7]",
@@ -30,7 +30,10 @@ public class Check {
     static final List<String> API = List.of(
             "Stream.of(", "Stream.empty()", "Stream.ofNullable(", "Stream.iterate(", "Stream.generate(",
             "Stream.concat(", "Arrays.stream(", ".chars()", ".peek(", ".findFirst()",
-            "IllegalStateException", ".iterator()", ".takeWhile(", ".limit(");
+            "Supplier<Stream<", ".iterator()", ".takeWhile(", ".limit(",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall02", args, EXPECTED, API);

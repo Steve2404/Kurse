@@ -1,20 +1,19 @@
-package ch10_streams.drills.r12_kata.solution;
+package ch10_streams.drills.r11_kata.solution;
 
 import ch10_streams.drills.Data;
 
 import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * SOLUTION du drill de rappel 12 - kata mixte chronometre.
+ * SOLUTION du drill de rappel 11 - kata mixte chronometre.
  */
-public class Recall12 {
+public class Recall11 {
 
     record Book(String title, String author, String genre, int year, int pages, double price) {
         static Book parse(String line) {
@@ -29,7 +28,7 @@ public class Recall12 {
         System.out.println("D01 : " + BOOKS.stream()
                 .collect(Collectors.groupingBy(Book::genre, Collectors.averagingDouble(Book::price)))
                 .entrySet().stream().max(Map.Entry.comparingByValue())
-                .map(e -> e.getKey() + String.format(Locale.US, " %.2f", e.getValue())).orElse("-"));
+                .map(e -> e.getKey() + " " + Math.round(e.getValue() * 100) / 100.0).orElse("-"));
 
         System.out.println("D02 : " + BOOKS.stream()
                 .collect(Collectors.toMap(Book::author, Book::pages, Integer::sum))
@@ -47,7 +46,7 @@ public class Recall12 {
         System.out.println("D06 : " + lengths.getMin() + " " + lengths.getMax() + " " + lengths.getSum());
 
         Map<Boolean, Double> sf = BOOKS.stream().collect(Collectors.partitioningBy(b -> b.genre().equals("SF"), Collectors.averagingInt(Book::pages)));
-        System.out.println("D07 : " + String.format(Locale.US, "SF %.1f / autres %.1f", sf.get(true), sf.get(false)));
+        System.out.println("D07 : SF " + Math.round(sf.get(true) * 10) / 10.0 + " / autres " + Math.round(sf.get(false) * 10) / 10.0);
 
         System.out.println("D08 : " + Data.WORDS.stream().collect(Collectors.groupingBy(w -> w, Collectors.counting()))
                 .entrySet().stream()

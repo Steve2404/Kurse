@@ -25,10 +25,10 @@ public class Check {
             "EXTREMES : Hello par tom / So What par lea",
             "MOYENNE VALIDEE : 309.8 s sur 19 ecoutes",
             "EXPLORATEURS (tous les genres) : [lea]",
-            "RECO hugo : voisin tom (0.50) -> Dua",
-            "RECO ines : voisin lea (0.67) -> Daft, Muse",
-            "RECO lea : voisin ines (0.67) -> rien de nouveau",
-            "RECO tom : voisin hugo (0.50) -> Queen",
+            "RECO hugo : voisin tom (50%) -> Dua",
+            "RECO ines : voisin lea (67%) -> Daft, Muse",
+            "RECO lea : voisin ines (67%) -> rien de nouveau",
+            "RECO tom : voisin hugo (50%) -> Queen",
             "RECO zoe : aucune ecoute validee");
             // EXPECTED-END
 
@@ -36,7 +36,10 @@ public class Check {
             "groupingBy(", "TreeMap::new", "partitioningBy(", "counting()", "mapping(", "filtering(",
             "flatMapping(", "collectingAndThen(", "toCollection(", "toSet()", "maxBy(", "minBy(",
             "summingInt(", "averagingInt(", "summarizingInt(", "reducing(", "toMap(", "teeing(",
-            "joining(");
+            "joining(",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "MusicStats", args, EXPECTED, API);

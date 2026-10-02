@@ -27,10 +27,11 @@ public class Recall07 {
         int letters = Data.WORDS.stream().reduce(0, (sum, w) -> sum + w.length(), Integer::sum);
         System.out.println("D03 : " + letters);
 
-        // Identite NON neutre : le sequentiel l'ajoute une fois, le parallele une fois par morceau.
-        int seq = Stream.of(1, 2, 3, 4).reduce(10, Integer::sum);
-        int par = Stream.of(1, 2, 3, 4).parallel().reduce(10, Integer::sum);
-        System.out.println("D04 : sequentiel " + seq + ", parallele " + (par > seq ? "plus grand" : "egal"));
+        // Identite NON neutre : un seul passage l'ajoute une fois ; reduire DEUX morceaux puis les combiner
+        // l'ajoute une fois PAR morceau (c'est ce que fera un stream parallele au chapitre 13).
+        int whole = Stream.of(1, 2, 3, 4).reduce(10, Integer::sum);
+        int halves = Integer.sum(Stream.of(1, 2).reduce(10, Integer::sum), Stream.of(3, 4).reduce(10, Integer::sum));
+        System.out.println("D04 : un passage " + whole + ", deux moities " + halves);
 
         // collect(supplier, accumulator, combiner) : reduction MUTABLE.
         ArrayList<String> upper = Data.WORDS.stream().collect(ArrayList::new, (l, w) -> l.add(w.toUpperCase()), ArrayList::addAll);
@@ -51,7 +52,13 @@ public class Recall07 {
                 },
                 (a, b) -> a.isEmpty() || (!b.isEmpty() && b.get(0).length() < a.get(0).length()) ? b : a,
                 acc -> acc.isEmpty() ? "-" : acc.get(0));
-        System.out.println("D07 : " + Data.WORDS.stream().collect(shortest) + " " + Data.WORDS.parallelStream().collect(shortest)
+        // Le collecteur applique A LA MAIN sur deux moities : supplier + accumulator par morceau, puis combiner et finisher.
+        List<String> left = shortest.supplier().get();
+        Data.WORDS.subList(0, 4).forEach(w -> shortest.accumulator().accept(left, w));
+        List<String> right = shortest.supplier().get();
+        Data.WORDS.subList(4, Data.WORDS.size()).forEach(w -> shortest.accumulator().accept(right, w));
+        String byHalves = shortest.finisher().apply(shortest.combiner().apply(left, right));
+        System.out.println("D07 : " + Data.WORDS.stream().collect(shortest) + " " + byHalves
                 + " " + Stream.<String>empty().collect(shortest));
 
         // Une concatenation de String par reduce cree une String par etape ; collect reutilise un seul StringBuilder.

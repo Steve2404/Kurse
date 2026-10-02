@@ -31,7 +31,10 @@ public class Check {
             "DoubleToIntFunction", "LongToIntFunction", "IntSupplier", "LongSupplier", "DoubleSupplier",
             "BooleanSupplier", "IntConsumer", "ObjIntConsumer<", "ToDoubleBiFunction<", "DoubleBinaryOperator",
             "DoubleUnaryOperator", "LongBinaryOperator", ".andThen(", ".compose(", ".negate()",
-            ".applyAsInt(", ".applyAsLong(", ".applyAsDouble(", ".getAsBoolean()", ".test(");
+            ".applyAsInt(", ".applyAsLong(", ".applyAsDouble(", ".getAsBoolean()", ".test(",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall06", args, EXPECTED, API);

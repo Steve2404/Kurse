@@ -1,12 +1,12 @@
-package ch10_streams.drills.r11_spliterator;
+package ch10_streams.drills.r10_spliterator;
 
 import projectkit.ProjectChecker;
 
 import java.util.List;
 
 /**
- * Le correcteur du drill de rappel 11 (ne pas modifier). Consigne : TODO.md.
- * Lance-le tel quel pour verifier TON Recall11, ou avec l'argument "solution".
+ * Le correcteur du drill de rappel 10 (ne pas modifier). Consigne : TODO.md.
+ * Lance-le tel quel pour verifier TON Recall10, ou avec l'argument "solution".
  */
 public class Check {
 
@@ -22,9 +22,12 @@ public class Check {
 
     static final List<String> API = List.of(
             "implements Spliterator<", ".spliterator()", ".estimateSize()", ".getExactSizeIfKnown()", ".hasCharacteristics(",
-            ".trySplit()", ".tryAdvance(", ".forEachRemaining(", "StreamSupport.stream(", "characteristics()");
+            ".trySplit()", ".tryAdvance(", ".forEachRemaining(", "StreamSupport.stream(", "characteristics()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
-        ProjectChecker.check(Check.class, "Recall11", args, EXPECTED, API);
+        ProjectChecker.check(Check.class, "Recall10", args, EXPECTED, API);
     }
 }

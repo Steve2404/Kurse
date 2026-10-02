@@ -20,7 +20,7 @@ On y trouve des statistiques par jour, une fenêtre glissante, une médiane, un 
 
 **Règle du projet :** les températures sont des `int`. Elles ne sont **jamais boxées** en `Integer`, sauf aux deux endroits où le rapport l'exige vraiment (étapes 3 et 4). À chaque `boxed()` que tu écris, demande-toi s'il est indispensable.
 
-Tous les nombres décimaux s'affichent avec `String.format(Locale.US, ...)`.
+**Les nombres décimaux** s'affichent arrondis avec `Math.round` (chapitre 4) : `Math.round(x * 10) / 10.0` pour une décimale. `Double.toString` écrit toujours un point, quelle que soit la langue du système. Le formatage localisé (`Locale`, `NumberFormat`) est au programme du chapitre 11, pas ici.
 
 ---
 

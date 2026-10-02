@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.Locale;
 import java.util.LongSummaryStatistics;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
@@ -61,6 +60,6 @@ public class Recall05 {
 
         // Stream<Integer>.max veut un Comparator ; IntStream.max() n'en veut pas.
         System.out.println("D12 : " + Arrays.stream(Data.NUMBERS).boxed().max(Integer::compare).orElse(-1)
-                + " " + String.format(Locale.US, "%.3f", DoubleStream.of(1, 2, 2).average().orElse(0)));
+                + " " + Math.round(DoubleStream.of(1, 2, 2).average().orElse(0) * 1000) / 1000.0);
     }
 }

@@ -44,7 +44,10 @@ public class Check {
             ".flatMap(", ".distinct()", ".sorted(", ".reversed()", ".thenComparing",
             ".skip(", ".limit(", ".peek(", ".dropWhile(", ".takeWhile(",
             ".findFirst()", ".min(", ".anyMatch(", ".allMatch(", ".noneMatch(",
-            "Collectors.joining(", "Optional::stream");
+            "Collectors.joining(", "Optional::stream",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "BusNetwork", args, EXPECTED, API);

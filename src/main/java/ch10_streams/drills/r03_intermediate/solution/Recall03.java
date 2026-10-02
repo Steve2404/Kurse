@@ -68,14 +68,8 @@ public class Recall03 {
         long n2 = Data.WORDS.stream().peek(seen::add).filter(w -> true).count();
         System.out.println("D11 : count " + n1 + " -> peek " + withoutFilter + " fois ; avec filter count " + n2 + " -> peek " + seen.size() + " fois");
 
-        String cce;
-        try {
-            Stream.of(new Object(), new Object()).sorted().toList();
-            cce = "rien";
-        } catch (ClassCastException e) {
-            cce = e.getClass().getSimpleName();
-        }
-        System.out.println("D12 : sorted() sans Comparable -> " + cce);
+        // sorted est STABLE sur un flux ordonne : a longueur egale, l'ordre d'origine est garde.
+        System.out.println("D12 : " + Data.WORDS.stream().sorted(Comparator.comparingInt(String::length)).toList());
 
         List<List<String>> nested = List.of(List.of("a", "b"), List.of(), List.of("c"));
         System.out.println("D13 : map " + nested.stream().map(List::size).toList() + ", flatMap " + nested.stream().flatMap(List::stream).toList());

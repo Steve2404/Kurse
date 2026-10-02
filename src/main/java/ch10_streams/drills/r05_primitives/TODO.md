@@ -51,7 +51,7 @@
   → `D10 : [1, 3, 9, 27, 81] 21`
 - ☐ **D11.** Chaque lettre de `"OCP"` est décalée de +1. Recolle le résultat en `String`.
   → `D11 : PDQ`
-- ☐ **D12.** Le max de `NUMBERS` boxé en `Stream<Integer>` (il te faut un comparateur, lequel ?). Puis la moyenne de 1, 2, 2 avec 3 décimales.
+- ☐ **D12.** Le max de `NUMBERS` boxé en `Stream<Integer>` (il te faut un comparateur, lequel ?). Puis la moyenne de 1, 2, 2 arrondie à 3 décimales avec `Math.round`.
   → `D12 : 9 1.667`
 
 ## Sortie attendue complète

@@ -5,7 +5,6 @@ import ch10_streams.projects.p05_music.Data;
 import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -101,8 +100,9 @@ public class MusicStats {
                 .collect(joining(", ", "[", "]")));
 
         IntSummaryStatistics stats = plays.stream().collect(summarizingInt(Play::seconds));
-        System.out.println(String.format(Locale.US, "STATS : %d ecoutes, min %d s, max %d s, moyenne %.1f s",
-                stats.getCount(), stats.getMin(), stats.getMax(), stats.getAverage()));
+        // Math.round(x * 10) / 10.0 : une decimale sans Locale (Double.toString ecrit toujours un point).
+        System.out.println("STATS : " + stats.getCount() + " ecoutes, min " + stats.getMin() + " s, max " + stats.getMax()
+                + " s, moyenne " + Math.round(stats.getAverage() * 10) / 10.0 + " s");
 
         // teeing : deux collecteurs sur le MEME passage, fusionnes a la fin.
         // Piege : println(collect(teeing(...))) ne compile pas (println(char[]) ou println(String) ?) -> variable typee.
@@ -115,7 +115,7 @@ public class MusicStats {
         String average = plays.stream().filter(Play::valid).collect(teeing(
                 counting(),
                 Collectors.averagingInt(Play::seconds),
-                (n, avg) -> String.format(Locale.US, "MOYENNE VALIDEE : %.1f s sur %d ecoutes", avg, n)));
+                (n, avg) -> "MOYENNE VALIDEE : " + Math.round(avg * 10) / 10.0 + " s sur " + n + " ecoutes"));
         System.out.println(average);
 
         explorers();
@@ -178,7 +178,7 @@ public class MusicStats {
             System.out.println(best.map(n -> {
                 String news = artists.get(n.user()).stream().filter(a -> !mine.contains(a)).sorted()
                         .collect(collectingAndThen(joining(", "), s -> s.isEmpty() ? "rien de nouveau" : s));
-                return String.format(Locale.US, "RECO %s : voisin %s (%.2f) -> %s", user, n.user(), n.similarity(), news);
+                return "RECO " + user + " : voisin " + n.user() + " (" + Math.round(n.similarity() * 100) + "%) -> " + news;
             }).orElse("RECO " + user + " : aucun voisin"));
         }
     }

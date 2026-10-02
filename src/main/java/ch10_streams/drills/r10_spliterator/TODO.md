@@ -1,4 +1,4 @@
-# Drill de rappel 11 — `Spliterator`
+# Drill de rappel 10 — `Spliterator`
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch10_streams/PARCOURS.md`](../../PARCOURS.md) : comment lire cette fiche, lancer `Check`, quoi faire en cas de blocage.
 
@@ -6,7 +6,7 @@
 
 **Règles :**
 - Tout se fait de mémoire.
-- Crée la classe **`Recall11`** et **ta propre classe qui implémente `Spliterator<String>`**.
+- Crée la classe **`Recall10`** et **ta propre classe qui implémente `Spliterator<String>`**.
 - Utilise `Data.WORDS` (9 mots).
 - Écris une ligne `Dxx : ` par défi.
 
@@ -30,7 +30,7 @@
 - ☐ **D04.** Écris ton spliterator « paires ». Il rend les mots deux par deux, collés par `+` ; le dernier peut être seul. Il ne sait **pas** se couper. Il est ordonné, de taille connue et sans `null`.
   Affiche sa taille estimée, puis la liste obtenue en le transformant en stream séquentiel.
   → `D04 : 5 [stream+lambda, optional+java, stream+collector, map+java, filter]`
-- ☐ **D05.** Transforme un spliterator « paires » neuf en stream **parallèle** et compte-le. Puis vérifie qu'un autre spliterator « paires » refuse de se couper.
+- ☐ **D05.** Transforme un spliterator « paires » neuf en stream et compte-le. Puis vérifie qu'un autre spliterator « paires » refuse de se couper.
   → `D05 : 5 true`
 - ☐ **D06.** Le spliterator d'un `Stream.iterate` infini : affiche sa taille exacte, puis s'il est `SIZED`.
   → `D06 : -1 false`
@@ -59,7 +59,7 @@ D06 : -1 false
 | `long getExactSizeIfKnown()` | la taille si `SIZED`, sinon **-1** |
 | `int characteristics()` | une combinaison de bits (`ORDERED`, `DISTINCT`, `SORTED`, `SIZED`, `NONNULL`, `IMMUTABLE`, `CONCURRENT`, `SUBSIZED`) |
 | `boolean hasCharacteristics(int)` | |
-| `StreamSupport.stream(spliterator, parallel)` | `Stream<T>` |
+| `StreamSupport.stream(spliterator, false)` | `Stream<T>` (le `true`, parallèle, est au chapitre 13) |
 
 **Ce qu'il faut retenir :**
 - `ArrayList` est `ORDERED | SIZED | SUBSIZED` et coupe au milieu : la moitié basse est rendue.

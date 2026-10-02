@@ -25,6 +25,9 @@ public final class Data {
     public static final int POINTS_WIN = 3;
     public static final int POINTS_DRAW = 1;
 
+    /** Pour verifier un combiner : on coupe la saison en deux morceaux inegaux a cet indice. */
+    public static final int SPLIT_AT = 5;
+
     private Data() {
     }
 }

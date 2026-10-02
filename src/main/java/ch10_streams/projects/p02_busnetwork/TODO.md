@@ -84,8 +84,9 @@ REFUS : ligne inconnue L9
 - **Le nombre entre parenthèses** est le nombre de départs que ton stream a **réellement générés**. Compte-les avec `peek` placé juste après la source.
 - **Calcule à la main** avant de coder : L1 part à 06:00, 06:20… et Musee est à +10. Pourquoi exactement 7 ? Pourquoi 17 et pas 16 quand il n'y a plus de bus ?
 - **À tester toi-même :** si tu remplaces la fin de ta chaîne par `.toList()` puis une recherche dans la liste, combien affiches-tu ? Tu verras alors ce que « paresseux » veut dire.
-- Pour compter depuis une lambda, il faut une variable *effectivement finale*. Quel type mutable utiliser ?
-- Mets en place les refus (ligne inconnue, arrêt non desservi) avec ta propre exception, comme au projet 1.
+- Pour compter depuis une lambda, il faut une variable *effectivement finale* (chapitre 8). Un `int` local ne peut donc pas être incrémenté dans `peek`. Quelle structure du chapitre 9, référencée par une variable qui ne change pas, peut recevoir chaque départ ?
+- **Les refus** (ligne inconnue, arrêt non desservi) se font **sans `if` ni exception**, comme au projet 1 : la chaîne `Optional` rend soit la réponse, soit `REFUS : …`.
+  - PROCHAIN et HORAIRES ont besoin d'une ligne **et** d'un arrêt. Écris **une** méthode « avec ligne et arrêt » qui reçoit le traitement en `BiFunction<…>` et qui gère les deux refus une seule fois.
 
 ### ☐ Étape 6 — `HORAIRES <ligne> <arrêt> <de> <à>`
 
@@ -161,7 +162,7 @@ RESEAU : aucune ligne ne part avant 05:00 : oui
 ### ☐ Étape 12 — `main`
 
 - Toute autre commande produit `REFUS : commande inconnue RETARD`.
-- Chaque commande est protégée par son propre `try/catch`.
+- Une `switch` choisit le traitement. Chaque commande affiche sa réponse, refus compris.
 
 ---
 

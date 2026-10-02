@@ -46,7 +46,10 @@ public class Check {
             "enum ", "Optional.ofNullable(", ".orElseGet(", ".flatMap(", ".sorted(", ".thenComparing",
             "groupingBy(", "EnumMap", "partitioningBy(", "mapping(", "summingInt(", "summingLong(",
             "collectingAndThen(", "teeing(", "maxBy(", "LongSummaryStatistics", ".mapToLong(",
-            "IntStream.rangeClosed(", ".mapToObj(", ".reduce(", ".limit(", "joining(", "!.get()");
+            "IntStream.rangeClosed(", ".mapToObj(", ".reduce(", ".limit(", "joining(", "!.get()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Warehouse", args, EXPECTED, API);

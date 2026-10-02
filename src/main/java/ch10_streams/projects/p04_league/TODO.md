@@ -6,7 +6,7 @@
 - les **trois** `reduce` : `reduce(identité, accumulateur)`, `reduce(accumulateur)` → `Optional`, et `reduce(identité, accumulateur, combiner)` ;
 - le `collect` à **trois** arguments (`supplier`, `accumulator`, `combiner`) ;
 - un `Collector` **écrit par toi** avec `Collector.of` ;
-- le parallélisme (`parallelStream`), qui révèle les réductions mal écrites.
+- les quatre morceaux d'un `Collector` (`supplier`, `accumulator`, `combiner`, `finisher`), que tu appelleras **toi-même** pour vérifier qu'une réduction est juste.
 
 **Contrainte du projet :** la classe `Collectors` est **interdite** (`Check` la refuse). Tout passe par `reduce`, `collect` ou ton propre `Collector`. `Stream.toList()` reste autorisé.
 
@@ -20,7 +20,7 @@
 
 Quatre équipes jouent un championnat aller-retour : 12 matchs, sur 6 journées (`Data.MATCHES`). Ton programme imprime les résultats, des statistiques, le classement officiel avec ses départages et les séries sans défaite.
 
-Il **prouve** ensuite que chacun de ces calculs donne exactement la même chose en parallèle. C'est le cœur du projet : une réduction juste en séquentiel peut être fausse en parallèle, si l'identité n'est pas neutre ou si le combiner est mal écrit.
+Il **prouve** ensuite que chaque réduction reste juste quand on **coupe la saison en deux morceaux**, qu'on réduit chaque morceau séparément, puis qu'on les **fusionne avec le combiner**. C'est le cœur du projet : une réduction peut donner le bon résultat d'une traite et un faux résultat par morceaux, si l'identité n'est pas neutre ou si le combiner est mal écrit. Au chapitre 13, les streams parallèles feront exactement ce découpage automatiquement. Ici, tu le fais à la main, et tu comprendras donc pourquoi.
 
 ---
 
@@ -40,8 +40,8 @@ Il **prouve** ensuite que chacun de ces calculs donne exactement la même chose 
 RESULTATS : Lions 3-1 Tigres | Ours 0-0 Aigles | ...
 ```
 - Construis la ligne avec `stream.collect(StringBuilder::new, accumulateur, combiner)`. Le séparateur ` | ` n'apparaît qu'**entre** deux matchs.
-- **Piège du parallèle :** si ton combiner est `StringBuilder::append`, que devient la ligne en parallèle à la jonction de deux morceaux ? Écris le combiner correct.
-  - **Teste-le toi-même :** fais tourner la version `StringBuilder::append` sur `parallelStream()` et regarde.
+- **Piège du combiner :** si ton combiner est `StringBuilder::append`, que devient la ligne à la jonction de deux morceaux ? Écris le combiner correct.
+  - **Conception :** donne un **nom** à l'accumulateur et au combiner (des constantes typées `BiConsumer<…>`, chapitre 8). Tu en auras besoin à l'étape 9 pour fusionner deux morceaux à la main.
 - **Question :** pourquoi `collect` (réduction **mutable**) convient-il ici mieux que `reduce("", (a, m) -> a + ...)` ?
 
 ### ☐ Étape 3 — `BUTS` : `reduce` à 3 arguments
@@ -51,7 +51,8 @@ BUTS : 35 en 12 matchs, moyenne 2.92
 ```
 - Le total se calcule avec **un** `reduce`, directement sur le `Stream<Match>`, sans `map` ni `mapToInt` avant.
 - Les éléments sont des matchs et le résultat est un `int`. Pourquoi la forme à 2 arguments ne compile-t-elle pas ? À quoi sert le troisième argument, et quand est-il appelé ?
-- **Piège :** remplace l'identité `0` par `10`. Que donne le séquentiel ? Et le parallèle ? Explique pourquoi les deux résultats diffèrent.
+- **Piège :** remplace l'identité `0` par `10`. Que donne le passage unique ? Et deux morceaux réduits séparément puis additionnés ? Explique pourquoi les deux résultats diffèrent.
+- Comme pour l'étape 2, donne un nom au combiner (`BinaryOperator<Integer>`).
 
 ### ☐ Étape 4 — `PLUS LARGE VICTOIRE` : `reduce` sans identité
 
@@ -60,7 +61,7 @@ PLUS LARGE VICTOIRE : J3 Lions 5-0 Ours (ecart 5)
 ```
 - Les matchs nuls ne comptent pas.
 - **Contrainte :** un `reduce(accumulateur)`. Il rend un `Optional`. Pourquoi Java ne peut-il pas rendre directement un `Match` ?
-- À égalité d'écart, garde le match **le plus ancien**. Ton opérateur doit rester **associatif**, sinon le résultat parallèle dépendrait du découpage. Vérifie-le sur trois matchs à égalité.
+- À égalité d'écart, garde le match **le plus ancien**. Ton opérateur doit rester **associatif**, sinon le résultat dépendrait de la façon de découper la saison. Vérifie-le sur trois matchs à égalité.
 - S'il n'y a aucune victoire, affiche `PLUS LARGE VICTOIRE : aucune`.
 
 ### ☐ Étape 5 — `CLASSEMENT` : ton propre `Collector`
@@ -96,14 +97,14 @@ BILAN Lions (reduce) : 6 matchs, 11 pts, identique au classement : oui
 - Calcule le bilan des Lions sans ton `Collector`, avec `map` vers « bilan pour Lions » puis `reduce(zéro, plus)`.
 - **Vérification croisée :** ce bilan doit être **égal** (`equals`) à la ligne Lions du classement. Pourquoi un record rend-il cette comparaison gratuite ?
 
-### ☐ Étape 7 — `SERIES SANS DEFAITE` : l'algorithme parallélisable
+### ☐ Étape 7 — `SERIES SANS DEFAITE` : l'algorithme fusionnable
 
 ```
 SERIES SANS DEFAITE : Aigles 5, Lions 3, Ours 1, Tigres 1
 ```
 - Pour chaque équipe, cherche la plus longue suite de matchs consécutifs **sans défaite**, dans l'ordre chronologique.
 - Trie par série décroissante, puis par nom.
-- **La vraie difficulté :** ce calcul doit être un `reduce` à 3 arguments **correct en parallèle**.
+- **La vraie difficulté :** ce calcul doit être un `reduce` à 3 arguments **correct même par morceaux**.
   - Un compteur « série en cours » ne marche pas. Si le stream est coupé en deux au milieu d'une série, chaque moitié ne voit qu'un bout.
   - Il faut résumer un **morceau** de saison avec 4 nombres : sa longueur, sa série au **début**, sa série à la **fin** et sa meilleure série **interne**.
   - **À trouver :**
@@ -122,13 +123,19 @@ CONTROLE : 33 points distribues = 9 victoires x 3 + 3 nuls x 2 : oui
 - **Le nombre de victoires** : un `reduce` sur les matchs.
 - **Le contrôle :** un nul rapporte 1 point à **chacune** des deux équipes.
 
-### ☐ Étape 9 — `PARALLELE` : la preuve
+### ☐ Étape 9 — `COMBINER` : la preuve, à la main
 
 ```
-PARALLELE : resultats oui, buts oui, classement oui, series oui
+COMBINER (5 + 7 matchs) : resultats oui, buts oui, classement oui, series oui
 ```
-- Refais les étapes 2, 3, 5 et 7 avec `parallelStream()` et compare aux résultats séquentiels.
-- Si une seule de ces réponses vaut `non`, ta réduction est fausse, même si la sortie séquentielle est juste.
+- Coupe la saison en deux morceaux inégaux à l'indice `Data.SPLIT_AT` (`subList`, chapitre 9) : 5 matchs à gauche et 7 à droite.
+- Pour les étapes 2, 3, 5 et 7 :
+  - réduis **chaque morceau séparément** ;
+  - fusionne les deux résultats **avec le combiner de la réduction** ;
+  - compare au résultat obtenu en un seul passage.
+- **Pour ton `Collector` (étape 5) :** n'appelle pas `collect`. Appelle toi-même `supplier()`, `accumulator()`, `combiner()` puis `finisher()`, exactement ce qu'une implémentation de `collect` fait en interne.
+  - **Question :** dans quel ordre, et combien de fois chacun ?
+- Si une seule de ces réponses vaut `non`, ta réduction est fausse, même si la sortie d'un seul passage est juste.
 - **Pour finir, casse volontairement chaque réduction une fois :**
   - mets une identité non neutre ;
   - mets un combiner qui ignore la gauche ;
@@ -151,7 +158,7 @@ PARALLELE : resultats oui, buts oui, classement oui, series oui
 | `reduce(acc)` → `Optional` | 4, 7 | ☐ |
 | `reduce(identité, acc)` | 6 | ☐ |
 | `Collector.of` + type `Collector<…>` | 5 | ☐ |
-| `parallelStream` | 9 | ☐ |
+| `supplier()`, `combiner()` d'un `Collector` | 9 | ☐ |
 | au moins 5 `reduce` au total | — | ☐ |
 | ~~`Collectors.*`~~ | **interdit** | — |
 
@@ -171,5 +178,5 @@ CLASSEMENT
 BILAN Lions (reduce) : 6 matchs, 11 pts, identique au classement : oui
 SERIES SANS DEFAITE : Aigles 5, Lions 3, Ours 1, Tigres 1
 CONTROLE : 33 points distribues = 9 victoires x 3 + 3 nuls x 2 : oui
-PARALLELE : resultats oui, buts oui, classement oui, series oui
+COMBINER (5 + 7 matchs) : resultats oui, buts oui, classement oui, series oui
 ```

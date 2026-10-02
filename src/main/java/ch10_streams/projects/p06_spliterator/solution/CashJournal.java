@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,7 +20,7 @@ import java.util.stream.StreamSupport;
  */
 public class CashJournal {
 
-    // Les montants en CENTIMES (long) : une somme de double n'est pas associative -> resultat parallele instable.
+    // Les montants en CENTIMES (long) : une somme de double n'est pas associative -> le total par morceaux pourrait differer.
     record Item(int quantity, String article, long unitCents) {
         long cents() {
             return quantity * unitCents;
@@ -126,19 +125,20 @@ public class CashJournal {
         }
     }
 
-    static Stream<Transaction> transactions(List<String> log, boolean parallel) {
-        return StreamSupport.stream(new TransactionSpliterator(log, 0, log.size()), parallel);
+    // StreamSupport.stream(spliterator, false) : un Stream ordinaire (sequentiel) au-dessus de NOTRE source.
+    static Stream<Transaction> transactions(List<String> log) {
+        return StreamSupport.stream(new TransactionSpliterator(log, 0, log.size()), false);
     }
 
     static String money(long cents) {
         return String.format("%d.%02d", cents / 100, Math.abs(cents % 100));
     }
 
-    // Decoupe recursive : on coupe tant que trySplit accepte, puis on affiche les feuilles de gauche a droite.
-    static void leaves(TransactionSpliterator s, List<String> out) {
+    // Decoupe recursive : on coupe tant que trySplit accepte ; les morceaux finaux sont gardes de gauche a droite.
+    static void leaves(TransactionSpliterator s, List<TransactionSpliterator> out) {
         Spliterator<Transaction> prefix = s.trySplit();
         if (prefix == null) {
-            out.add(s.range());
+            out.add(s);
             return;
         }
         leaves((TransactionSpliterator) prefix, out);
@@ -171,7 +171,7 @@ public class CashJournal {
     }
 
     public static void main(String[] args) {
-        List<Transaction> all = transactions(Data.LOG, false).toList();
+        List<Transaction> all = transactions(Data.LOG).toList();
         for (Transaction t : all) {
             String detail = t.items().isEmpty() ? "vide"
                     : t.units() == 0 ? "annulee (0 article)"
@@ -180,28 +180,31 @@ public class CashJournal {
         }
         all.forEach(t -> t.unreadable().forEach(l -> System.out.println("ANOMALIE TX " + t.id() + " : ligne illisible \"" + l + "\"")));
 
-        long parallelCount = transactions(Data.LOG, true).count();
-        System.out.println("COMPTE : " + all.size() + " transactions (sequentiel) / " + parallelCount + " (parallele)");
+        // Chaque morceau de la decoupe devient son propre stream ; ensemble, ils doivent redonner tout le journal.
+        List<TransactionSpliterator> leaves = new ArrayList<>();
+        leaves(new TransactionSpliterator(Data.LOG, 0, Data.LOG.size()), leaves);
+        String ranges = leaves.stream().map(TransactionSpliterator::range).collect(Collectors.joining(" "));
+        List<List<Transaction>> pieces = leaves.stream().map(l -> StreamSupport.stream(l, false).toList()).toList();
         long total = all.stream().mapToLong(Transaction::cents).sum();
-        long parallelTotal = transactions(Data.LOG, true).mapToLong(Transaction::cents).sum();
-        System.out.println("CA TOTAL : " + money(total) + " (parallele identique : " + (total == parallelTotal ? "oui" : "non") + ")");
+        long piecesTotal = pieces.stream().flatMap(List::stream).mapToLong(Transaction::cents).sum();
+        System.out.println("COMPTE : " + all.size() + " transactions (journal entier) / "
+                + pieces.stream().mapToInt(List::size).sum() + " (somme des " + pieces.size() + " morceaux)");
+        System.out.println("CA TOTAL : " + money(total) + " (somme des morceaux identique : " + (total == piecesTotal ? "oui" : "non") + ")");
 
-        Map<String, Long> perCustomer = transactions(Data.LOG, true)
+        Map<String, Long> perCustomer = transactions(Data.LOG)
                 .collect(Collectors.groupingBy(Transaction::customer, TreeMap::new, Collectors.summingLong(Transaction::cents)));
         perCustomer.entrySet().stream().max(Map.Entry.comparingByValue())
                 .ifPresent(e -> System.out.println("MEILLEUR CLIENT : " + e.getKey() + " (" + money(e.getValue()) + ")"));
 
-        List<String> leaves = new ArrayList<>();
-        leaves(new TransactionSpliterator(Data.LOG, 0, Data.LOG.size()), leaves);
-        System.out.println("DECOUPAGE : " + String.join(" ", leaves));
+        System.out.println("DECOUPAGE : " + ranges);
 
         // tryAdvance consomme UN element ; forEachRemaining consomme le reste, sur le MEME spliterator.
         Spliterator<Transaction> s = new TransactionSpliterator(Data.LOG, 0, Data.LOG.size());
         StringBuilder first = new StringBuilder();
         s.tryAdvance(t -> first.append(t.id()));
-        AtomicInteger rest = new AtomicInteger();
-        s.forEachRemaining(t -> rest.incrementAndGet());
-        System.out.println("PREMIERE (tryAdvance) : " + first + ", RESTE (forEachRemaining) : " + rest
+        List<Transaction> rest = new ArrayList<>();
+        s.forEachRemaining(rest::add);
+        System.out.println("PREMIERE (tryAdvance) : " + first + ", RESTE (forEachRemaining) : " + rest.size()
                 + ", ENCORE : " + s.tryAdvance(t -> { }));
 
         List<List<String>> lots = new ArrayList<>();

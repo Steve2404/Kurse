@@ -127,15 +127,15 @@ EXPLORATEURS (tous les genres) : [lea]
 ### ☐ Étape 10 — Les recommandations : l'algorithme
 
 ```
-RECO hugo : voisin tom (0.50) -> Dua
-RECO ines : voisin lea (0.67) -> Daft, Muse
-RECO lea : voisin ines (0.67) -> rien de nouveau
-RECO tom : voisin hugo (0.50) -> Queen
+RECO hugo : voisin tom (50%) -> Dua
+RECO ines : voisin lea (67%) -> Daft, Muse
+RECO lea : voisin ines (67%) -> rien de nouveau
+RECO tom : voisin hugo (50%) -> Queen
 RECO zoe : aucune ecoute validee
 ```
 1. **Les goûts.** Pour chaque utilisateur, prends l'ensemble trié des artistes de ses écoutes **validées**. C'est un `groupingBy` + `mapping` + `toCollection`.
 2. **La similarité de Jaccard** entre deux ensembles A et B : |A ∩ B| / |A ∪ B|.
-   - Calcule à la main lea / ines : {Adele, Miles, Nina, Queen} sur 6 artistes, soit 0.67.
+   - Calcule à la main lea / ines : {Adele, Miles, Nina, Queen} sur 6 artistes, soit 0.666…, affiché `67%` (`Math.round`, chapitre 4).
 3. **Le voisin.** C'est l'**autre** utilisateur le plus similaire.
    - La similarité doit être strictement supérieure à 0.
    - À égalité, prends le premier dans l'alphabet.
@@ -190,9 +190,9 @@ STATS : 24 ecoutes, min 8 s, max 562 s, moyenne 247.9 s
 EXTREMES : Hello par tom / So What par lea
 MOYENNE VALIDEE : 309.8 s sur 19 ecoutes
 EXPLORATEURS (tous les genres) : [lea]
-RECO hugo : voisin tom (0.50) -> Dua
-RECO ines : voisin lea (0.67) -> Daft, Muse
-RECO lea : voisin ines (0.67) -> rien de nouveau
-RECO tom : voisin hugo (0.50) -> Queen
+RECO hugo : voisin tom (50%) -> Dua
+RECO ines : voisin lea (67%) -> Daft, Muse
+RECO lea : voisin ines (67%) -> rien de nouveau
+RECO tom : voisin hugo (50%) -> Queen
 RECO zoe : aucune ecoute validee
 ```

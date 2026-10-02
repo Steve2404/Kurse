@@ -31,7 +31,10 @@ public class Check {
             "DoubleStream.of(", "IntStream.iterate(", "IntStream.generate(", ".average()", ".sum()",
             ".getAsInt()", ".getAsLong()", ".getAsDouble()", "IntSummaryStatistics", "LongSummaryStatistics",
             "DoubleSummaryStatistics", ".mapToInt(", ".mapToLong(", ".mapToDouble(", ".mapToObj(",
-            ".boxed()", ".asLongStream()", ".asDoubleStream()", ".flatMapToInt(", ".chars()");
+            ".boxed()", ".asLongStream()", ".asDoubleStream()", ".flatMapToInt(", ".chars()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall05", args, EXPECTED, API);

@@ -6,7 +6,7 @@ Lis ce fichier **en entier une fois** avant de commencer. Il répond à cinq que
 
 ## 1. Ce que tu vas faire, en une phrase
 
-Tu vas **construire 8 applications** (les projets) pour **comprendre** l'API des streams. Ensuite, tu **refais de mémoire, à intervalles espacés**, 12 petits drills chronométrés pour la **retenir**.
+Tu vas **construire 8 applications** (les projets) pour **comprendre** l'API des streams. Ensuite, tu **refais de mémoire, à intervalles espacés**, 11 petits drills chronométrés pour la **retenir**.
 
 | | Projets (`projects/`) | Drills de rappel (`drills/`) |
 |---|---|---|
@@ -14,6 +14,24 @@ Tu vas **construire 8 applications** (les projets) pour **comprendre** l'API des
 | Durée | 2 à 6 h chacun, en plusieurs séances | 10 à 30 min chacun |
 | Combien de fois | une fois, puis p07 et p08 refaits 2 à 3 semaines plus tard | 6 fois chacun (J0, J+1, J+3, J+7, J+14, J+30) |
 | Aide autorisée | Javadoc, réflexion, papier | **aucune** pendant le drill |
+
+---
+
+## 1 bis. La règle du crescendo : seulement les chapitres 1 à 10
+
+Chaque projet et chaque drill du chapitre 10 se résout **uniquement** avec ce que tu as appris aux chapitres 1 à 10 : types, opérateurs, `switch`, `String`, `StringBuilder`, tableaux, `Math`, dates (`LocalDate`, `LocalTime`), méthodes, classes, interfaces, enums, records, lambdas, interfaces fonctionnelles, collections et génériques, puis les streams.
+
+**Ce qui est volontairement exclu, car vu plus tard :**
+
+| Notion | Chapitre | Ce qu'on fait à la place ici |
+|---|---|---|
+| `try/catch`, exceptions personnalisées | 11 | un refus est une **réponse** : une chaîne `Optional` qui rend le résultat ou `REFUS : …` ; les exceptions des pièges (stream réutilisé, liste non modifiable…) s'**observent** dans la console, dans des « expériences » |
+| `Locale`, `NumberFormat`, formatage localisé | 11 | `Math.round(x * 10) / 10.0`, ou des montants en centimes affichés avec `String.format("%d.%02d", …)` |
+| streams parallèles, `ConcurrentMap`, `groupingByConcurrent`, `AtomicInteger` | 13 | les réductions se vérifient **par morceaux, à la main** (avec le combiner) ; les compteurs dans une lambda passent par une liste |
+
+`Check` refuse ces notions : `catch`, `extends Exception`, `Locale`, `.parallel()`, `.parallelStream()`, `Atomic…`, `Concurrent…`. Si tu les vois apparaître dans le message `[FAIL] API : interdit ici`, cherche la solution avec les outils du chapitre 10.
+
+Au chapitre 11, tu reprendras ces mêmes situations avec `try/catch`. Au chapitre 13, tu les reprendras en parallèle.
 
 ---
 
@@ -32,9 +50,9 @@ p02 → r02 r03 r04
 p03 → r05
 p04 → r07
 p05 → r08 r09
-p06 → r11
-p07 → r12 (1er passage)
-p08 → r06 r10 → r12 (test final)
+p06 → r10
+p07 → r11 (1er passage)
+p08 → r06 → r11 (test final)
 ```
 
 Pendant tout ce temps, les **répétitions** des drills déjà faits passent **avant** le projet du jour (section 6).
@@ -56,7 +74,7 @@ ch10_streams/
 │       └── (tes fichiers)   ← TOUT le reste, c'est TOI qui le crées ici
 └── drills/
     ├── README.md            ← règles des drills + tableau de suivi des répétitions
-    ├── Data.java            ← les données communes aux 12 drills
+    ├── Data.java            ← les données communes aux 11 drills
     └── r01_optional/
         ├── TODO.md          ← les défis + la carte mémoire repliée en bas
         ├── Check.java
@@ -181,8 +199,8 @@ Pourquoi ces règles ? La mémoire se renforce quand on **fait l'effort de retro
 ## 7. Comment savoir que le chapitre est acquis
 
 - [ ] Les 8 projets affichent `PROJET REUSSI`, et toutes les questions des `TODO.md` ont une réponse écrite.
-- [ ] Les 12 drills ont passé la répétition R3 (J+7, sans carte).
-- [ ] r12 (kata mixte) passe en moins de 25 minutes, sans carte.
+- [ ] Les 11 drills ont passé la répétition R3 (J+7, sans carte).
+- [ ] r11 (kata mixte) passe en moins de 25 minutes, sans carte.
 - [ ] p07 et p08 ont été refaits **depuis un dossier vide** (déplace tes fichiers ailleurs), 2 à 3 semaines plus tard, sans regarder ton ancien code.
 
 ---
@@ -199,7 +217,6 @@ Pourquoi ces règles ? La mémoire se renforce quand on **fait l'effort de retro
 - les interfaces fonctionnelles primitives ;
 - `reduce`, `collect`, `Collector.of` ;
 - tous les `Collectors` ;
-- le parallélisme ;
 - `Spliterator`.
 
 Les anciens exercices « remplir le corps » ont été retirés. Ils restent consultables dans l'historique git (commit `60ff6c1` et antérieurs).

@@ -28,8 +28,10 @@
   → `D04 : HASTGZ`
 - ☐ **D05.** Transforme les titres en tableau de deux façons : sans argument, puis typé `String[]`. Affiche le nom simple de la classe de chaque tableau et sa taille.
   → `D05 : Object[] 8 / String[] 8`
-- ☐ **D06.** Ajoute un élément à la liste rendue par `toList()` du stream (affiche l'exception), puis à celle du collecteur classique (affiche la taille après l'ajout).
-  → `D06 : toList() -> UnsupportedOperationException, Collectors.toList() -> 9 elements`
+- ☐ **D06.** Collecte les titres de deux façons : `toList()` du stream, et le collecteur classique. Les deux listes sont-elles égales ? Puis ajoute un élément à celle du collecteur et affiche sa taille.
+  → `D06 : meme contenu true, Collectors.toList() apres ajout -> 9 elements`
+
+**Expérience** (hors sortie attendue) : ajoute un élément à la liste de `toList()`, lance, et note l'exception. Que garantit la Javadoc de chacune des deux listes ?
 - ☐ **D07.** Affiche trois réductions :
   - le total des pages par `reduce` avec identité ;
   - l'année max par `reduce` **sans** identité ;
@@ -54,7 +56,7 @@ D02 : Le Hobbit true
 D03 : true false true | vide : false true true
 D04 : HASTGZ
 D05 : Object[] 8 / String[] 8
-D06 : toList() -> UnsupportedOperationException, Collectors.toList() -> 9 elements
+D06 : meme contenu true, Collectors.toList() apres ajout -> 9 elements
 D07 : 3199 1989 SF/Fantasy/Classique
 D08 : Optional.empty 5
 D09 : true false

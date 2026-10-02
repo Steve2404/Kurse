@@ -54,7 +54,10 @@ public class Check {
             ".orElse(", ".orElseGet(", ".orElseThrow(()", ".orElseThrow()",
             ".ifPresent(", ".ifPresentOrElse(", ".isPresent()", ".isEmpty()",
             "Optional::stream", "OptionalInt", ".getAsInt()", "OptionalDouble",
-            "!.get()");
+            "!.get()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "LoanDesk", args, EXPECTED, API);

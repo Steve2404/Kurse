@@ -1,4 +1,4 @@
-package ch10_streams.drills.r11_spliterator.solution;
+package ch10_streams.drills.r10_spliterator.solution;
 
 import ch10_streams.drills.Data;
 
@@ -9,9 +9,9 @@ import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 /**
- * SOLUTION du drill de rappel 11 - Spliterator.
+ * SOLUTION du drill de rappel 10 - Spliterator.
  */
-public class Recall11 {
+public class Recall10 {
 
     // Un Spliterator maison : rend les mots deux par deux ("stream+lambda", ...).
     static class Pairs implements Spliterator<String> {
@@ -33,7 +33,7 @@ public class Recall11 {
             return true;
         }
 
-        // null = "je ne sais pas me couper" : le flux reste correct, simplement pas parallelise.
+        // null = "je ne sais pas me couper" : le flux reste correct, il ne pourra simplement pas etre decoupe.
         @Override
         public Spliterator<String> trySplit() {
             return null;
@@ -69,7 +69,7 @@ public class Recall11 {
         Pairs pairs = new Pairs(words);
         System.out.println("D04 : " + pairs.estimateSize() + " " + StreamSupport.stream(pairs, false).toList());
 
-        System.out.println("D05 : " + StreamSupport.stream(new Pairs(words), true).count() + " " + (new Pairs(words).trySplit() == null));
+        System.out.println("D05 : " + StreamSupport.stream(new Pairs(words), false).count() + " " + (new Pairs(words).trySplit() == null));
 
         // Le spliterator d'un stream infini ne connait pas sa taille.
         Spliterator<Integer> infinite = java.util.stream.Stream.iterate(1, x -> x + 1).spliterator();

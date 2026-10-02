@@ -37,8 +37,10 @@
   → `D10 : [5, 3, 8, 1] [9, 2, 8, 7]`
 - ☐ **D11.** Compte `WORDS` avec un `peek` qui remplit une liste, puis refais-le avec un `filter(w -> true)` ajouté. Combien de fois `peek` a-t-il tourné chaque fois ? Explique pourquoi en commentaire.
   → `D11 : count 9 -> peek 0 fois ; avec filter count 9 -> peek 9 fois`
-- ☐ **D12.** Trie, sans comparateur, un stream de deux `new Object()`. Affiche le nom simple de l'exception.
-  → `D12 : sorted() sans Comparable -> ClassCastException`
+- ☐ **D12.** Trie `WORDS` par longueur **seulement**. À longueur égale, dans quel ordre restent les mots ? (Le tri d'un flux ordonné est *stable*.)
+  → `D12 : [map, java, java, stream, lambda, stream, filter, optional, collector]`
+
+**Expérience** (hors sortie attendue) : trie, sans comparateur, un stream de deux `new Object()`. Ça compile ? Que se passe-t-il à l'exécution, et pourquoi ?
 - ☐ **D13.** Sur `[[a, b], [], [c]]`, affiche les tailles (`map`), puis tous les éléments à plat.
   → `D13 : map [2, 0, 1], flatMap [a, b, c]`
 
@@ -56,7 +58,7 @@ D08 : 10 mots, 9 distincts
 D09 : [Hyperion, L'Assommoir, Le Hobbit]
 D10 : [5, 3, 8, 1] [9, 2, 8, 7]
 D11 : count 9 -> peek 0 fois ; avec filter count 9 -> peek 9 fois
-D12 : sorted() sans Comparable -> ClassCastException
+D12 : [map, java, java, stream, lambda, stream, filter, optional, collector]
 D13 : map [2, 0, 1], flatMap [a, b, c]
 ```
 

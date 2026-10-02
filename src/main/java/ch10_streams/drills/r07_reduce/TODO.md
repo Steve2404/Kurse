@@ -20,15 +20,15 @@
   → `D02 : collector Optional.empty`
 - ☐ **D03.** Le total des lettres en **un seul** `reduce`, directement sur les mots, sans `map`.
   → `D03 : 52`
-- ☐ **D04.** Réduis 1, 2, 3, 4 avec l'identité **10** et `Integer::sum`, en séquentiel puis en parallèle. Affiche le résultat séquentiel, puis si le parallèle est `plus grand` ou `egal`.
-  → `D04 : sequentiel 20, parallele plus grand`
+- ☐ **D04.** Réduis 1, 2, 3, 4 avec l'identité **10** et `Integer::sum` en un seul passage. Puis réduis **séparément** 1, 2 et 3, 4 (même identité) et additionne les deux résultats, comme le ferait un découpage.
+  → `D04 : un passage 20, deux moities 30`
 - ☐ **D05.** Deux `collect` à 3 arguments (sans `Collectors`) :
   - une `ArrayList` des mots en majuscules : affiche le 1er et la taille ;
   - un `TreeSet` des mots : affiche le 1er et la taille.
   → `D05 : STREAM 9 collector 7`
 - ☐ **D06.** Les initiales, avec un `collect` à 3 arguments dans un `StringBuilder`.
   → `D06 : slojscmjf`
-- ☐ **D07.** Écris avec `Collector.of` un collecteur « mot le plus court ». Il a un conteneur mutable, un combiner correct, et un finisher qui rend `-` si le flux est vide. Applique-le en séquentiel, en parallèle et sur un flux vide.
+- ☐ **D07.** Écris avec `Collector.of` un collecteur « mot le plus court ». Il a un conteneur mutable, un combiner correct, et un finisher qui rend `-` si le flux est vide. Applique-le avec `collect`. Puis applique-le **à la main** sur deux moitiés de `WORDS` (indices 0 à 3, puis 4 à 8) : `supplier()` et `accumulator()` pour chaque moitié, puis `combiner()` et `finisher()`. Enfin, applique-le sur un flux vide.
   → `D07 : map map -`
 - ☐ **D08.** Concatène `a`, `b`, `c` par `reduce` (`String::concat`) puis par `collect` (`StringBuilder`). Les deux résultats sont-ils égaux ?
   → `D08 : true`
@@ -39,7 +39,7 @@
 D01 : 52 slojscmjf
 D02 : collector Optional.empty
 D03 : 52
-D04 : sequentiel 20, parallele plus grand
+D04 : un passage 20, deux moities 30
 D05 : STREAM 9 collector 7
 D06 : slojscmjf
 D07 : map map -
@@ -54,16 +54,16 @@ D08 : true
 |---|---|---|
 | `reduce(T identity, BinaryOperator<T>)` | `T` | même type ; l'identité doit être **neutre** |
 | `reduce(BinaryOperator<T>)` | `Optional<T>` | pas d'identité, flux vide possible |
-| `reduce(U identity, BiFunction<U, ? super T, U>, BinaryOperator<U>)` | `U` | le type change ; le combiner sert en parallèle |
+| `reduce(U identity, BiFunction<U, ? super T, U>, BinaryOperator<U>)` | `U` | le type change ; le combiner fusionne deux résultats partiels |
 | `collect(Supplier<R>, BiConsumer<R, ? super T>, BiConsumer<R, R>)` | `R` | réduction **mutable** |
 | `collect(Collector)` | `R` | |
 | `Collector.of(supplier, accumulator, combiner, [finisher], characteristics...)` | `Collector` | |
 
-**Les règles d'une réduction correcte en parallèle :**
+**Les règles d'une réduction correcte par morceaux** (indispensables au chapitre 13, avec les streams parallèles) :
 - **identité :** `acc(identity, x) == x` ;
 - **associativité :** `(a op b) op c == a op (b op c)` ;
 - **combiner** compatible avec l'accumulateur.
 
-Une identité non neutre est ajoutée **une fois par morceau** en parallèle.
+Une identité non neutre est ajoutée **une fois par morceau**.
 
 </details>

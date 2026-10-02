@@ -10,14 +10,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentMap;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.filtering;
 import static java.util.stream.Collectors.flatMapping;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.groupingByConcurrent;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.maxBy;
@@ -78,8 +76,8 @@ public class Recall09 {
 
         System.out.println("D10 : " + BOOKS.stream().collect(teeing(summingInt(Book::pages), counting(), (p, n) -> p / n + " pages en moyenne sur " + n)));
 
-        ConcurrentMap<String, Long> concurrent = BOOKS.parallelStream().collect(groupingByConcurrent(Book::author, counting()));
-        System.out.println("D11 : " + new TreeMap<>(concurrent) + " " + BOOKS.stream().map(Book::genre).collect(toSet()).size());
+        Map<String, Long> perAuthor = BOOKS.stream().collect(groupingBy(Book::author, TreeMap::new, counting()));
+        System.out.println("D11 : " + perAuthor + " " + BOOKS.stream().map(Book::genre).collect(toSet()).size());
 
         System.out.println("D12 : " + BOOKS.stream().collect(partitioningBy(b -> b.genre().equals("SF"),
                 mapping(Book::title, joining("/")))).get(false));

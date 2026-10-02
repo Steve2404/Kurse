@@ -23,12 +23,15 @@ public class Check {
             "BILAN Lions (reduce) : 6 matchs, 11 pts, identique au classement : oui",
             "SERIES SANS DEFAITE : Aigles 5, Lions 3, Ours 1, Tigres 1",
             "CONTROLE : 33 points distribues = 9 victoires x 3 + 3 nuls x 2 : oui",
-            "PARALLELE : resultats oui, buts oui, classement oui, series oui");
+            "COMBINER (5 + 7 matchs) : resultats oui, buts oui, classement oui, series oui");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "5x.reduce(", ".collect(", "StringBuilder::new", "Collector.of(", "Collector<",
-            ".parallelStream()", "!Collectors.");
+            ".combiner()", ".supplier()", "!Collectors.",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "League", args, EXPECTED, API);

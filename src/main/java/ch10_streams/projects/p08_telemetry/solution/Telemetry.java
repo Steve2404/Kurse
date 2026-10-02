@@ -3,16 +3,14 @@ package ch10_streams.projects.p08_telemetry.solution;
 import ch10_streams.projects.p08_telemetry.Data;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.OptionalLong;
-import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoublePredicate;
 import java.util.function.DoubleToIntFunction;
@@ -92,32 +90,25 @@ public class Telemetry {
         return known ? samples.stream().filter(s -> s.region().equals(name)) : Stream.empty();
     }
 
+    // Une decimale sans Locale (chapitre 11) : Math.round (chapitre 4), et Double.toString ecrit toujours un point.
     static String fmt(double d) {
-        return String.format(Locale.US, "%.1f", d);
+        return String.valueOf(Math.round(d * 10) / 10.0);
     }
 
-    void pipeline() {
-        // parallel/sequential ne s'appliquent pas a "une etape" : le DERNIER appel decide pour tout le pipeline.
-        boolean a = samples.stream().parallel().filter(s -> s.cpu() > 50).sequential().isParallel();
-        boolean b = samples.stream().sequential().map(Sample::server).parallel().isParallel();
-        System.out.println("PIPELINE : parallel puis sequential -> " + a + ", sequential puis parallel -> " + b);
-
-        // distinct sur un flux ORDONNE garde la 1re occurrence, meme en parallele ; IntFunction<String[]> type le tableau.
-        String[] servers = samples.parallelStream().map(Sample::server).distinct().toArray(NEW_ARRAY);
+    void overview() {
+        // distinct garde la 1re occurrence ; toArray(IntFunction<String[]>) donne un VRAI String[] (pas un Object[]).
+        String[] servers = samples.stream().map(Sample::server).distinct().toArray(NEW_ARRAY);
         System.out.println("SERVEURS : " + Arrays.toString(servers));
 
-        // forEach en parallele affiche dans un ordre imprevisible ; forEachOrdered respecte l'ordre de rencontre.
-        StringJoiner first = new StringJoiner(" ");
-        samples.parallelStream().filter(s -> s.epoch() == Data.WINDOW_START)
-                .forEachOrdered(s -> first.add(s.server() + "@" + fmt(s.cpu())));
-        System.out.println("PREMIERS (forEachOrdered) : " + first);
+        List<String> first = new ArrayList<>();
+        samples.stream().filter(s -> s.epoch() == Data.WINDOW_START).forEach(s -> first.add(s.server() + "@" + fmt(s.cpu())));
+        System.out.println("PREMIERS : " + String.join(" ", first));
 
-        // findAny n'est deterministe ici que parce qu'UN SEUL element satisfait le filtre.
-        samples.parallelStream().filter(s -> s.server().equals("db1") && s.cpu() > 90).findAny()
+        // findAny : "n'importe lequel" ; le resultat est previsible ici seulement parce qu'UN SEUL element passe le filtre.
+        samples.stream().filter(s -> s.server().equals("db1") && s.cpu() > 90).findAny()
                 .ifPresent(s -> System.out.println("UNIQUE db1 > 90% (findAny) : " + fmt(s.cpu()) + " a " + HHMM.apply(s.epoch())));
 
-        // unordered : on renonce a l'ordre (inutile pour un comptage) -> distinct parallele moins couteux.
-        System.out.println("REGIONS DISTINCTES (unordered) : " + samples.parallelStream().unordered().map(Sample::region).distinct().count());
+        System.out.println("REGIONS DISTINCTES : " + samples.stream().map(Sample::region).distinct().count());
     }
 
     void longs() {
@@ -161,11 +152,10 @@ public class Telemetry {
                 Collectors.collectingAndThen(Collectors.averagingDouble(Sample::cpu), Telemetry::fmt)));
         System.out.println("CPU MOYEN PAR REGION : " + byRegion);
 
-        // groupingByConcurrent : UNE ConcurrentMap remplie par tous les threads (pas de fusion de maps) ;
-        // l'ordre n'est plus garanti -> on recopie dans une TreeMap pour afficher.
-        ConcurrentMap<String, Double> cpuMinutes = samples.parallelStream().unordered()
-                .collect(Collectors.groupingByConcurrent(Sample::server, Collectors.summingDouble(Sample::cpu)));
-        System.out.println("CPU CUMULE PAR SERVEUR (concurrent) : " + new TreeMap<>(cpuMinutes));
+        // summingDouble rend un Double ; les CPU sont des multiples de 0.5 -> sommes exactes en binaire.
+        Map<String, Double> cpuMinutes = samples.stream()
+                .collect(Collectors.groupingBy(Sample::server, TreeMap::new, Collectors.summingDouble(Sample::cpu)));
+        System.out.println("CPU CUMULE PAR SERVEUR : " + cpuMinutes);
 
         // Stream.empty() + average() -> OptionalDouble vide : rien a moyenner n'est pas "0".
         OptionalDouble empty = region(Data.EMPTY_REGION).mapToDouble(Sample::cpu).average();
@@ -183,7 +173,7 @@ public class Telemetry {
             Map<Boolean, List<String>> split = hits.stream().collect(Collectors.partitioningBy(
                     s -> maintenanceOn.getAsBoolean() && s.region().equals(Data.MAINTENANCE_REGION),
                     Collectors.mapping(Sample::server, Collectors.toList())));
-            System.out.println("ALERTE " + rule.name() + ">" + String.format(Locale.US, "%.0f", rule.threshold()) + " : "
+            System.out.println("ALERTE " + rule.name() + ">" + (long) rule.threshold() + " : "
                     + split.get(false).size() + " " + names(split.get(false)) + " | masquees " + split.get(true).size()
                     + " " + names(split.get(true)));
         }
@@ -225,45 +215,19 @@ public class Telemetry {
                 .mapToObj(Integer::toString).collect(Collectors.joining(" ")) + " s");
     }
 
-    void pitfalls() {
-        Stream<Sample> once = samples.stream();
-        once.count();
-        try {
-            once.count();
-        } catch (IllegalStateException e) {
-            System.out.println("REUTILISATION : " + e.getClass().getSimpleName());
-        }
-        // Le remede : un Supplier qui fabrique un flux NEUF a chaque appel.
+    // Le remede au stream a usage unique : un Supplier qui fabrique un flux NEUF a chaque appel.
+    void reuse() {
         Supplier<Stream<Sample>> fresh = samples::stream;
-        System.out.println("SUPPLIER : " + fresh.get().count() + " puis " + fresh.get().count());
-
-        System.out.println("MODIFIABLE : Collectors.toList() " + modifiable(samples.stream().map(Sample::server).collect(Collectors.toList()))
-                + ", Stream.toList() " + modifiable(samples.stream().map(Sample::server).toList())
-                + ", toUnmodifiableList() " + modifiable(samples.stream().map(Sample::server).collect(Collectors.toUnmodifiableList())));
-
-        try {
-            samples.stream().collect(Collectors.toUnmodifiableMap(Sample::server, Function.identity()));
-        } catch (IllegalStateException e) {
-            System.out.println("toUnmodifiableMap avec cles en double : " + e.getClass().getSimpleName());
-        }
-    }
-
-    static String modifiable(List<String> list) {
-        try {
-            list.add("x");
-            return "oui";
-        } catch (UnsupportedOperationException e) {
-            return "non";
-        }
+        System.out.println("SUPPLIER : " + fresh.get().count() + " puis " + fresh.get().filter(s -> s.cpu() > 90).count());
     }
 
     public static void main(String[] args) {
         Telemetry t = new Telemetry();
-        t.pipeline();
+        t.overview();
         t.longs();
         t.doubles();
         t.alerts();
         t.profiles();
-        t.pitfalls();
+        t.reuse();
     }
 }

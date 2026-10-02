@@ -29,7 +29,10 @@ public class Check {
     static final List<String> API = List.of(
             "groupingBy(", "TreeMap::new", "counting()", "mapping(", "toCollection(",
             "partitioningBy(", "filtering(", "flatMapping(", "collectingAndThen(", "maxBy(",
-            "reducing(", "teeing(", "groupingByConcurrent(", "joining(", "toSet()");
+            "reducing(", "teeing(", "joining(", "toSet()",
+            // Crescendo : notions des chapitres 11 et 13, interdites au chapitre 10.
+            "!catch (", "!extends Exception", "!extends RuntimeException", "!Locale",
+            "!.parallel()", "!.parallelStream()", "!Atomic", "!Concurrent");
 
     public static void main(String[] args) throws Exception {
         ProjectChecker.check(Check.class, "Recall09", args, EXPECTED, API);

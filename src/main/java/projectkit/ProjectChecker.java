@@ -131,7 +131,7 @@ public final class ProjectChecker {
             }
         }
         if (!forbidden.isEmpty()) {
-            System.out.println("[FAIL] API : appel interdit dans ce projet : " + forbidden);
+            System.out.println("[FAIL] API : interdit ici (Optional.get() ou notion d'un chapitre suivant, voir TODO.md) : " + forbidden);
         }
         if (missing.isEmpty()) {
             System.out.println("[PASS] API : toutes les methodes visees sont utilisees");

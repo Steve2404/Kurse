@@ -16,16 +16,18 @@
   - en ensemble : affiche la taille ;
   - en `TreeSet` : affiche le premier et le dernier, séparés par `..`.
   → `D01 : 8 6 Asimov..Zola`
-- ☐ **D02.** La taille de l'ensemble **non modifiable** des mots. Puis collecte `"a"` et `null` dans une liste **non modifiable** et affiche l'exception.
-  → `D02 : 7 NullPointerException`
+- ☐ **D02.** La taille de l'ensemble **non modifiable** des mots, puis celle de la liste **non modifiable** des mots.
+  → `D02 : 7 9`
+
+**Expérience** (hors sortie attendue) : collecte `"a"` et `null` dans une liste non modifiable, lance, et note l'exception.
 - ☐ **D03.** Les trois formes de jointure sur `a`, `b` : sans séparateur, avec `-`, puis `", "` avec crochets. Enfin, cette dernière forme sur un flux **vide**.
   → `D03 : ab a-b [a, b] []`
 - ☐ **D04.** Avec des collecteurs uniquement, stockés dans des variables dont **tu écris le type exact** :
   - le nombre de livres ;
   - la moyenne des pages ;
   - le total des pages ;
-  - le total des prix (2 décimales).
-  → `D04 : 8 399.875 3199 71.10`
+  - le total des prix, arrondi à 2 décimales avec `Math.round`.
+  → `D04 : 8 399.875 3199 71.1`
 - ☐ **D05.** Trois collecteurs de statistiques :
   - les années : affiche `min-max` ;
   - les prix : affiche le max ;
@@ -33,26 +35,27 @@
   → `D05 : 1877-1989 12.0 3199`
 - ☐ **D06.** Le titre le plus ancien, puis le titre le plus cher, avec les collecteurs « min » et « max ».
   → `D06 : L'Assommoir Le Silmarillion`
-- ☐ **D07.** Trois `toMap` :
-  - auteur → titre **sans** fusion (échoue) ;
+- ☐ **D07.** Deux `toMap` :
   - auteur → titres fusionnés par `+`, dans une `TreeMap` ;
   - titre → pages.
 
-  Affiche dans cet ordre : l'exception, les titres de Zola, les pages de Dune, puis les clés de la `TreeMap`.
-  → `D07 : IllegalStateException Germinal+L'Assommoir 412 [Asimov, Gibson, Herbert, Simmons, Tolkien, Zola]`
-- ☐ **D08.** La moyenne des prix (3 décimales), puis la moyenne des années par le collecteur de moyenne sur des **`long`**.
+  Affiche dans cet ordre : les titres de Zola, les pages de Dune, puis les clés de la `TreeMap`.
+  → `D07 : Germinal+L'Assommoir 412 [Asimov, Gibson, Herbert, Simmons, Tolkien, Zola]`
+
+**Expérience** (hors sortie attendue) : fais un `toMap` auteur → titre **sans** fonction de fusion, lance, et note l'exception. Pourquoi l'auteur pose-t-il problème, et pas le titre ?
+- ☐ **D08.** La moyenne des prix (arrondie à 3 décimales avec `Math.round`), puis la moyenne des années par le collecteur de moyenne sur des **`long`**.
   → `D08 : 8.888 1945.625`
 
 ## Sortie attendue complète
 
 ```
 D01 : 8 6 Asimov..Zola
-D02 : 7 NullPointerException
+D02 : 7 9
 D03 : ab a-b [a, b] []
-D04 : 8 399.875 3199 71.10
+D04 : 8 399.875 3199 71.1
 D05 : 1877-1989 12.0 3199
 D06 : L'Assommoir Le Silmarillion
-D07 : IllegalStateException Germinal+L'Assommoir 412 [Asimov, Gibson, Herbert, Simmons, Tolkien, Zola]
+D07 : Germinal+L'Assommoir 412 [Asimov, Gibson, Herbert, Simmons, Tolkien, Zola]
 D08 : 8.888 1945.625
 ```
 

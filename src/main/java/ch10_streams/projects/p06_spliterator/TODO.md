@@ -1,11 +1,11 @@
-# Projet 6 — Le lecteur parallèle d'un journal de caisse (ton propre `Spliterator`)
+# Projet 6 — Le lecteur découpable d'un journal de caisse (ton propre `Spliterator`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch10_streams/PARCOURS.md`](../../PARCOURS.md) : comment lire cette fiche, lancer `Check`, quoi faire en cas de blocage.
 
 **API visée :** l'interface `Spliterator` :
 - `tryAdvance`, `forEachRemaining`, `trySplit`, `estimateSize`, `getExactSizeIfKnown`, `characteristics` et `hasCharacteristics` ;
 - les constantes `ORDERED`, `SIZED`, `SUBSIZED`, etc. ;
-- `StreamSupport.stream`, qui transforme **ton** spliterator en `Stream`, séquentiel ou parallèle.
+- `StreamSupport.stream`, qui transforme **ton** spliterator en `Stream`.
 
 **Ce qui est donné :** `Data.java` et `Check.java`.
 
@@ -19,7 +19,7 @@ La caisse d'une librairie écrit un journal texte (`Data.LOG`). Une **transactio
 
 Une `List<String>` sait faire un stream de **lignes**. Toi, tu veux un stream de **transactions**. Aucun opérateur standard ne regroupe « un en-tête et ses lignes suivantes ». Il faut donc écrire la **source** elle-même : un `Spliterator<Transaction>`.
 
-De plus, le journal réel fait des millions de lignes. Ton spliterator doit donc savoir **se couper en deux** pour un traitement parallèle, sans jamais couper une transaction au milieu.
+De plus, le journal réel fait des millions de lignes. Ton spliterator doit donc savoir **se couper en morceaux** qu'on pourra traiter séparément, sans jamais couper une transaction au milieu. Au chapitre 13, les streams parallèles utiliseront exactement ce découpage. Ici, tu le pilotes toi-même et tu vérifies que les morceaux redonnent bien tout le journal.
 
 ---
 
@@ -30,7 +30,7 @@ De plus, le journal réel fait des millions de lignes. Ton spliterator doit donc
 - **Un article :** une quantité (négative pour un retour), un nom et un prix unitaire.
 - **Une transaction :** un id, un client, ses articles et ses lignes illisibles.
 - **Décision imposée : les montants en centimes, dans un `long`.**
-  - **Question :** en parallèle, une somme de `double` peut donner un résultat différent selon le découpage. Pourquoi ? Indice : `(a + b) + c` n'est pas toujours égal à `a + (b + c)` en virgule flottante.
+  - **Question :** additionner des `double` morceau par morceau peut donner un résultat différent de la somme d'une traite. Pourquoi ? Indice : `(a + b) + c` n'est pas toujours égal à `a + (b + c)` en virgule flottante.
   - Comment transformer `"12.50"` en `1250` sans `double` ?
 
 ### ☐ Étape 2 — `tryAdvance` : lire UNE transaction
@@ -65,15 +65,13 @@ ANOMALIE TX 1005 : ligne illisible "  + 2 x"
   - `SIZED` : **non**. Pourquoi serait-ce un mensonge, et qu'est-ce qui casserait ? Pense à `count()` et `toArray()`.
   - `NONNULL`, `IMMUTABLE` : justifie ton choix.
 
-### ☐ Étape 4 — En faire un `Stream` et compter
+### ☐ Étape 4 — En faire un `Stream`
 
 ```
-COMPTE : 8 transactions (sequentiel) / 8 (parallele)
-CA TOTAL : 119.25 (parallele identique : oui)
 MEILLEUR CLIENT : hugo (58.90)
 ```
-- `StreamSupport.stream(tonSpliterator, parallèle?)` donne un `Stream<Transaction>` ordinaire. Tous les opérateurs des projets précédents marchent dessus.
-- **À tester toi-même :** avec un `trySplit` qui rend toujours `null`, le parallèle est-il faux ? Lent ?
+- `StreamSupport.stream(tonSpliterator, false)` donne un `Stream<Transaction>` ordinaire. Tous les opérateurs des projets précédents marchent dessus. Le second argument (`true`, le parallèle) attendra le chapitre 13.
+- **MEILLEUR CLIENT :** le client qui a dépensé le plus.
 
 ### ☐ Étape 5 — `trySplit` : l'algorithme de découpe
 
@@ -86,8 +84,15 @@ DECOUPAGE : [1001] [1002] [1003 1004] [1005] [1006] [1007] [1008]
   - moins de `Data.MIN_SPLIT_LINES` lignes dans la plage : on ne coupe pas (`null`) ;
   - sinon, on vise le milieu des lignes. Si ce n'est pas un en-tête, on **avance** la coupe jusqu'au prochain en-tête ;
   - si on atteint la fin de la plage, on ne coupe pas (`null`).
-- **DECOUPAGE :** coupe **récursivement** le spliterator du journal entier tant que `trySplit` accepte. Affiche ensuite les ids de chaque morceau final, de gauche à droite.
-  - Pour lister un morceau, vide-le avec `forEachRemaining`.
+- **DECOUPAGE :** coupe **récursivement** le spliterator du journal entier tant que `trySplit` accepte. Garde les morceaux finaux dans une liste, de gauche à droite, puis affiche les ids de chacun.
+  - Pour lister un morceau, vide une **copie** de sa plage avec `forEachRemaining`. Pourquoi une copie ? Que resterait-il dans le morceau sinon ?
+- **La preuve que la découpe est juste** (ces deux lignes s'affichent **avant** `MEILLEUR CLIENT`) :
+  ```
+  COMPTE : 8 transactions (journal entier) / 8 (somme des 7 morceaux)
+  CA TOTAL : 119.25 (somme des morceaux identique : oui)
+  ```
+  - Transforme **chaque morceau** en stream avec `StreamSupport.stream`, puis additionne leurs comptes et leurs montants. Ils doivent redonner exactement ceux du journal entier.
+  - **À tester toi-même :** avance la coupe d'une ligne de trop (sur une ligne d'article). Que devient le compte ?
 - **À la main :**
   - les 22 lignes vont des indices 0 à 21. La première coupe vise 11, qui est `TX 1005`. Continue ;
   - pourquoi `[1003 1004]` reste-t-il un seul morceau, alors qu'il fait 5 lignes ?
@@ -168,8 +173,8 @@ TX 1006 hugo : 3 article(s), 34.90
 TX 1007 zoe : 10 article(s), 5.00
 TX 1008 ines : annulee (0 article)
 ANOMALIE TX 1005 : ligne illisible "  + 2 x"
-COMPTE : 8 transactions (sequentiel) / 8 (parallele)
-CA TOTAL : 119.25 (parallele identique : oui)
+COMPTE : 8 transactions (journal entier) / 8 (somme des 7 morceaux)
+CA TOTAL : 119.25 (somme des morceaux identique : oui)
 MEILLEUR CLIENT : hugo (58.90)
 DECOUPAGE : [1001] [1002] [1003 1004] [1005] [1006] [1007] [1008]
 PREMIERE (tryAdvance) : 1001, RESTE (forEachRemaining) : 7, ENCORE : false

@@ -25,11 +25,11 @@ Lance `Check.java` avec l'argument `solution` pour voir à quoi ressemble un pro
 | ☐ | `p01_loandesk` — guichet de prêt | `Optional`, `OptionalInt`, `OptionalDouble` | `LoanDesk` | file d'attente, pénalités plafonnées |
 | ☐ | `p02_busnetwork` — itinéraires de bus | sources, paresse, opérations intermédiaires, recherche | `BusNetwork` | horaires générés à la demande, trajet avec correspondance |
 | ☐ | `p03_weather` — station météo | `IntStream`, `LongStream`, `DoubleStream` | `WeatherStation` | fenêtre glissante, médiane, histogramme, plus longues séries |
-| ☐ | `p04_league` — championnat | `reduce` (3 formes), `collect`, `Collector.of`, parallèle | `League` | classement avec départages, série fusionnable en parallèle |
+| ☐ | `p04_league` — championnat | `reduce` (3 formes), `collect`, `Collector.of` et ses 4 morceaux | `League` | classement avec départages, série fusionnable par morceaux |
 | ☐ | `p05_music` — plateforme musicale | tous les `Collectors` | `MusicStats` | recommandation par similarité de Jaccard |
 | ☐ | `p06_spliterator` — journal de caisse | `Spliterator`, `StreamSupport` | `CashJournal` | découpe d'un journal sans couper une transaction |
 | ☐ | `p07_warehouse` — **capstone** entrepôt | tout le chapitre | `Warehouse` | allocation de stock par priorité, contrôle comptable |
-| ☐ | `p08_telemetry` — supervision de serveurs | parallèle, `LongStream`/`DoubleStream`, interfaces fonctionnelles primitives, pièges | `Telemetry` | trous de sonde, règles d'alerte, composition de fonctions |
+| ☐ | `p08_telemetry` — supervision de serveurs | `LongStream`/`DoubleStream`, interfaces fonctionnelles primitives, pièges | `Telemetry` | trous de sonde, règles d'alerte, composition de fonctions |
 
 Fais-les **dans l'ordre**. Chaque projet réutilise des réflexes du précédent : `Optional::stream` (p01) revient dans p02, p05 et p07, et les centimes en `long` de p06 reviennent dans p07.
 

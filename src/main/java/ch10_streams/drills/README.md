@@ -46,9 +46,9 @@ Après le premier passage (J0), refais **le même drill, depuis un fichier vide*
 | p03 `WeatherStation` | r05 |
 | p04 `League` | r07 |
 | p05 `MusicStats` | r08, r09 |
-| p06 `CashJournal` | r11 |
-| p07 `Warehouse` | r12 (premier passage) |
-| p08 `Telemetry` | r06, r10, puis r12 en test final |
+| p06 `CashJournal` | r10 |
+| p07 `Warehouse` | r11 (premier passage) |
+| p08 `Telemetry` | r06, puis r11 en test final |
 
 ## Tableau de suivi
 
@@ -65,11 +65,10 @@ Note la date et le temps (par exemple `03/10 · 14 min · 1✗`).
 | r07 | reduce / collect | | | | | | |
 | r08 | Collecteurs simples | | | | | | |
 | r09 | groupingBy / partitioningBy / teeing | | | | | | |
-| r10 | Parallèle | | | | | | |
-| r11 | Spliterator | | | | | | |
-| r12 | Kata mixte (test final) | | | | | | |
+| r10 | Spliterator | | | | | | |
+| r11 | Kata mixte (test final) | | | | | | |
 
 **Critère de fin du chapitre :**
-- les 12 drills ont passé R3 ;
-- r12 passe en moins de 25 minutes, sans carte ;
+- les 11 drills ont passé R3 ;
+- r11 passe en moins de 25 minutes, sans carte ;
 - p07 et p08 sont refaits **depuis zéro** 2 à 3 semaines plus tard.

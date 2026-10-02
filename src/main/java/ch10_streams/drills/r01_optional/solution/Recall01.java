@@ -2,15 +2,13 @@ package ch10_streams.drills.r01_optional.solution;
 
 import ch10_streams.drills.Data;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 /**
@@ -41,26 +39,21 @@ public class Recall01 {
         // toString : "Optional[valeur]" ou "Optional.empty".
         System.out.println("D01 : " + Optional.of("Dune") + " " + Optional.empty());
 
-        String npe;
-        try {
-            Optional.of(null);
-            npe = "rien";
-        } catch (NullPointerException e) {
-            npe = e.getClass().getSimpleName();
-        }
-        // of(null) lance NPE tout de suite ; ofNullable(null) rend vide.
-        System.out.println("D02 : " + Optional.ofNullable(null).isEmpty() + " " + npe);
+        // ofNullable(null) rend vide ; of(null), lui, lancerait NullPointerException tout de suite.
+        System.out.println("D02 : " + Optional.ofNullable(null).isEmpty() + " " + Optional.ofNullable("Dune").isPresent());
 
         System.out.println("D03 : " + BOOKS.stream().filter(b -> b.author().equals("Zola")).findFirst().map(Book::title).orElse("inconnu")
                 + " | " + BOOKS.stream().filter(b -> b.author().equals("Proust")).findFirst().map(Book::title).orElse("inconnu"));
 
         // orElse EVALUE toujours son argument ; orElseGet n'appelle le Supplier que si vide.
-        AtomicInteger calls = new AtomicInteger();
+        // Une lambda ne peut pas incrementer un int local (effectivement final, chapitre 8) : on note les appels dans une liste.
+        List<String> calls = new ArrayList<>();
         Optional<String> present = Optional.of("Dune");
         present.orElse(expensive(calls));
-        int withOrElse = calls.getAndSet(0);
+        int withOrElse = calls.size();
+        calls.clear();
         present.orElseGet(() -> expensive(calls));
-        System.out.println("D04 : orElse appelle " + withOrElse + " fois, orElseGet " + calls.intValue() + " fois");
+        System.out.println("D04 : orElse appelle " + withOrElse + " fois, orElseGet " + calls.size() + " fois");
 
         // flatMap : la fonction rend deja un Optional -> pas d'Optional<Optional<...>>.
         System.out.println("D05 : " + byTitle("Dune").flatMap(Recall01::sequel).orElse("aucune suite")
@@ -76,21 +69,10 @@ public class Recall01 {
         byTitle("Ulysse").ifPresentOrElse(b -> sb.append(" trouve ").append(b.year()), () -> sb.append(" absent"));
         System.out.println(sb);
 
-        String e1;
-        String e2;
-        try {
-            byTitle("Ulysse").orElseThrow();
-            e1 = "rien";
-        } catch (NoSuchElementException e) {
-            e1 = e.getClass().getSimpleName();
-        }
-        try {
-            byTitle("Ulysse").orElseThrow(IllegalArgumentException::new);
-            e2 = "rien";
-        } catch (IllegalArgumentException e) {
-            e2 = e.getClass().getSimpleName();
-        }
-        System.out.println("D08 : " + e1 + " " + e2);
+        // Sur un Optional PRESENT, les deux orElseThrow rendent la valeur ; vides, ils lanceraient
+        // NoSuchElementException (sans argument) ou l'exception fournie par le Supplier.
+        System.out.println("D08 : " + byTitle("Dune").map(Book::author).orElseThrow()
+                + " " + byTitle("Germinal").map(Book::year).orElseThrow(IllegalArgumentException::new));
 
         // Optional::stream : 0 ou 1 element -> flatMap ne garde que les presents.
         System.out.println("D09 : " + BOOKS.stream().map(Recall01::sequel).flatMap(Optional::stream).sorted().toList());
@@ -100,7 +82,7 @@ public class Recall01 {
         OptionalDouble avgPrice = BOOKS.stream().mapToDouble(Book::price).average();
         OptionalInt none = IntStream.empty().max();
         System.out.println("D10 : " + maxPages.getAsInt() + " " + lastYear.getAsLong() + " "
-                + String.format(Locale.US, "%.2f", avgPrice.getAsDouble()) + " " + none.orElse(-1));
+                + Math.round(avgPrice.getAsDouble() * 100) / 100.0 + " " + none.orElse(-1));
 
         // map qui rend null -> Optional vide (pas d'exception).
         System.out.println("D11 : " + Optional.of("a").equals(Optional.of("a")) + " " + Optional.of(1).map(x -> null));
@@ -111,8 +93,8 @@ public class Recall01 {
         byTitle("Fondation").ifPresent(b -> System.out.println("D13 : " + b.author() + " " + byTitle("Fondation").isPresent()));
     }
 
-    static String expensive(AtomicInteger calls) {
-        calls.incrementAndGet();
+    static String expensive(List<String> calls) {
+        calls.add("appel");
         return "defaut";
     }
 }

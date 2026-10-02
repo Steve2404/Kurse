@@ -29,12 +29,14 @@
   → `D05 : [8, 1, 9]`
 - ☐ **D06.** Les lettres de `"java"` séparées par des tirets, en partant de la `String`.
   → `D06 : j-a-v-a`
-- ☐ **D07.** Le premier mot de plus de 6 lettres, et le nombre d'éléments **réellement examinés**. Compte-les avec une opération de débogage.
+- ☐ **D07.** Le premier mot de plus de 6 lettres, et le nombre d'éléments **réellement examinés**. Note-les dans une liste avec une opération de débogage (un `int` ne peut pas être modifié dans une lambda).
   → `D07 : optional apres 3 elements examines`
-- ☐ **D08.** Construis un pipeline avec un compteur dans l'opération de débogage, mais **sans** opération terminale. Affiche le compteur.
+- ☐ **D08.** Construis un pipeline dont l'opération de débogage note chaque élément dans une liste, mais **sans** opération terminale. Affiche la taille de la liste.
   → `D08 : sans operation terminale : 0 appel`
-- ☐ **D09.** Consomme deux fois le même stream, puis affiche le nom simple de l'exception.
-  → `D09 : IllegalStateException`
+- ☐ **D09.** Un `Supplier` de streams de `WORDS` : compte les mots avec un premier flux, puis les mots **distincts** avec un second flux venant du même `Supplier`.
+  → `D09 : 9 7`
+
+**Expérience** (hors sortie attendue) : consomme **deux fois** le même stream (deux `count()`), lance, et note l'exception. Pourquoi le `Supplier` l'évite-t-il ?
 - ☐ **D10.** Les 3 premiers mots, lus avec l'**opération terminale qui rend un itérateur** classique.
   → `D10 : stream lambda optional`
 - ☐ **D11.** Compte un `Stream.of(NUMBERS)`, puis le stream du tableau d'`int` construit correctement. Explique la différence en commentaire.
@@ -57,7 +59,7 @@ D05 : [8, 1, 9]
 D06 : j-a-v-a
 D07 : optional apres 3 elements examines
 D08 : sans operation terminale : 0 appel
-D09 : IllegalStateException
+D09 : 9 7
 D10 : stream lambda optional
 D11 : 1 8
 D12 : [1, 2, 3, 4, 5, 6, 7]
@@ -78,7 +80,7 @@ D13 : [stream, lambda, optional] [stream, lambda, optional, stream]
 | `Stream.concat(a, b)` | deux `Stream<T>` exactement |
 | `Arrays.stream(arr, from, toExclusive)` | `IntStream` pour un `int[]` |
 | `"txt".chars()` | `IntStream` de codes de caractères |
-| `collection.stream()`, `.parallelStream()` | |
+| `collection.stream()` | |
 
 **Les règles du pipeline :**
 - Les opérations intermédiaires sont **paresseuses**. Rien ne s'exécute sans opération terminale.

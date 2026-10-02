@@ -67,7 +67,7 @@ O9 Ines (STANDARD) : REFUSEE 0.00 | manque B2x1
   - `REFUSEE` si rien n'a été servi ;
   - `PARTIELLE` s'il y a un manque ou un article inconnu ;
   - sinon `COMPLETE`.
-- **La question de conception du projet :** l'allocation **modifie** le stock, et son résultat **dépend de l'ordre de passage**. Est-ce une bonne idée de l'écrire avec `stream().map(...)`, ou `parallelStream()` ?
+- **La question de conception du projet :** l'allocation **modifie** le stock, et son résultat **dépend de l'ordre de passage**. Est-ce une bonne idée de l'écrire avec `stream().map(...)` ?
   - Que dit la Javadoc de `java.util.stream` sur les lambdas avec effets de bord (« side-effects », « stateless ») ?
   - Choisis, et justifie en commentaire.
 
@@ -81,7 +81,7 @@ BONS : BL-001=O8 BL-002=O2 ... BL-007=O7
 - **Les avis :** chaque commande non complète déclenche un avis, par email si le client en a un, sinon par courrier. Construis le texte de repli avec `orElseGet`.
 - **Les bons :** les commandes **expédiées** (non refusées) reçoivent un numéro `BL-001`, `BL-002`… dans l'ordre de traitement.
   - Les numéros viennent d'un `IntStream`, et non d'un compteur mutable.
-  - **Question :** pourquoi un compteur dans une lambda serait-il refusé par le compilateur, ou faux en parallèle ?
+  - **Question :** pourquoi un compteur `int` incrémenté dans une lambda serait-il refusé par le compilateur (chapitre 8) ?
 
 ### ☐ Étape 5 — Les regroupements
 

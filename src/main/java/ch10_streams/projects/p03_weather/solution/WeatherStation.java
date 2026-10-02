@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -59,6 +58,15 @@ public class WeatherStation {
         return days.stream().flatMapToInt(Day::temps);
     }
 
+    // Arrondi a n decimales sans Locale : Math.round (chapitre 4), puis Double.toString ecrit toujours un point.
+    static double round1(double x) {
+        return Math.round(x * 10) / 10.0;
+    }
+
+    static double round2(double x) {
+        return Math.round(x * 100) / 100.0;
+    }
+
     // chars() rend un IntStream de codes : on reste en int du debut a la fin.
     int checksum(String code) {
         return code.chars().filter(Character::isLetterOrDigit).sum() % 97;
@@ -71,13 +79,12 @@ public class WeatherStation {
                 .max(Comparator.comparingInt(h -> IntStream.range(h, h + 3).map(d::at).sum()))
                 .orElseThrow();
         double avg = IntStream.range(start, start + 3).map(d::at).average().getAsDouble();
-        return String.format(Locale.US, "pic %dh-%dh moy %.1f", start, start + 2, avg);
+        return "pic " + start + "h-" + (start + 2) + "h moy " + round1(avg);
     }
 
     void daily(Day d) {
         IntSummaryStatistics s = d.temps().summaryStatistics();
-        System.out.println(String.format(Locale.US, "%s : min %d max %d moy %.1f | %s",
-                d.date(), s.getMin(), s.getMax(), s.getAverage(), peak(d)));
+        System.out.println(d.date() + " : min " + s.getMin() + " max " + s.getMax() + " moy " + round1(s.getAverage()) + " | " + peak(d));
         // iterate a 3 arguments sur un IntStream : 0, 6, 12, 18.
         String checkpoints = IntStream.iterate(0, h -> h < HOURS, h -> h + 6)
                 .mapToObj(h -> String.valueOf(d.at(h)))
@@ -145,10 +152,10 @@ public class WeatherStation {
         rejected.forEach(System.out::println);
         days.forEach(this::daily);
 
-        System.out.println(String.format(Locale.US, "MEDIANE : %.1f", median()));
+        System.out.println("MEDIANE : " + round1(median()));
         // asDoubleStream : la conversion en Fahrenheit doit se faire en double, pas en division entiere.
-        System.out.println(String.format(Locale.US, "MOYENNE : %.1f C / %.1f F",
-                all().average().orElse(0), all().asDoubleStream().map(c -> c * 9 / 5 + 32).average().orElse(0)));
+        System.out.println("MOYENNE : " + round1(all().average().orElse(0)) + " C / "
+                + round1(all().asDoubleStream().map(c -> c * 9 / 5 + 32).average().orElse(0)) + " F");
         histogram();
 
         System.out.println(heatWave()
@@ -171,12 +178,12 @@ public class WeatherStation {
 
         // mapToLong : (t - 24) * 350 Wh deborderait vite un int sur une annee de releves.
         long wh = all().filter(t -> t > Data.AC_THRESHOLD).mapToLong(t -> (t - Data.AC_THRESHOLD) * Data.WH_PER_DEGREE_HOUR).sum();
-        System.out.println(String.format(Locale.US, "CLIMATISATION : %d Wh (%.1f kWh)", wh, wh / 1000.0));
+        System.out.println("CLIMATISATION : " + wh + " Wh (" + round1(wh / 1000.0) + " kWh)");
         // mapToDouble : une valeur double par journee, puis sum.
         double degreeDays = days.stream()
                 .mapToDouble(d -> Math.max(0, d.temps().average().orElse(0) - Data.AC_THRESHOLD))
                 .sum();
-        System.out.println(String.format(Locale.US, "DEGRES-JOURS : %.2f", degreeDays));
+        System.out.println("DEGRES-JOURS : " + round2(degreeDays));
     }
 
     public static void main(String[] args) {
