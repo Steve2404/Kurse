@@ -6,8 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +130,36 @@ public class Recall02 {
                         System.out.println("D08 : Statement " + glued + ", PreparedStatement " + safe.getInt(1));
                     }
                 }
+            }
+
+            // D09 : un PreparedStatement herite de executeQuery(String)... mais l'appeler est une ERREUR (le SQL est deja fixe).
+            try (PreparedStatement ps = conn.prepareStatement("SELECT title FROM films")) {
+                List<String> states = new ArrayList<>();
+                try {
+                    ps.executeQuery("SELECT * FROM films");
+                } catch (SQLException e) {
+                    states.add(e.getSQLState());
+                }
+                try {
+                    ps.addBatch("DELETE FROM films");
+                } catch (SQLException e) {
+                    states.add(e.getSQLState());
+                }
+                System.out.println("D09 : " + states);
+            }
+
+            // D10 : date et heure. Timestamp/Time de java.sql, ou LocalDateTime/LocalTime par getObject.
+            st.executeUpdate("CREATE TABLE shows (id INT PRIMARY KEY, starts TIMESTAMP NOT NULL, doors TIME NOT NULL)");
+            try (PreparedStatement ps = conn.prepareStatement("INSERT INTO shows VALUES (?, ?, ?)")) {
+                ps.setInt(1, 1);
+                ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.of(2026, 3, 1, 20, 30)));
+                ps.setTime(3, Time.valueOf(LocalTime.of(19, 45)));
+                ps.executeUpdate();
+            }
+            try (ResultSet rs = st.executeQuery("SELECT starts, doors FROM shows")) {
+                rs.next();
+                LocalDateTime starts = rs.getObject("starts", LocalDateTime.class);
+                System.out.println("D10 : " + rs.getTimestamp(1) + " | " + rs.getTime("doors") + " | " + starts + " | " + rs.getTime(2).toLocalTime().isBefore(starts.toLocalTime()));
             }
         }
     }

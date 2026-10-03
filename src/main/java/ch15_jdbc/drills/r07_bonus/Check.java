@@ -20,7 +20,9 @@ public class Check {
             "D05 : [Ana=45, Ben=25, Cleo=60, Eve=33]",
             "D06 : READ_COMMITTED par defaut true, SERIALIZABLE supporte true, actif true",
             "D07 : maxRows 2, lignes lues 2, timeout 5 s",
-            "D08 : warnings true true");
+            "D08 : warnings true true",
+            "D09 : java.sql uses [java.sql.Driver] exports [java.sql, javax.sql] requires transitive [java.logging, java.transaction.xa, java.xml]",
+            "D09 : pilote H2 module nomme false, Recall07 module nomme false");
             // EXPECTED-END
 
     static final List<String> API = List.of(
@@ -30,7 +32,8 @@ public class Check {
             ".beforeFirst()", ".getRow()", ".updateInt(", ".updateRow()",
             ".moveToInsertRow()", ".insertRow()", ".deleteRow()", "Connection.TRANSACTION_SERIALIZABLE",
             ".setTransactionIsolation(", ".supportsTransactionIsolationLevel(", ".setMaxRows(", ".setQueryTimeout(",
-            ".getWarnings()", "static void crud(String url)",
+            ".getWarnings()", "static void crud(String url)", "Connection.class.getModule()", "ModuleDescriptor",
+            ".uses()", ".exports()", "Requires.Modifier.TRANSITIVE", ".isNamed()",
             // Crescendo : System.exit, printStackTrace et l heure reelle (sortie non deterministe), interdits au chapitre 15.
             "!System.exit", "!printStackTrace", "!.now()");
 

@@ -2,7 +2,7 @@
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch15_jdbc/PARCOURS.md`](../../PARCOURS.md). À faire après le projet p02.
 
-**Chrono cible :** 12 min, puis 6 min.
+**Chrono cible :** 15 min, puis 8 min.
 
 **Règles :**
 - Tout se fait de mémoire, **imports compris**.
@@ -50,6 +50,23 @@
   → `D07 : 1er ferme true, 2e Brazil`
 - ☐ **D08.** `input = "' OR 1=1 --"`. Compte les films avec `"SELECT COUNT(*) FROM films WHERE title = '" + input + "'"` sur `st`, puis avec `WHERE title = ?` en `PreparedStatement`.
   → `D08 : Statement 2, PreparedStatement 0`
+- ☐ **D09.** `ps = conn.prepareStatement("SELECT title FROM films")`. Ajoute à une liste le SQLState de chacun de ces appels (chacun attrapé) :
+  1. `ps.executeQuery("SELECT * FROM films")` ;
+  2. `ps.addBatch("DELETE FROM films")`.
+  
+  → `D09 : [90130, 90130]`
+- ☐ **D10.** `st.executeUpdate("CREATE TABLE shows (id INT PRIMARY KEY, starts TIMESTAMP NOT NULL, doors TIME NOT NULL)")`. Insère, avec un `PreparedStatement` :
+  - l'id 1 ;
+  - `setTimestamp(2, Timestamp.valueOf(LocalDateTime.of(2026, 3, 1, 20, 30)))` ;
+  - `setTime(3, Time.valueOf(LocalTime.of(19, 45)))`.
+  
+  Puis `SELECT starts, doors FROM shows`, et affiche, séparés par ` | ` :
+  - `getTimestamp(1)` ;
+  - `getTime("doors")` ;
+  - `starts = getObject("starts", LocalDateTime.class)` ;
+  - `getTime(2).toLocalTime().isBefore(starts.toLocalTime())`.
+  
+  → `D10 : 2026-03-01 20:30:00.0 | 19:45:00 | 2026-03-01T20:30 | true`
 
 ## Expériences (hors sortie attendue)
 
@@ -68,6 +85,8 @@ D06 : ? entre apostrophes 90008
 D06 : LIKE ? avec "%li%" Alien
 D07 : 1er ferme true, 2e Brazil
 D08 : Statement 2, PreparedStatement 0
+D09 : [90130, 90130]
+D10 : 2026-03-01 20:30:00.0 | 19:45:00 | 2026-03-01T20:30 | true
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -87,7 +106,15 @@ D08 : Statement 2, PreparedStatement 0
   - les valeurs **restent** posées ;
   - `clearParameters()` les efface toutes ;
   - une nouvelle exécution **ferme** le `ResultSet` précédent du même `PreparedStatement`.
+- **Le piège des méthodes héritées :** `PreparedStatement` hérite de `executeQuery(String)`, `executeUpdate(String)`, `execute(String)` et `addBatch(String)` de `Statement`. Les appeler sur un `PreparedStatement` **compile**, mais lève une `SQLException` à l'exécution. Sur un `PreparedStatement`, on appelle toujours la version **sans** argument.
 - **Les dates :**
+
+  | Type SQL | Getter / setter | Classe `java.sql` | Pont vers `java.time` |
+  |---|---|---|---|
+  | `DATE` | `getDate` / `setDate` | `Date` | `toLocalDate()`, `Date.valueOf(LocalDate)` |
+  | `TIME` | `getTime` / `setTime` | `Time` | `toLocalTime()`, `Time.valueOf(LocalTime)` |
+  | `TIMESTAMP` | `getTimestamp` / `setTimestamp` | `Timestamp` | `toLocalDateTime()`, `Timestamp.valueOf(LocalDateTime)` |
+
   - `getDate` rend un `java.sql.Date` (une sous-classe de `java.util.Date`) ;
   - `getObject(col, LocalDate.class)` rend un `LocalDate` (JDBC 4.2) ;
   - `java.sql.Date.valueOf(LocalDate)` et `date.toLocalDate()` font le pont.

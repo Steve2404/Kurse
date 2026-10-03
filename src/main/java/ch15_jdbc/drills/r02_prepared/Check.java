@@ -19,14 +19,19 @@ public class Check {
             "D06 : ? entre apostrophes 90008",
             "D06 : LIKE ? avec \"%li%\" Alien",
             "D07 : 1er ferme true, 2e Brazil",
-            "D08 : Statement 2, PreparedStatement 0");
+            "D08 : Statement 2, PreparedStatement 0",
+            "D09 : [90130, 90130]",
+            "D10 : 2026-03-01 20:30:00.0 | 19:45:00 | 2026-03-01T20:30 | true");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             ".prepareStatement(", ".setInt(", ".setString(", ".setDouble(",
             ".setBoolean(", ".setNull(", "Types.DOUBLE", ".setObject(",
             "LocalDate.class", ".getDate(", ".clearParameters()", "LIKE '%?%'",
-            "LIKE ?", ".isClosed()", "try (PreparedStatement",
+            "LIKE ?", ".isClosed()", "try (PreparedStatement", "ps.executeQuery(\"",
+            "ps.addBatch(\"", "Timestamp.valueOf(", "Time.valueOf(", ".setTimestamp(",
+            ".setTime(", ".getTimestamp(", ".getTime(", "LocalDateTime.class",
+            ".toLocalTime()",
             // Crescendo : System.exit, printStackTrace et l heure reelle (sortie non deterministe), interdits au chapitre 15.
             "!System.exit", "!printStackTrace", "!.now()");
 

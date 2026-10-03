@@ -19,13 +19,15 @@ public class Check {
             "D05 : 15",
             "D06 : rollback(libere) 90063, getSavepointName(anonyme) SQLException",
             "D07 : 23513, toujours 7 dans la transaction",
-            "D08 : l'autre voit 7");
+            "D08 : l'autre voit 7",
+            "D09 : rollback apres commit 90063, stock 8");
             // EXPECTED-END
 
     static final List<String> API = List.of(
             "2xDriverManager.getConnection(", ".setAutoCommit(false)", ".setAutoCommit(true)", ".commit()",
             ".rollback()", "Savepoint", ".setSavepoint(\"moitie\")", ".setSavepoint()",
-            ".rollback(half)", ".releaseSavepoint(", ".getSavepointName()",
+            ".rollback(half)", ".releaseSavepoint(", ".getSavepointName()", ".setSavepoint(\"ancien\")",
+            ".rollback(old)",
             // Crescendo : System.exit, printStackTrace et l heure reelle (sortie non deterministe), interdits au chapitre 15.
             "!System.exit", "!printStackTrace", "!.now()");
 

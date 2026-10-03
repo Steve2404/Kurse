@@ -49,6 +49,14 @@
   → `D07 : 23513, toujours 7 dans la transaction`
 - ☐ **D08.** `conn.setAutoCommit(true)`, puis `stock(other)`.
   → `D08 : l'autre voit 7`
+- ☐ **D09.** Dans cet ordre :
+  1. `conn.setAutoCommit(false)`, puis `old = conn.setSavepoint("ancien")` ;
+  2. `UPDATE stock SET qty = 8` ;
+  3. `conn.commit()` ;
+  4. `conn.rollback(old)`, attrapée : affiche le SQLState et `stock(conn)`.
+  
+  Remets enfin `setAutoCommit(true)`.
+  → `D09 : rollback apres commit 90063, stock 8`
 
 ## Expériences (hors sortie attendue)
 
@@ -67,6 +75,7 @@ D05 : 15
 D06 : rollback(libere) 90063, getSavepointName(anonyme) SQLException
 D07 : 23513, toujours 7 dans la transaction
 D08 : l'autre voit 7
+D09 : rollback apres commit 90063, stock 8
 ```
 
 ## Carte mémoire (à lire **après** le drill)

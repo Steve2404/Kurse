@@ -55,6 +55,15 @@ Sa dernière partie se fait **à la main**, avec Docker (hors `Check`).
   → `D07 : maxRows 2, lignes lues 2, timeout 5 s`
 - ☐ **D08.** `conn.getWarnings() == null` et `st.getWarnings() == null`.
   → `D08 : warnings true true`
+- ☐ **D09.** **Après** le try de la connexion : JDBC vu comme un **module** (le lien avec le chapitre 12).
+  - `Module sql = Connection.class.getModule()`, puis son `ModuleDescriptor` ;
+  - affiche son nom, puis `descriptor.uses()` ;
+  - puis les `source()` de `exports()`, triés dans un `TreeSet` ;
+  - puis les noms des `requires()` qui portent `ModuleDescriptor.Requires.Modifier.TRANSITIVE`, triés dans un `TreeSet`.
+  
+  Sur une 2e ligne, affiche `getModule().isNamed()` pour la classe du pilote H2 (`DriverManager.getDriver(VENDOR_URLS[0]).getClass()`), puis pour `Recall07.class`.
+  → `D09 : java.sql uses [java.sql.Driver] exports [java.sql, javax.sql] requires transitive [java.logging, java.transaction.xa, java.xml]`
+  → `D09 : pilote H2 module nomme false, Recall07 module nomme false`
 - ☐ **Pour la partie à la main :** après le try, si `args[0]` vaut `"docker"`, appelle `crud(url)` pour les deux URL Docker. `static void crud(String url)` :
   1. se connecte avec `kurse` / `kurse` ;
   2. `DROP TABLE IF EXISTS r07_scores`, la crée comme `scores`, puis insère `Ana` (40) avec un `PreparedStatement` ;
@@ -73,8 +82,9 @@ Sa dernière partie se fait **à la main**, avec Docker (hors `Check`).
 ## Expériences (hors sortie attendue)
 
 1. D04 : appelle `absolute(2)` sur un curseur `TYPE_FORWARD_ONLY`. Que se passe-t-il ?
-2. D05 : pourquoi `deleteRow()` a-t-il supprimé Dan, et pas Eve, qui vient pourtant d'être insérée ?
-3. D07 : `setMaxRows(0)` : que veut dire 0 ?
+2. D09 : relance avec le pilote H2 sur le **module path** (`java --module-path …h2-2.3.232.jar --add-modules com.h2database …`). Que devient `isNamed()` ? Quel est le nom du module H2 ?
+3. D05 : pourquoi `deleteRow()` a-t-il supprimé Dan, et pas Eve, qui vient pourtant d'être insérée ?
+4. D07 : `setMaxRows(0)` : que veut dire 0 ?
 
 ## Sortie attendue complète
 
@@ -88,6 +98,8 @@ D05 : [Ana=45, Ben=25, Cleo=60, Eve=33]
 D06 : READ_COMMITTED par defaut true, SERIALIZABLE supporte true, actif true
 D07 : maxRows 2, lignes lues 2, timeout 5 s
 D08 : warnings true true
+D09 : java.sql uses [java.sql.Driver] exports [java.sql, javax.sql] requires transitive [java.logging, java.transaction.xa, java.xml]
+D09 : pilote H2 module nomme false, Recall07 module nomme false
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -120,6 +132,11 @@ D08 : warnings true true
   - `setMaxRows(n)` (0 = sans limite) ;
   - `setQueryTimeout(secondes)` : au-delà, `SQLTimeoutException` ;
   - `setFetchSize(n)` : un conseil au pilote.
+- **JDBC et les modules :**
+  - l'API vit dans le module **`java.sql`** (paquets `java.sql` et `javax.sql`). Une application modulaire écrit `requires java.sql;` ;
+  - `java.sql` déclare `uses java.sql.Driver` : `DriverManager` trouve les pilotes par **`ServiceLoader`** ;
+  - un pilote modulaire déclare `provides java.sql.Driver with …` ; sur le classpath, il tombe dans le module **sans nom** ;
+  - `requires transitive java.logging, java.transaction.xa, java.xml` : qui lit `java.sql` lit aussi ces trois modules.
 - **`SQLWarning`** : un avertissement n'est **pas** lancé. On le lit avec `getWarnings()`, puis `getNextWarning()`.
 
 </details>

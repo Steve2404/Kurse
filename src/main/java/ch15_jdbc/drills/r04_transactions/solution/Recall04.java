@@ -88,6 +88,18 @@ public class Recall04 {
             // D08 : repasser en auto-commit VALIDE la transaction en cours.
             conn.setAutoCommit(true);
             System.out.println("D08 : l'autre voit " + stock(other));
+
+            // D09 : un commit libere tous les Savepoint : y revenir ensuite echoue.
+            conn.setAutoCommit(false);
+            Savepoint old = conn.setSavepoint("ancien");
+            st.executeUpdate("UPDATE stock SET qty = 8");
+            conn.commit();
+            try {
+                conn.rollback(old);
+            } catch (SQLException e) {
+                System.out.println("D09 : rollback apres commit " + e.getSQLState() + ", stock " + stock(conn));
+            }
+            conn.setAutoCommit(true);
         }
     }
 }

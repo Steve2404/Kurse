@@ -1,5 +1,6 @@
 package ch15_jdbc.drills.r07_bonus.solution;
 
+import java.lang.module.ModuleDescriptor;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -10,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.TreeSet;
 
 /**
  * SOLUTION du drill de rappel 7 (bonus) - pilotes de plusieurs fournisseurs, Properties, curseurs defilants et modifiables,
@@ -111,6 +113,18 @@ public class Recall07 {
             // D08 : les avertissements (SQLWarning) ne sont pas lances : on les lit.
             System.out.println("D08 : warnings " + (conn.getWarnings() == null) + " " + (st.getWarnings() == null));
         }
+
+        // D09 : JDBC est un MODULE (java.sql). Il CONSOMME le service java.sql.Driver : c'est ainsi que
+        // DriverManager trouve les pilotes. Une application modulaire ecrit "requires java.sql;".
+        Module sql = Connection.class.getModule();
+        ModuleDescriptor descriptor = sql.getDescriptor();
+        TreeSet<String> exports = new TreeSet<>(descriptor.exports().stream().map(ModuleDescriptor.Exports::source).toList());
+        TreeSet<String> transitive = new TreeSet<>(descriptor.requires().stream()
+                .filter(r -> r.modifiers().contains(ModuleDescriptor.Requires.Modifier.TRANSITIVE)).map(ModuleDescriptor.Requires::name).toList());
+        System.out.println("D09 : " + sql.getName() + " uses " + descriptor.uses() + " exports " + exports + " requires transitive " + transitive);
+        // Lances depuis le classpath, le pilote H2 et ta classe sont dans le module SANS NOM.
+        System.out.println("D09 : pilote H2 module nomme " + DriverManager.getDriver(VENDOR_URLS[0]).getClass().getModule().isNamed()
+                + ", Recall07 module nomme " + Recall07.class.getModule().isNamed());
 
         // A la main : docker compose up -d dans ch15_jdbc-lab, puis l'argument "docker".
         if (args.length > 0 && args[0].equals("docker")) {
