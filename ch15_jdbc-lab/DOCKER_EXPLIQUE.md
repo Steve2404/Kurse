@@ -64,15 +64,17 @@ il faut donc se connecter a `localhost:15432` pour Postgres, et
 `localhost:13306` pour MySQL - jamais les ports habituels, precisement
 pour ne jamais toucher a ce qui tournait deja chez toi.
 
-## Ce qu'il faut retenir pour les exercices
+## Ce qu'il faut retenir pour le chapitre 15
 
-- Les exercices H2 (01 a 08) n'ont besoin d'AUCUNE de ces boites -
-  H2 tourne directement "en memoire", integre au programme Java
-  lui-meme.
-- Les exercices multi-fournisseurs (09 a 15) ont besoin que les 2
-  boites soient DEMARREES (`docker compose up -d`) AVANT de lancer
-  leur `main()` - sinon la connexion echoue avec un message explicite
-  te demandant de les demarrer.
+- Les 7 projets et les drills r01 a r06 n'ont besoin d'AUCUNE de ces
+  boites : H2 tourne directement "en memoire", integre au programme
+  Java lui-meme.
+- Seule la partie "a la main" du drill bonus r07
+  (`src/main/java/ch15_jdbc/drills/r07_bonus/TODO.md`) les utilise :
+  demarre les 2 boites (`docker compose up -d`, depuis ce dossier),
+  puis lance `Recall07` avec l'argument `docker`. Le meme code JDBC
+  tourne alors sur PostgreSQL et sur MySQL. Si une boite est arretee,
+  le programme le dit simplement (SQLState `08001` ou `08S01`).
 - Rien de tout ca n'est permanent : `docker compose down` fait
   disparaitre les boites (et leurs donnees) sans laisser aucune trace
   sur ta machine.
