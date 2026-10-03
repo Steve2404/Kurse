@@ -33,6 +33,7 @@ Les **projets** te font **comprendre**. Les **drills** te font **retenir** : éc
 | p05 `SortLab` | r05 |
 | p06 `Dedup` | (révision r05) |
 | p07 `MiniGit` | r06 (test final) |
+| après r06 | r07 (bonus : liens symboliques, POSIX, `Console` ; une partie à la main dans un terminal) |
 
 ## Tableau de suivi
 
@@ -44,3 +45,4 @@ Les **projets** te font **comprendre**. Les **drills** te font **retenir** : éc
 | r04 | Sérialisation | | | | | | |
 | r05 | NIO.2 : texte, parcours, attributs | | | | | | |
 | r06 | Kata : flux standard, `Console` (test final) | | | | | | |
+| r07 | Bonus : liens symboliques, POSIX, attributs par nom, `Console` | | | | | | |

@@ -10,7 +10,7 @@ Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est 
 
 | | Projets (`projects/`) | Drills de rappel (`drills/`) |
 |---|---|---|
-| Combien | 7 | 6 |
+| Combien | 7 | 6 (+ 1 bonus) |
 | But | de vrais outils sur des fichiers : liens d'un site, sauvegarde incrémentale, compresseur, sauvegarde de partie, tri externe, doublons, gestionnaire de versions | retrouver vite et sans aide l'API et ses pièges |
 | Durée | 2 à 4 h chacun | 10 à 12 min chacun |
 | Combien de fois | une fois ; p02 et p07 refaits 2 à 3 semaines plus tard | 6 fois chacun (J0, J+1, J+3, J+7, J+14, J+30) |
@@ -64,6 +64,7 @@ p04 → r04
 p05 → r05
 p06 → (révision r05)
 p07 → r06 (test final)
+puis r07 (bonus : liens symboliques, POSIX, Console ; une partie se lance à la main dans un vrai terminal)
 ```
 
 ---
