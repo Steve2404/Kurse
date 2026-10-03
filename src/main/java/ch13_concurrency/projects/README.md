@@ -19,3 +19,4 @@ Chaque projet est une **application à construire de A à Z**. Dans son dossier,
 | ☐ | `p05_life` — jeu de la vie | `CyclicBarrier`, action de barrière, barrière cassée, `reset` | `ParallelLife` | phases synchronisées, résultat identique au séquentiel |
 | ☐ | `p06_streams` — streams parallèles | `parallel`, `reduce` (identité, combineur), `collect`, ordre, `findAny`, collecteurs concurrents, `parallelSort` | `ParallelLab` | calculs exacts quel que soit le découpage (points du disque, Collatz) |
 | ☐ | `p07_crawler` — **capstone** robot d'indexation | tout, plus `ScheduledExecutorService` | `CrawlerApp` | parcours en largeur parallèle, pages vues une seule fois, index concurrent |
+| ☐ | `p08_async` — **bonus** agence asynchrone (au-delà de l'examen) | `CompletableFuture`, Fork/Join (`RecursiveTask`/`RecursiveAction`), `ThreadLocal`, `Semaphore`, `CountDownLatch` | `AsyncLab` | devis asynchrones composés, sous-tableau maximal en diviser pour régner |

@@ -33,6 +33,7 @@ Les **projets** te font **comprendre**. Les **drills** te font **retenir** : éc
 | p05 `ParallelLife` | (révision r03) |
 | p06 `ParallelLab` | r05 |
 | p07 `CrawlerApp` | r06 (test final) |
+| p08 `AsyncLab` (bonus) | r07 (bonus) |
 
 ## Tableau de suivi
 
@@ -44,3 +45,4 @@ Les **projets** te font **comprendre**. Les **drills** te font **retenir** : éc
 | r04 | Collections concurrentes | | | | | | |
 | r05 | Streams parallèles | | | | | | |
 | r06 | Kata : problèmes de concurrence (test final) | | | | | | |
+| r07 | Bonus : `CompletableFuture`, Fork/Join, `ThreadLocal`, `Semaphore` | | | | | | |

@@ -10,7 +10,7 @@ Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est 
 
 | | Projets (`projects/`) | Drills de rappel (`drills/`) |
 |---|---|---|
-| Combien | 7 | 6 |
+| Combien | 7 (+ 1 bonus) | 6 (+ 1 bonus) |
 | But | des programmes **concurrents corrects** : découper un travail, le répartir, le combiner, sans course ni interblocage | retrouver vite et sans aide l'API et ses pièges |
 | Durée | 2 à 4 h chacun | 10 à 15 min chacun |
 | Combien de fois | une fois ; p03 et p07 refaits 2 à 3 semaines plus tard | 6 fois chacun (J0, J+1, J+3, J+7, J+14, J+30) |
@@ -68,6 +68,7 @@ p04 → r04
 p05 → (révision r03)
 p06 → r05
 p07 → r06 (test final)
+p08 → r07 (bonus, au-delà de l'examen : CompletableFuture, Fork/Join, ThreadLocal, Semaphore)
 ```
 
 ---
