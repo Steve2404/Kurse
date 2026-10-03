@@ -49,13 +49,25 @@ public class Check {
             "java.transaction.xa",
             "java.xml",
             "r.report",
+            "rapport du 2026-10-02 dans r.report",
+            "--- D06 jmod",
+            "",
+            "contains r.report",
+            "main-class r.report.Main",
+            "r.report@3.1",
+            "requires java.base mandated",
+            "requires java.sql",
+            "classes/module-info.class",
+            "classes/r/report/Main.class",
+            "JMOD format not supported at execution time",
             "rapport du 2026-10-02 dans r.report");
             // SCRIPT-END
 
     static final List<String> API = List.of(
             "requires java.sql;", "X500Name", "--describe-module java.sql", "--list-modules",
             "jdeps -s", "jdeps --print-module-deps", "--add-exports java.base/sun.security.x509=ALL-UNNAMED", "jdeps --jdk-internals",
-            "jlink", "--compress=2",
+            "jlink", "--compress=2", "jmod create", "--class-path",
+            "jmod describe", "jmod list",
             // Crescendo : notions des chapitres 13 a 15 (threads, E/S de fichiers, JDBC), interdites au chapitre 12.
             "!Thread", "!Executor", "!synchronized", "!Atomic", "!parallel", "!Files.",
             "!Path.of", "!Paths.", "!DriverManager", "!Connection", "!System.exit", "!.now()");

@@ -26,3 +26,13 @@ echo "--- D05 jlink"
 jlink --module-path "$OUT/mods" --add-modules r.report --output "$OUT/image" --strip-debug --compress=2 --no-header-files --no-man-pages
 "$OUT/image/bin/java" --list-modules | sed 's/@.*//'
 "$OUT/image/bin/java" -m r.report/r.report.Main
+
+echo "--- D06 jmod"
+mkdir -p "$OUT/jmods"
+jmod create --class-path "$OUT/mods/r.report" --main-class r.report.Main --module-version 3.1 "$OUT/jmods/r.report.jmod"
+jmod describe "$OUT/jmods/r.report.jmod" | sort
+jmod list "$OUT/jmods/r.report.jmod" | sort
+# Un .jmod sert a jlink, mais java refuse de l'executer.
+java -p "$OUT/jmods/r.report.jmod" -m r.report 2>&1 | grep -o "JMOD format not supported at execution time" || true
+jlink --module-path "$OUT/jmods" --add-modules r.report --output "$OUT/image-jmod"
+"$OUT/image-jmod/bin/java" -m r.report

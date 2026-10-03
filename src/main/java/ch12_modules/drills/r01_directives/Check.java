@@ -44,12 +44,20 @@ public class Check {
             "uses d.base.Greeter",
             "--- d.open",
             "d.open",
-            "exports d.open");
+            "exports d.open",
+            "--- d.extra",
+            "contains d.extra",
+            "d.extra",
+            "requires d.open static",
+            "--- D07 requires static",
+            "d.open present false",
+            "d.open present true");
             // SCRIPT-END
 
     static final List<String> API = List.of(
             "exports d.base.hidden to d.friend;", "requires transitive d.base;", "opens d.friend;", "provides d.base.Greeter with d.plugin.Hello;",
-            "uses d.base.Greeter;", "open module d.open", "ServiceLoader.load(", "--describe-module",
+            "uses d.base.Greeter;", "open module d.open", "requires static d.open;", "ServiceLoader.load(",
+            "--describe-module", "--add-modules d.open",
             // Crescendo : notions des chapitres 13 a 15 (threads, E/S de fichiers, JDBC), interdites au chapitre 12.
             "!Thread", "!Executor", "!synchronized", "!Atomic", "!parallel", "!Files.",
             "!Path.of", "!Paths.", "!DriverManager", "!Connection", "!System.exit", "!.now()");

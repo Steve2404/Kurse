@@ -10,9 +10,9 @@
 - Ton script `recall.sh` va dans **ce** dossier, avec :
   - `P=ch12_modules/drills/r01_directives` et `OUT=build/ch12/r01_directives` ;
   - `set -e` et `rm -rf "$OUT"` ;
-  - `javac -d "$OUT/mods" --module-source-path "$P/src" -m d.app,d.plugin,d.open` ;
+  - `javac -d "$OUT/mods" --module-source-path "$P/src" -m d.app,d.plugin,d.open,d.extra` ;
   - `java -p "$OUT/mods" -m d.app/d.app.Main` ;
-  - pour chaque module (`d.base d.mid d.friend d.plugin d.app d.open`) : `echo "--- <m>"`, puis `java -p "$OUT/mods" --describe-module <m> | sed 's/ file:.*//' | grep -v "java.base mandated" | sort`.
+  - pour chaque module (`d.base d.mid d.friend d.plugin d.app d.open d.extra`) : `echo "--- <m>"`, puis `java -p "$OUT/mods" --describe-module <m> | sed 's/ file:.*//' | grep -v "java.base mandated" | sort`.
 
 ## Défis
 
@@ -30,13 +30,20 @@ Chaque module a **une** petite classe ; seuls les `module-info` sont l'objet du 
   → `[Bonjour Ada] secret 42`
 - ☐ **D06. `d.open`** : un **module ouvert**, qui exporte `d.open` (la classe `Box`, avec `private int value`).
   → `exports d.open`
+- ☐ **D07. `d.extra`** : dépend de `d.open` **seulement à la compilation** (dépendance optionnelle). Son `main` affiche `"d.open present " + ModuleLayer.boot().findModule("d.open").isPresent()`. À la fin du script :
+  1. `echo "--- D07 requires static"` ;
+  2. lance `d.extra/d.extra.Main` ;
+  3. relance-le avec `--add-modules d.open`.
+  → `requires d.open static`, puis `d.open present false`, puis `d.open present true`
 
 ## Expériences (hors sortie attendue)
 
 1. Dans `d.open`, ajoute `opens d.open;` : quelle erreur ?
 2. Retire `transitive` dans `d.mid` : quel module ne compile plus, et pourquoi ?
 3. Exporte un paquet qui n'existe pas (`exports d.base.nope;`) : quelle erreur ?
-4. Écris deux fois `requires d.mid;` : quelle erreur ?
+4. Écris deux fois `requires d.mid;` : quelle erreur ? Et `requires d.mid;` avec `requires transitive d.mid;` ?
+5. Les noms de modules : lesquels compilent ? `module 2fast { }`, `module my-app { }`, `module my_app { }`, `module com.Example.App { }`, `module java.mine { }`.
+6. Dans D07, pourquoi `d.open` est-il absent au premier lancement, alors qu'il est sur le module path ?
 
 ## Sortie attendue complète
 
@@ -69,6 +76,13 @@ uses d.base.Greeter
 --- d.open
 d.open
 exports d.open
+--- d.extra
+contains d.extra
+d.extra
+requires d.open static
+--- D07 requires static
+d.open present false
+d.open present true
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -81,12 +95,15 @@ exports d.open
 | `exports p to m1, m2;` | idem, mais seulement pour m1 et m2 |
 | `requires m;` | ce module lit m |
 | `requires transitive m;` | et tous ceux qui me lisent lisent aussi m |
+| `requires static m;` | m est requis à la **compilation**, mais facultatif à l'exécution (pas résolu, sauf si un autre module le requiert, ou `--add-modules`) |
 | `opens p;` / `opens p to m;` | réflexion profonde (membres privés) à l'exécution seulement |
 | `open module x { }` | tous les paquets sont ouverts (`opens` y est alors interdit) |
 | `uses I;` | ce module recherche des fournisseurs de I (`ServiceLoader`) |
 | `provides I with C1, C2;` | ce module fournit I |
 
 - `java.base` est toujours lu : `requires java.base mandated`.
+- **Nom de module :** des identifiants Java séparés par des points (pas de `-`, pas de chiffre en tête de segment), souvent le nom du paquet principal. Les noms `java.*` sont réservés au JDK.
+- **Un module ne peut pas requérir deux fois le même module** (même avec et sans `transitive`).
 - `--describe-module` affiche `contains p` pour un paquet ni exporté ni ouvert.
 - **L'ordre des lignes** de `--describe-module` n'est pas garanti, d'où le `sort`.
 

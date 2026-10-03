@@ -2,7 +2,7 @@
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
 
-**Chrono cible :** 12 min, puis 6 min.
+**Chrono cible :** 15 min, puis 8 min.
 
 **Règles :**
 - Tout se fait de mémoire.
@@ -27,6 +27,12 @@
   - `"$OUT/image/bin/java" --list-modules | sed 's/@.*//'` ;
   - le lancement de `r.report/r.report.Main` avec le `java` de l'image.
   → `java.base` … `r.report`, puis `rapport du 2026-10-02 dans r.report`
+- ☐ **D06.** Le format **JMOD** :
+  1. `jmod create --class-path "$OUT/mods/r.report" --main-class r.report.Main --module-version 3.1 "$OUT/jmods/r.report.jmod"` (crée d'abord `$OUT/jmods`) ;
+  2. `jmod describe … | sort`, puis `jmod list … | sort` ;
+  3. lance `java -p "$OUT/jmods/r.report.jmod" -m r.report` (le **fichier** : un dossier de `.jmod` serait juste ignoré, « module not found »), en ne gardant que `JMOD format not supported at execution time` (`2>&1 | grep -o …`, avec `|| true`) ;
+  4. `jlink` depuis `$OUT/jmods` vers `$OUT/image-jmod`, puis lance `r.report` avec le `java` de cette image.
+  → `r.report@3.1` … `classes/r/report/Main.class` … `JMOD format not supported at execution time` … `rapport du 2026-10-02 dans r.report`
 
 ## Expériences (hors sortie attendue)
 
@@ -71,6 +77,17 @@ java.transaction.xa
 java.xml
 r.report
 rapport du 2026-10-02 dans r.report
+--- D06 jmod
+
+contains r.report
+main-class r.report.Main
+r.report@3.1
+requires java.base mandated
+requires java.sql
+classes/module-info.class
+classes/r/report/Main.class
+JMOD format not supported at execution time
+rapport du 2026-10-02 dans r.report
 ```
 
 ## Carte mémoire (à lire **après** le drill)
@@ -88,7 +105,10 @@ rapport du 2026-10-02 dans r.report
 | `jdeps --jdk-internals` | repère les API internes du JDK utilisées |
 | `jlink --module-path … --add-modules … --output dir` | une image minimale |
 | `jlink --strip-debug --compress=2 --no-header-files --no-man-pages --launcher nom=module` | des options pour réduire l'image, et ajouter un lanceur |
+| `jmod create --class-path dir [--main-class c] [--module-version v] f.jmod` | crée un fichier JMOD (le format des modules du JDK, dans `$JAVA_HOME/jmods`) |
+| `jmod list` / `jmod describe` / `jmod extract` / `jmod hash` | lister, décrire, extraire, hacher |
 
+- **Un `.jmod`** peut contenir du code natif et des fichiers de configuration. Il sert à la **compilation** et à **`jlink`**, jamais à l'exécution (`java` le refuse).
 - `jlink` ajoute les modules **requis transitivement**, mais pas les fournisseurs de services (`--bind-services` pour cela).
 - Il refuse les modules **automatiques**.
 
