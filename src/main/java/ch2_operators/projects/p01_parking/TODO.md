@@ -18,6 +18,27 @@
 
 **Règle du crescendo :** chapitres 1 et 2 seulement. **Pas de `if`, pas de `switch`, pas de boucle** : ce sont des notions du chapitre 3. Chaque choix s'écrit avec un **ternaire**. Pas de méthode de `String`. `Check` refuse tout cela.
 
+**Ce que tu sais déjà faire** (chapitre 1) :
+- créer une classe, la lancer, lancer `Check` ;
+- donner des arguments ;
+- taper `javac` et `java` dans le terminal ;
+- lire une erreur ;
+- écrire des classes, des champs `static`, des méthodes qui rendent un résultat ;
+- convertir les arguments (`parseInt`, `parseBoolean`).
+
+Si un de ces gestes te manque, refais le **projet 0 du chapitre 1** (`ch1_buildingblocks/projects/p00_bonjour`).
+
+**Ce que le chapitre 2 t'apprend :** les **opérateurs**, c'est-à-dire les petits signes qui calculent, comparent et choisissent. Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet.
+
+**Tes outils pour ce projet :**
+- **Arguments dans IntelliJ :** Run → Edit Configurations… → **Parking** → Program arguments : `2 135 true false 3`.
+- **Terminal** (Alt + F12, depuis `Kurse`) :
+
+```
+javac -d build/ch2-p01 src/main/java/ch2_operators/projects/p01_parking/Parking.java
+java "-Duser.language=fr" -cp build/ch2-p01 ch2_operators.projects.p01_parking.Parking 2 135 true false 3
+```
+
 ---
 
 ## Le problème
@@ -44,11 +65,65 @@ Tout se calcule en **centimes** (`int`), comme au chapitre 1.
 
 ### ☐ Étape 1 — Les libellés et les tarifs
 
+**📖 La leçon : comparer.** Les opérateurs de comparaison rendent un **`boolean`**, `true` ou `false` :
+
+| Opérateur | Se lit | Exemple avec `t = 25` |
+|---|---|---|
+| `==` | est égal à (deux signes `=` !) | `t == 25` → `true` |
+| `!=` | est différent de | `t != 25` → `false` |
+| `<` `<=` | plus petit, plus petit ou égal | `t < 0` → `false` |
+| `>` `>=` | plus grand, plus grand ou égal | `t > 20` → `true` |
+
+**📖 La leçon : le ternaire `? :`, un choix en une ligne.** Il se lit comme une question :
+
+```
+condition ? valeurSiVrai : valeurSiFaux
+```
+
+```java
+boolean soleil = true;
+System.out.println(soleil ? "content" : "grognon");     // content
+```
+
+On peut **enchaîner** des ternaires pour choisir parmi plus de deux possibilités. Java teste les conditions **dans l'ordre**, et s'arrête à la première vraie :
+
+```java
+int t = 25;
+System.out.println(t < 0 ? "glace" : t < 100 ? "eau" : "vapeur");   // eau
+// t vaut 120 -> vapeur
+```
+
+Au chapitre 2, il n'y a pas encore de `if` (c'est au chapitre 3) : **chaque choix s'écrit avec un ternaire**.
+
+**👉 À toi :**
+
 - Écris une méthode qui donne le **libellé** du véhicule, et une qui donne son **tarif horaire**.
 - **Contrainte :** chacune tient en **une** expression : un ternaire **imbriqué** `a ? x : b ? y : z`.
 - **Question :** comment Java lit-il `t == 1 ? "MOTO" : t == 2 ? "VOITURE" : "CAMION"` ? Où mettrais-tu des parenthèses pour le rendre explicite ?
 
 ### ☐ Étape 2 — Le calcul d'un ticket
+
+**📖 La leçon : les affectations composées.** `prix += 100` est un raccourci pour `prix = prix + 100`. Il existe aussi `-=`, `*=`, `/=` et `%=` :
+
+```java
+int prix = 1000;
+prix += prix / 10;    // 1000 + 100 -> 1100
+prix -= 100;          // 1000
+prix *= 2;            // 2000
+```
+
+**📖 La leçon : un `int` ne reçoit pas de virgule.** `prix * 0.9` donne un `double` (un nombre à virgule). Le ranger dans un `int` risquerait de perdre la partie après la virgule : `javac` refuse.
+
+```java
+prix = prix * 0.9;
+// error: incompatible types: possible lossy conversion from double to int
+```
+
+(« types incompatibles : conversion avec perte possible, de `double` vers `int` ».) En centimes, on calcule donc avec des entiers : 10 % d'un montant, c'est `montant / 10`.
+
+**📖 Rappel du chapitre 1 :** entre deux `int`, `/` est une division **entière** (`7 / 2` vaut `3`), et `%` donne le **reste** (`7 % 2` vaut `1`). Un nombre est multiple de 10 quand le reste de sa division par 10 vaut 0.
+
+**👉 À toi :**
 
 **Exemple :**
 ```
@@ -71,6 +146,31 @@ Pour 135 min, il y a 120 minutes facturables, soit 2 h. 2 × 250 = 500, plus 50 
 #3 CAMION | 600 min | jour | abonne | 10 h | 28.00
 #4 VOITURE | 61 min | nuit | abonne | 1 h | offert (10e visite)
 ```
+
+**📖 La leçon : `++` et `--`, ajouter ou retirer 1.** `n++` et `++n` augmentent tous deux `n` de 1. La différence est la valeur que l'expression **rend**, quand on s'en sert dans un calcul ou un `println` :
+- `n++` (suffixe) rend l'**ancienne** valeur, **puis** augmente ;
+- `++n` (préfixe) augmente **d'abord**, puis rend la **nouvelle** valeur.
+
+```java
+int n = 5;
+System.out.println(n++);   // affiche 5 ; n vaut maintenant 6
+System.out.println(++n);   // n passe à 7, affiche 7
+```
+
+**📖 La leçon : `!`, le contraire.** `!` devant un `boolean` le retourne : `!true` vaut `false`, et `!soleil` vaut `true` quand il pleut.
+
+**📖 La leçon : la priorité entre `+` et `? :`.** Le `+` passe **avant** le ternaire. Sans parenthèses, Java colle d'abord le texte, puis essaie d'utiliser **le texte** comme condition :
+
+```java
+System.out.println("Il fait " + chaud ? "chaud" : "froid");
+// error: incompatible types: String cannot be converted to boolean
+System.out.println("Il fait " + (chaud ? "chaud" : "froid"));   // Il fait chaud
+```
+
+**Règle pratique :** un ternaire **dans** une concaténation se met **toujours entre parenthèses**.
+
+**👉 À toi :**
+
 - **Le numéro de ticket** est un compteur `static`, incrémenté **dans** l'expression du texte. Le 1er ticket porte le numéro 1.
   - `++n` ou `n++` : lequel ? Essaie les deux.
 - **Les parties optionnelles** sont des ternaires : `nuit` ou `jour`, `| abonne` ou rien.
@@ -86,6 +186,11 @@ Pour 135 min, il y a 120 minutes facturables, soit 2 h. 2 × 250 = 500, plus 50 
 ```
 Tickets emis : 6, prochain numero : 7
 ```
+
+**📖 Rappel du chapitre 1 (projet 1, étape 6) :** `+` se lit de gauche à droite, et dès qu'un côté est un texte, il **colle** au lieu d'additionner. Les parenthèses forcent le calcul d'abord.
+
+**👉 À toi :**
+
 - Le ticket du client présent vient des 5 arguments. Les 5 tickets de démonstration sont des appels écrits en dur (voir la sortie attendue).
 - **Question :** dans `"… : " + (issued + 1)`, pourquoi les parenthèses ? Que donnerait le texte sans elles ?
 

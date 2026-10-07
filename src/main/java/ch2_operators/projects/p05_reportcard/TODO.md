@@ -29,6 +29,29 @@
 
 **Indication :** peu d'indices ici. Recalcule **chaque** ligne de la sortie attendue à la main avant de coder.
 
+**C'est le projet-bilan du chapitre 2.** Il n'y a pas de leçon nouvelle. Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| convertir des arguments à virgule (`parseDouble`) | chapitre 1, projet 2, étape 5 |
+| savoir le type d'un calcul qui mélange `int` et `double` | projet 3, étapes 2 et 4 |
+| placer un cast `(double)` ou `(int)` au bon endroit | projet 3, étapes 2 et 4 |
+| lire un texte en base 2 (`parseInt(texte, 2)`) | chapitre 1, projet 2, étape 5 |
+| construire un masque par décalage et tester un bit | projet 2, étapes 1 et 2 |
+| `+=`, `-=` avec un ternaire à droite | projet 1, étape 2 |
+| un ternaire imbriqué à plusieurs issues | projet 1, étape 1 |
+| `'A'` plus un rang, puis `(char)` | projet 3, étape 2 |
+| l'ordre entre `&&` et `\|\|` | projet 2, étape 1 (tableau des priorités) |
+
+**Tes outils pour ce projet :**
+- **Arguments dans IntelliJ :** Run → Edit Configurations… → **ReportCard** → Program arguments : `14.5 9.5 17 3 2 1 4 101`.
+- **Terminal** (depuis `Kurse`) :
+
+```
+javac -d build/ch2-p05 src/main/java/ch2_operators/projects/p05_reportcard/ReportCard.java
+java "-Duser.language=fr" -cp build/ch2-p05 ch2_operators.projects.p05_reportcard.ReportCard 14.5 9.5 17 3 2 1 4 101
+```
+
 ---
 
 ## Le problème
@@ -59,6 +82,15 @@ Le bulletin d'un élève, calculé selon ces règles :
 points 79.5 / coefficients 6 = 13.25
 piege : (int) points = 79 ; 79 / 6 = 13 ; (double) (79 / 6) = 13.0 ; (double) 79 / 6 = 13.166666666666666
 ```
+
+**📖 La leçon : à quoi s'applique un cast ?** Un cast agit sur **ce qui le suit immédiatement**, et sur rien d'autre. Comme `-` dans `-3 + 5`, il est prioritaire sur `*`, `/`, `+`. Donc :
+- `(double) a / b` convertit **seulement `a`**, puis divise : la division se fait en `double` ;
+- `(double) (a / b)` fait **d'abord** la division entière entre parenthèses, puis convertit son résultat, déjà tronqué.
+
+C'est toute la question de la ligne « piège » : dessine, pour chaque écriture, sur quoi porte le cast.
+
+**👉 À toi :**
+
 - **La moyenne :** quel est le type de `maths * cMaths` ? Et celui de la somme des coefficients ?
 - **La ligne « piège »** compare trois façons de diviser 79 par 6. Explique, en commentaire, **à quoi s'applique** le cast `(double)` dans chaque cas.
 

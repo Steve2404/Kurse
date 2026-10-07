@@ -17,6 +17,17 @@
 
 **Règle du crescendo :** chapitres 1 et 2. Pas de `if`, pas de boucle, pas de méthode de `String`.
 
+**Tes outils pour ce projet :**
+- **Arguments dans IntelliJ :** Run → Edit Configurations… → **Permissions** → Program arguments : `0754 022 0xB 3 false`.
+- **Terminal** (depuis `Kurse`) :
+
+```
+javac -d build/ch2-p02 src/main/java/ch2_operators/projects/p02_permissions/Permissions.java
+java "-Duser.language=fr" -cp build/ch2-p02 ch2_operators.projects.p02_permissions.Permissions 0754 022 0xB 3 false
+```
+
+**À quoi sert ce projet ?** Sous Linux, chaque fichier a des droits : lire (`r`), écrire (`w`), exécuter (`x`), pour trois personnes (le propriétaire, le groupe, les autres). Ces 9 droits sont rangés dans **9 bits**, comme 9 interrupteurs. Tu vas allumer, éteindre et tester ces interrupteurs avec les opérateurs **bit à bit**. Relis d'abord la leçon sur le binaire et l'octal : chapitre 1, projet 2, étape 3.
+
 ---
 
 ## Le problème
@@ -46,6 +57,38 @@ Ton programme affiche ces droits, simule les commandes `chmod`, calcule les droi
 ```
 mode : 754 rwxr-xr-- (decimal 492)
 ```
+
+**📖 La leçon : les opérateurs bit à bit.** Ils travaillent **chiffre binaire par chiffre binaire**, en colonne, comme une addition posée. Avec 6 (`110`) et 3 (`011`) :
+
+| Opérateur | Règle, pour chaque colonne | `6 ? 3` en binaire | Résultat |
+|---|---|---|---|
+| `&` (et) | 1 seulement si les **deux** valent 1 | `110 & 011 = 010` | `2` |
+| `\|` (ou) | 1 si **au moins un** vaut 1 | `110 \| 011 = 111` | `7` |
+| `^` (ou exclusif) | 1 si **un seul** vaut 1 | `110 ^ 011 = 101` | `5` |
+| `~` (non) | inverse chaque bit (un seul nombre) | `~5` | `-6` (étape 4) |
+
+**📖 La leçon : les décalages.** `<<` pousse les bits vers la **gauche** : `1 << 3` donne `1000`, c'est-à-dire `8`. Chaque cran multiplie par 2. `>>` les pousse vers la **droite** : `40 >> 2` donne `10`. Chaque cran divise par 2.
+
+**📖 La leçon : tester un bit.** Pour savoir si un interrupteur est allumé, on le « masque » avec `&` : tous les autres bits deviennent 0. Exemple : trois lampes, salon = bit de valeur 1, cuisine = 2, chambre = 4. `lampes = 0b101` : salon et chambre allumés.
+
+```java
+System.out.println((lampes & 4) != 0);   // true  : la chambre est allumée
+System.out.println((lampes & 2) != 0);   // false : la cuisine est éteinte
+```
+
+**⚠️ Les parenthèses sont obligatoires.** `!=` passe **avant** `&` :
+
+```java
+System.out.println(lampes & 4 != 0);
+// error: bad operand types for binary operator '&'
+```
+
+Java calcule d'abord `4 != 0` (un `boolean`), puis essaie `lampes & true` : impossible.
+
+**Les priorités utiles, de la plus forte à la plus faible :** `* / %`, puis `+ -`, puis `<< >> >>>`, puis `< > <= >=`, puis `== !=`, puis `&`, puis `^`, puis `|`, puis `&&`, puis `||`, puis `? :`, puis `= += -=`…
+
+**👉 À toi :**
+
 - **Lire :** `Integer.decode` comprend le `0` initial (octal) et le `0x` (hexadécimal). Que donnerait `parseInt` sur `"0754"` ?
 - **Afficher en symboles :** écris une méthode « triplet » qui transforme 3 bits en `rwx`.
   - Chaque lettre vient d'un **test de bit** `(bits & masque) != 0`, suivi d'un ternaire.
@@ -63,6 +106,19 @@ nouveau dossier : 755 rwxr-xr-x
 bascule lecture autres : 750 rwxr-x---
 bascule deux fois : 754 rwxr-xr--
 ```
+
+**📖 La leçon : allumer, éteindre, basculer.** Avec les lampes `0b101` :
+
+```java
+lampes | 2       // allume la cuisine        : 111
+lampes & ~4      // éteint la chambre        : 001   (~4 = « tout sauf la chambre »)
+lampes ^ 1       // bascule le salon         : 100   (allumé -> éteint, ou l'inverse)
+```
+
+Un **masque** est un nombre qui sert à choisir des bits. On le construit par décalage, pour qu'il se lise : `1 << 2` est « le bit n° 2 » (la chambre), ce qui est plus clair que le nombre magique `4`.
+
+**👉 À toi :**
+
 - **Les masques :** déclare-les comme des **constantes construites par décalage** (`1 << 8` pour la lecture du propriétaire, etc.), pas comme des nombres magiques.
 - **Les opérations :**
   - **nouveau fichier** = `0666` « et pas » umask. Quel est l'opérateur « pas » bit à bit ?
@@ -78,6 +134,11 @@ proprietaire peut lire : true, ecrire : true
 groupes 1011, groupe du fichier 3 -> membre : true
 acces accorde en tant que groupe : r-x, ecriture refusee
 ```
+
+**📖 Rappel :** le ternaire imbriqué (projet 1, étape 1) choisit entre plusieurs valeurs : la première condition vraie l'emporte.
+
+**👉 À toi :**
+
 - **L'appartenance au groupe n :** le bit n de l'ensemble des groupes. Construis le masque avec `1 << n`.
 - **Les droits applicables :**
   - ceux du propriétaire s'il l'est ;
@@ -92,6 +153,14 @@ acces accorde en tant que groupe : r-x, ecriture refusee
 ~mode = -493, ~mode & 0777 = 23
 -16 >> 2 = -4, -16 >>> 28 = 15
 ```
+
+**📖 La leçon : les nombres négatifs en binaire.** Un `int` a 32 bits. Le bit le plus à gauche est le **signe** : 1 pour un nombre négatif. Par exemple, `-8` s'écrit `11111111111111111111111111111000`. Deux conséquences :
+- `~x` inverse les 32 bits, et le résultat vaut toujours `-x - 1` : `~5` vaut `-6` ;
+- **`>>` garde le signe** (il recopie le bit de gauche) : `-8 >> 1` vaut `-4` ;
+- **`>>>` insère des zéros** à gauche, le nombre devient positif : `-8 >>> 29` garde seulement les 3 bits de gauche, `111`, soit `7`.
+
+**👉 À toi :**
+
 - **Question :** pourquoi `~492` vaut-il `-493` ? (Un `int` a 32 bits, et `~x` vaut `-x - 1`.)
 - **Question :** `>>` recopie le bit de signe, `>>>` insère des zéros. Calcule `-16 >>> 28` à la main en binaire.
 
