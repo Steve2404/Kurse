@@ -10,6 +10,21 @@
 - **Chaque défi utilise un text block** (8 en tout).
 - `Check` montre les espaces de tête sous forme de `·` quand une ligne diffère.
 
+**Les notions de ce drill ont été apprises dans :** projet 1 (étape 5). Si un défi te semble totalement inconnu, ce drill arrive trop tôt : refais d'abord la leçon de ce projet.
+
+<details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
+
+1. **Note l'heure** de départ (montre ou téléphone).
+2. **Crée la classe** : clic droit sur le dossier `r04_textblocks` → **New** → **Java Class** → `Recall04`.
+3. **Écris `main`**, puis **une ligne par défi**. La ligne qui suit la flèche `→` est **exactement** ce que ton programme doit afficher. Par exemple, pour un défi `D01` qui attend `D01 : 8 16`, écris un `System.out.println("D01 : " + … + " " + …);`, où les `…` sont les valeurs que **Java** calcule.
+4. **Lance `Recall04`** avec la flèche verte, pour voir tes lignes.
+5. **Bloqué plus de 3 minutes sur un défi ?** Écris un commentaire `// D03 : ✗` à sa place, et passe au suivant.
+6. **Lance `Check.java`** (flèche verte). Une ligne `[FAIL]` te montre `attendu` et `obtenu`.
+7. **Ensuite seulement**, ouvre la **carte mémoire** tout en bas (en aperçu Markdown, clique sur le triangle « Ouvrir la carte »), relis tes ✗, et fais les **expériences**.
+8. **Note** la date, ton temps et tes ✗ dans le tableau de [`drills/README.md`](../README.md).
+
+</details>
+
 ## Défis
 
 - ☐ **D01.** Un text block d'une seule ligne, `bonjour`, **sans** saut de ligne final, affiché entre crochets.

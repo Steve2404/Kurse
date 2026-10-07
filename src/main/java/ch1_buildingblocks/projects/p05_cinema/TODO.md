@@ -22,6 +22,30 @@
 
 **Indication :** ici, peu d'indices. Tout a été vu dans les projets 1 à 4. Avant de coder, recalcule chaque ligne de la sortie attendue à la main.
 
+**C'est le projet-bilan du chapitre.** Il n'y a pas de leçon nouvelle, sauf une : **trouver toi-même une méthode que tu ne connais pas**. Tout le reste a déjà été appris. Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| créer les sous-paquets `app` et `model` | projet 4, en-tête (« Créer un sous-paquet ») |
+| rendre une classe utilisable depuis un autre paquet (`public`), importer | projet 4, étapes 1 à 3 |
+| écrire un champ, un constructeur, `this` | projet 1, étape 2 |
+| journaliser l'ordre d'initialisation (champs, bloc, constructeur) | projet 3, étapes 1 et 2 |
+| lire un champ **avant** sa déclaration, sans erreur | projet 3, étape 2 (piège de la ligne 2) |
+| convertir les arguments (`parseInt`, `valueOf`, `intValue`, `parseBoolean`) | projet 1, étape 3 |
+| afficher des centimes en euros | projet 1, étape 4 |
+| `var` et `final` | projet 3, étapes 3 et 5 |
+| écrire un text block et placer ses `"""` fermants | projet 1, étape 5 |
+| afficher un nombre en binaire et en octal | projet 2, étape 3 |
+| compiler et lancer dans le terminal | projet 0, étape 6, et projet 4, étape 5 |
+
+**Lancer `Cinema` avec ses arguments dans IntelliJ :** Run → Edit Configurations… → **Cinema** → Program arguments :
+
+```
+"Dune 2" VO 2 1150 3 850 0x0F true
+```
+
+Les guillemets autour de `Dune 2` en font **un seul** argument (projet 0, étape 5).
+
 ---
 
 ## Le problème
@@ -65,6 +89,16 @@ Le programme construit la séance (son initialisation est journalisée), puis im
 
 ### ☐ Étape 2 — Le lanceur (paquet `app`)
 
+**📖 La leçon : trouver une méthode que tu ne connais pas.** Personne ne connaît toutes les méthodes par cœur. Voici comment chercher dans IntelliJ :
+1. Dans `main`, tape `Integer.` (avec le point), puis attends une seconde. IntelliJ ouvre la **liste** de tout ce que la classe `Integer` propose.
+2. Parcours la liste avec les flèches ↑ ↓. Les noms sont en anglais et parlent d'eux-mêmes : `parseInt` (analyser un entier), `valueOf` (valeur de), `toHexString` (vers un texte hexadécimal)…
+3. Sur un nom qui te semble prometteur, appuie sur **Ctrl + Q** : la **documentation** s'affiche. Lis la 1re phrase et les exemples.
+4. Appuie sur **Échap** pour fermer la liste sans rien écrire.
+
+Ici, tu cherches une méthode d'`Integer` qui **décode** un texte comme `0x0F`, `#0F` ou `017`, en comprenant le préfixe tout seul. Son nom anglais ressemble à « décoder ».
+
+**👉 À toi :**
+
 - **Les imports :** importe chaque classe de `model` **explicitement** (pas de joker).
 - **Les variables :** déclare la séance et les deux lignes de tarif avec `var`. Le pourcentage de remise est `final`.
 - **Les conversions :**
@@ -99,6 +133,9 @@ Fidelite : true, code en binaire 1111, en octal 17
 
 1. **Les fichiers :** combien de fichiers `.java`, de classes publiques et de paquets compte ton projet ? Où chaque fichier **doit-il** se trouver, et pourquoi ?
 2. **La compilation à la main :** écris la commande `javac -d` qui compile ton projet, puis la commande `java -cp` qui le lance avec les arguments ci-dessus. Reprends le projet 4, puis **essaie-les** dans un terminal.
+   - Dans le terminal PowerShell d'IntelliJ (projet 0, étape 6) : `javac` reçoit **tous** tes fichiers `.java`, à la suite, séparés par des espaces, comme dans le script du projet 4.
+   - Le dossier de sortie peut être `build/p05`.
+   - Avec `java`, garde les guillemets autour de `"Dune 2"` : PowerShell les comprend comme bash.
 3. **Le ramasse-miettes :** à la fin du `main`, quels objets sont éligibles au ramasse-miettes ?
 
 ---

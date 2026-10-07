@@ -2,7 +2,7 @@
 
 > **Quand le lire :** ouvre **seulement la section de l'étape** que tu viens de terminer, pour comparer ton code et tes réponses. Le programme complet est dans [`Receipt.java`](Receipt.java).
 >
-> Les messages d'erreur ci-dessous ont été obtenus en direct avec **JDK 17** (`javac` / `java` 17.0.18). Sur un Windows en allemand, `java` les affiche en allemand (`Fehler: Hauptmethode ist nicht static…`). Le texte anglais s'obtient avec `java -Duser.language=en …`.
+> Les messages d'erreur ci-dessous ont été obtenus en direct avec **JDK 17** (`javac` / `java` 17.0.18). Les messages de `java` sont ceux obtenus avec `java "-Duser.language=fr" …`, comme dans le `TODO.md`. `javac` écrit toujours en anglais : ses messages sont traduits ici.
 
 ---
 
@@ -25,6 +25,8 @@ public class Receipt {
 error: ',', ')', or '[' expected
 ```
 
+Traduction : « j'attendais `,`, `)` ou `[` ». Après le nom du paramètre, `javac` n'accepte plus les `...`.
+
 **Question — les écritures valides de `main` :**
 
 | Signature | Compile et se lance ? |
@@ -36,8 +38,8 @@ error: ',', ')', or '[' expected
 | `static public void main(String[] x)` | ✅ l'ordre des modificateurs est libre ; le nom du paramètre aussi |
 | `public final static void main(String[] a)` | ✅ `final` est permis sur la méthode |
 | `public static void main(String... args[])` | ❌ `legacy array notation not allowed on variable-arity parameter` |
-| `public static int main(String[] args)` | ❌ ici `missing return statement` ; avec un `return 0;`, compile mais `java` refuse : `Error: Main method must return a value of type void` |
-| `private static void main(String[] args)` | compile, mais `java` refuse : `Error: Main method not found in class M` |
+| `public static int main(String[] args)` | ❌ ici `missing return statement` ; avec un `return 0;`, compile mais `java` refuse : `Erreur : la méthode principale doit renvoyer une valeur de type void dans la classe M` |
+| `private static void main(String[] args)` | compile, mais `java` refuse : `Erreur : la méthode principale est introuvable dans la classe M` |
 
 **À retenir :** `public`, `static`, `void`, le nom `main` et un paramètre `String[]` ou `String...` sont obligatoires. Le reste (ordre des modificateurs, `final`, nom du paramètre, place des crochets) est libre.
 
@@ -46,7 +48,7 @@ error: ',', ')', or '[' expected
 - `java` : refuse de lancer, car la JVM cherche une méthode qu'elle peut appeler **sans objet** :
 
 ```
-Error: Main method is not static in class Receipt, please define the main method as:
+Erreur : la méthode principale n'est pas static dans la classe ch1_buildingblocks.projects.p01_receipt.Receipt, définissez la méthode principale comme suit :
    public static void main(String[] args)
 ```
 
@@ -88,7 +90,7 @@ class Item {
 Receipt.java:…: error: class Item is public, should be declared in a file named Item.java
 ```
 
-Un fichier `.java` contient **au plus une** classe `public`, et elle doit porter le nom du fichier. Les autres classes du fichier n'ont pas de modificateur : elles sont visibles dans le paquet seulement.
+Traduction : « la classe `Item` est publique, elle devrait être dans un fichier nommé `Item.java` ». Un fichier `.java` contient **au plus une** classe `public`, et elle doit porter le nom du fichier. Les autres classes du fichier n'ont pas de modificateur : elles sont visibles dans le paquet seulement.
 
 **Expérience — `name = name;` au lieu de `this.name = name;` :**
 - La ligne du ticket devient `null x 3 a 12.50 = 37.50`.
@@ -120,7 +122,7 @@ boolean loyal = Boolean.parseBoolean(args[7]);
 Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3
 ```
 
-`args` a 3 cases, numérotées 0 à 2. Le premier accès hors limites est `args[3]`. Ça compile, car `javac` ne connaît pas le nombre d'arguments ; l'erreur n'arrive qu'à l'**exécution**.
+Traduction : « case n° 3 hors limites, pour une longueur de 3 ». `args` a 3 cases, numérotées 0 à 2. Le premier accès hors limites est `args[3]`. Ça compile, car `javac` ne connaît pas le nombre d'arguments ; l'erreur n'arrive qu'à l'**exécution**.
 
 **Expérience — `12.50` au lieu de `1250` :**
 
@@ -128,7 +130,7 @@ Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 3 out
 Exception in thread "main" java.lang.NumberFormatException: For input string: "12.50"
 ```
 
-`parseInt` n'accepte que des chiffres entiers (avec un signe éventuel). Le point n'en fait pas partie.
+Traduction : « erreur de format de nombre, pour le texte `"12.50"` ». `parseInt` n'accepte que des chiffres entiers (avec un signe éventuel). Le point n'en fait pas partie.
 
 **Expérience — `Boolean.parseBoolean` :**
 - `"TRUE"` → `true` : la comparaison **ignore la casse**.

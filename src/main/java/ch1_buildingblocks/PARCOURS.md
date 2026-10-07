@@ -1,6 +1,10 @@
 # Chapitre 1 (Building Blocks) — Mode d'emploi
 
-Lis ce fichier **en entier une fois** avant de commencer. C'est le même fonctionnement qu'au chapitre 10 : des **projets** à construire de A à Z pour **comprendre**, et des **drills** chronométrés, répétés à intervalles espacés, pour **retenir**.
+Lis ce fichier **en entier une fois** avant de commencer. Le cours fonctionne avec :
+- des **projets** à construire de A à Z, pour **comprendre** ;
+- des **drills** chronométrés, répétés à intervalles espacés, pour **retenir**.
+
+> **Tu débutes complètement en Java ?** C'est prévu. Commence par le **projet 0**, [`projects/p00_bonjour/TODO.md`](projects/p00_bonjour/TODO.md). Il explique **chaque geste** pas à pas : créer un fichier, le lancer, lancer le correcteur, taper `javac` et `java` dans le terminal, lire une erreur. Il contient aussi un petit **lexique** des mots du cours. Ensuite, chaque étape des projets commence par une **📖 leçon**, avec un exemple, avant de te demander quoi que ce soit.
 
 ---
 
@@ -8,7 +12,7 @@ Lis ce fichier **en entier une fois** avant de commencer. C'est le même fonctio
 
 | | Projets (`projects/`) | Drills de rappel (`drills/`) |
 |---|---|---|
-| Combien | 5 | 7 |
+| Combien | 1 guidé (p00) + 5 | 7 |
 | But | comprendre, concevoir, produire une sortie exacte | retrouver vite et sans aide |
 | Durée | 1 à 3 h chacun | 10 à 20 min chacun |
 | Combien de fois | une fois ; p05 refait 2 à 3 semaines plus tard | 6 fois chacun (J0, J+1, J+3, J+7, J+14, J+30) |
@@ -50,12 +54,14 @@ On est au **premier** chapitre. Tu n'as donc droit qu'à ce qu'il enseigne :
 ## 3. Par où commencer (aujourd'hui)
 
 1. Lis ce fichier jusqu'au bout.
-2. Ouvre `projects/p01_receipt/TODO.md` en **aperçu Markdown** (icône « Preview » d'IntelliJ).
-3. Suis la section 5, « Comment faire un projet ».
+2. Ouvre `projects/p00_bonjour/TODO.md` en **aperçu Markdown** : dans IntelliJ, double-clique sur le fichier, puis clique sur l'icône **Preview** (en haut à droite de l'éditeur). Le texte s'affiche mis en forme, et les blocs « Indice » deviennent des triangles à déplier.
+3. Fais p00 en entier. Il est guidé : tu recopies et tu observes.
+4. Ensuite seulement, passe à `p01_receipt`, en suivant la section 5, « Comment faire un projet ».
 
 **L'ordre complet :**
 
 ```
+p00 (guidé, une seule fois)
 p01 → r01 r03 r04
 p02 → r02
 p03 → r05 r06
@@ -91,9 +97,9 @@ ch1_buildingblocks/
 ```
 
 **Spécificités du chapitre 1 :**
-- **Les arguments.** Certains `Check` lancent ton `main` **avec des arguments** (p01, p05, r01, r07). Ils sont écrits dans le `TODO.md` et en haut du `Check.java` (`ARGS`). Pour les essayer toi-même : Run → Edit Configurations → **Program arguments**.
+- **Les arguments.** Certains `Check` lancent ton `main` **avec des arguments** (p01, p05, r01, r07). Ils sont écrits dans le `TODO.md` et en haut du `Check.java` (`ARGS`). Pour les essayer toi-même : Run → Edit Configurations → **Program arguments** (appris au projet 0, étape 5).
 - **Les sous-paquets.** Le projet **p04** et le capstone **p05** se répartissent en sous-paquets (`app`, `model`…). Crée les dossiers correspondants dans le dossier du projet. Le correcteur lit tous les sous-dossiers, sauf `solution/`.
-- **Les scripts.** Le projet **p04** et le drill **r01** te demandent un script **`commandes.sh`** (`javac`, `java`, `jar`). `Check` l'exécute avec **bash** (Git Bash sous Windows), **depuis la racine du dépôt**. Écris tes dossiers de travail sous `build/`, qui est ignoré par git.
+- **Les scripts.** Le projet **p04** et le drill **r01** te demandent un script **`commandes.sh`** (`javac`, `java`, `jar`). `Check` l'exécute avec **bash** (Git Bash sous Windows), **depuis la racine du dépôt** (le dossier `Kurse`). Le projet p04 explique comment écrire et lancer ce script. Écris tes dossiers de travail sous `build/`, qui est ignoré par git.
 
 ---
 
@@ -130,7 +136,7 @@ ch1_buildingblocks/
 | `[FAIL] script …` | ton `commandes.sh` ne produit pas la bonne sortie | lance-le toi-même : `bash chemin/commandes.sh` depuis la racine |
 | `*** PROJET REUSSI ***` | tout est juste | passe à la section 5.5 |
 
-L'argument `solution` (Run → Edit Configurations → Program arguments) vérifie la solution, pour voir à quoi ressemble un projet réussi.
+L'argument `solution` vérifie la solution, pour voir à quoi ressemble un projet réussi. Pour le donner : lance `Check` une fois, puis Run → Edit Configurations… → **Check** → Program arguments : `solution`. **Efface-le** ensuite, sinon `Check` continuera de vérifier la solution au lieu de ton code.
 
 ### 5.4 Quand tu bloques
 
@@ -168,6 +174,7 @@ L'argument `solution` (Run → Edit Configurations → Program arguments) vérif
 
 ## 7. Comment savoir que le chapitre 1 est acquis
 
+- [ ] p00 est fait, et tu sais lancer un programme, `Check` et le terminal sans le relire.
 - [ ] Les 5 projets affichent `PROJET REUSSI` (et le script de p04 `SCRIPT REUSSI`). Toutes les questions ont une réponse écrite.
 - [ ] Les 7 drills ont passé la répétition R3 (J+7, sans carte).
 - [ ] r07 passe en moins de 20 minutes, sans carte.

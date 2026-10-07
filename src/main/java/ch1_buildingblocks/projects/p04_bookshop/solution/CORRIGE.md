@@ -2,7 +2,7 @@
 
 > **Quand le lire :** ouvre **seulement la section de l'étape** que tu viens de terminer, pour comparer ton code et tes réponses. Le programme complet est dans ce dossier (`app/`, `model/`, `export/`, `tools/`, `commandes.sh`).
 >
-> Les messages ci-dessous ont été obtenus en direct avec **JDK 17** (17.0.18), sur une copie du projet où le paquet s'appelle `shop` au lieu de `ch1_buildingblocks.projects.p04_bookshop`. Chez toi, les noms seront plus longs, mais les messages sont les mêmes. Sur un Windows en allemand, `java` affiche ses erreurs en allemand ; le texte anglais s'obtient avec `java -Duser.language=en …`.
+> Les messages ci-dessous ont été obtenus en direct avec **JDK 17** (17.0.18), sur une copie du projet où le paquet s'appelle `shop` au lieu de `ch1_buildingblocks.projects.p04_bookshop`. Chez toi, les noms seront plus longs, mais les messages sont les mêmes. Sur ton Windows, `java` affiche ses erreurs en **allemand**. Pour les lire en français, ajoute `"-Duser.language=fr"` juste après `java` dans ta commande d'expérience. Chaque message est donné ici en anglais **et** en français.
 >
 > Dans les extraits, `P` remplace `ch1_buildingblocks.projects.p04_bookshop`.
 
@@ -209,9 +209,9 @@ java "$SRC/$P/tools/Hello.java" Lea
 
 | Commande | Message |
 |---|---|
-| sans `-cp` | `Error: Could not find or load main class ….app.Main` puis `Caused by: java.lang.ClassNotFoundException: ….app.Main` |
-| `….app.Main.class` | `Error: Could not find or load main class ….app.Main.class` |
-| `Main` (nom court) | `Error: Could not find or load main class Main` |
+| sans `-cp` | `Error: Could not find or load main class ….app.Main` puis `Caused by: java.lang.ClassNotFoundException: ….app.Main`<br>en français : `Erreur : impossible de trouver ou de charger la classe principale ….app.Main` |
+| `….app.Main.class` | `Error: Could not find or load main class ….app.Main.class`<br>en français : `Erreur : impossible de trouver ou de charger la classe principale ….app.Main.class` |
+| `Main` (nom court) | `Error: Could not find or load main class Main`<br>en français : `Erreur : impossible de trouver ou de charger la classe principale Main` |
 
 - **Sans `-cp`**, `java` cherche dans le dossier courant (la racine du dépôt), où il n'y a pas de `.class`.
 - **`java` attend un nom de classe**, pas un nom de fichier. Il comprend `Main.class` comme « la classe `class` du paquet `….Main` ».
@@ -224,6 +224,8 @@ java "$SRC/$P/tools/Hello.java" Lea
 ```
 no main manifest attribute, in build/ch1-p04/bookshop.jar
 ```
+
+En français : `aucun attribut manifest principal dans build/ch1-p04/bookshop.jar` (« pas d'indication de classe principale dans l'archive »).
 
 `java -jar` lit la classe à lancer dans le manifeste (`META-INF/MANIFEST.MF`, ligne `Main-Class:`). `--main-class` écrit cette ligne ; le premier jar ne l'a pas.
 
