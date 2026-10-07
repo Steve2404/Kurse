@@ -79,9 +79,11 @@ ch11_exceptions/
 │   ├── README.md            ← la liste des 7 projets, à cocher
 │   └── p01_bank/
 │       ├── TODO.md          ← L'ÉNONCÉ
+│       ├── INDICES.md       ← 2 indices repliés par étape, sans code (si tu bloques)
 │       ├── Data.java        ← les données : tu les lis, tu ne les modifies pas
 │       ├── Check.java       ← le correcteur : tu le LANCES
 │       ├── solution/        ← la correction : à la fin seulement
+│       │   └── CORRIGE.md   ← étape par étape : code, réponses aux questions, résultats des expériences
 │       └── (tes types)      ← BankException.java, Account.java, Teller.java... : c'est TOI qui les crées
 └── drills/
     ├── README.md            ← règles des drills + tableau de suivi
@@ -125,6 +127,7 @@ src/main/resources/ch11_exceptions/   ← les fichiers .properties que TU crées
 2. **Crée la classe du `main` tout de suite**, pour pouvoir lancer `Check`.
 3. **Fais une étape à la fois.** Lance `Check`, corrige, puis coche ☐ → ☑.
 4. **Fais les expériences** et **réponds aux questions par écrit**, en commentaire.
+5. **Vérifie l'étape** : ouvre la section de cette étape (et **seulement** elle) dans `solution/CORRIGE.md`. Compare tes réponses et le résultat de tes expériences. Une réponse fausse : corrige ton commentaire avec tes propres mots.
 
 ### 5.3 Lire la réponse de `Check`
 
@@ -144,8 +147,8 @@ L'argument `solution` vérifie la solution, pour voir à quoi ressemble un proje
 | Palier | Temps | Ce que tu fais |
 |---|---|---|
 | 1 | jusqu'à 20 min | affiche `getClass().getSimpleName()`, `getMessage()` et `getCause()` de l'exception, dans un `catch (Exception e)` temporaire |
-| 2 | 20 min de plus | relis la **carte mémoire** du drill du même thème, ou demande-moi un **indice** |
-| 3 | en dernier recours | lis **uniquement** la partie concernée de `solution/`, ferme, réécris de mémoire, note `// AIDE : solution consultée` |
+| 2 | 20 min de plus | ouvre l'**indice 1** de l'étape dans `INDICES.md`, puis l'**indice 2** s'il ne suffit pas ; relis la **carte mémoire** du drill du même thème, ou demande-moi un **indice** |
+| 3 | en dernier recours | lis **uniquement** la section de l'étape dans `solution/CORRIGE.md` (ou la partie concernée de `solution/`), ferme, réécris de mémoire, note `// AIDE : solution consultée` |
 
 **Jamais :**
 - copier depuis `solution/` ;
