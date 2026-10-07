@@ -34,6 +34,15 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 11. Pas de `now()` : les dates viennent de `Data`.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -encoding UTF-8 -d build/ch11-p06 -sourcepath src/main/java src/main/java/ch11_exceptions/projects/p06_agenda/Agenda.java
+java "-Duser.language=fr" -cp build/ch11-p06 ch11_exceptions.projects.p06_agenda.Agenda
+```
+
+**Les imports :** `java.time.*` et `java.time.format.*`.
+
 ---
 
 ## Tableau de bord
@@ -45,6 +54,30 @@ lu "March 27, 2026 4:00 PM" -> 2026-03-27T16:00
 lu "2026-02-30 10:00" -> 2026-02-28T10:00
 date illisible : 2026-04-32 10:00 (4 essais) ; dernier : Text '2026-04-32 10:00' could not be parsed: Invalid value for DayOfMonth (valid values 1 - 28/31): 32
 ```
+
+**📖 La leçon : `DateTimeFormatter`, écrire et lire des dates.** Un motif décrit la forme de la date avec des **lettres** :
+
+| Lettres | Sens | Exemple (5 mars 2026, 7 h 04) |
+|---|---|---|
+| `d`, `dd` | jour du mois | `5`, `05` |
+| `MM`, `MMM`, `MMMM` | mois | `03`, `mars`, `mars` (selon la locale) |
+| `yyyy` ou `uuuu` | année | `2026` |
+| `EEE`, `EEEE` | jour de la semaine | `jeu.`, `jeudi` |
+| `HH`, `mm` | heure (0-23), minutes | `07`, `04` |
+| `h`, `a` | heure (1-12), matin/après-midi | `7`, `AM` |
+| `'texte'` | du texte recopié tel quel | `'le'` |
+
+```java
+LocalDate d = LocalDate.of(2026, 3, 5);
+d.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))                    // 05/03/2026
+d.format(DateTimeFormatter.ofPattern("d MMMM uuuu", Locale.FRANCE))    // 5 mars 2026
+LocalDate.parse("05/03/2026", DateTimeFormatter.ofPattern("dd/MM/yyyy"))   // 2026-03-05 : dans l'autre sens
+```
+
+Si le texte ne correspond pas au motif, `parse` lance une `DateTimeParseException` (non vérifiée), dont le message donne la position du problème.
+
+**👉 À toi :**
+
 - **Premier appel du `main` :** `Locale.setDefault(Locale.US)`.
 - **`record Event(LocalDateTime when, String title)`**.
 - **`UnreadableDateException extends Exception`** : construite avec `(String text)`, message `date illisible : <texte>`.
@@ -83,6 +116,13 @@ echeance 2026-04-01 + 10 jours ouvres = jeu. 16/04, sautes [sam. 04/04, dim. 05/
 reunion : | Europe/Paris Fri 16:00 CET (+01:00) | America/New_York Fri 11:00 EDT (-04:00) | Asia/Tokyo Sat 00:00 JST (+09:00)
 en-US : | Saturday, March 14, 2026 | March 14, 2026 | Mar 14, 2026 | 3/14/26 | 9:30 AM
 ```
+
+**📖 La leçon : les formats tout faits.** `DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(Locale.FRANCE)` choisit tout seul le format habituel du pays : `5 mars 2026`. Il existe quatre styles : `SHORT`, `MEDIUM`, `LONG` et `FULL`.
+
+**📖 Rappel :** `ZonedDateTime` et `withZoneSameInstant` (chapitre 4, projet 5).
+
+**👉 À toi :**
+
 - **La réunion :** pour la semaine 0, puis la semaine 1 :
   - `LocalDateTime.parse(Data.MEETING).plusWeeks(semaine).atZone(ZoneId.of(Data.ZONES[0]))` ;
   - pour chaque zone de `Data.ZONES` : ` | <zone> ` suivi de `withZoneSameInstant(ZoneId.of(zone))`, formaté avec `ofPattern("EEE HH:mm z (xxx)", Locale.US)`.
@@ -99,6 +139,11 @@ date sans heure : UnsupportedTemporalTypeException Unsupported field: HourOfDay
 FULL sans zone : DateTimeException Unable to extract ZoneId from temporal 2026-03-14T09:30
 parse ISO : Text '14.03.2026' could not be parsed at index 0 (index 0, texte 14.03.2026)
 ```
+
+**📖 La leçon : les constantes ISO.** `DateTimeFormatter.ISO_LOCAL_DATE` écrit `2026-03-05`, le format international. Pour une apostrophe **littérale** dans un motif, on l'écrit deux fois : `''`.
+
+**👉 À toi :**
+
 - **La ligne `ISO`** :
   - `sample.format(DateTimeFormatter.ISO_LOCAL_DATE)` ;
   - `DateTimeFormatter.ISO_LOCAL_TIME.format(sample)` ;

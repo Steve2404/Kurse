@@ -26,11 +26,75 @@ Côté algorithme : un **virement atomique** avec **compensation** (si le crédi
 
 **Règle du crescendo :** chapitres 1 à 11. Les streams et `Optional` sont permis. Pas de threads, d'entrées/sorties de fichiers ni de JDBC. Pas de `System.exit` ni de `printStackTrace` : `Check` ne peut pas les vérifier.
 
+**Ce que le chapitre 11 t'apprend :**
+- les **exceptions** : comment un programme signale un problème, et comment le rattraper au lieu de s'arrêter ;
+- la **localisation** : afficher nombres, monnaies, dates et textes selon le pays de l'utilisateur.
+
+Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet : la cuisine.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch11-p01 -sourcepath src/main/java src/main/java/ch11_exceptions/projects/p01_bank/Teller.java
+java "-Duser.language=fr" -cp build/ch11-p01 ch11_exceptions.projects.p01_bank.Teller
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les exceptions et les comptes
+
+**📖 La leçon : une exception, un problème qui remonte.** Depuis le chapitre 1, tu as vu des programmes s'arrêter avec `Exception in thread "main" …`. Une exception est un **objet** qui décrit un problème. Elle est **lancée** (`throw`) là où le problème arrive. Ensuite, elle **remonte** de méthode en méthode, jusqu'à ce que quelqu'un la **rattrape** (`catch`). Si personne ne la rattrape, le programme s'arrête.
+
+```java
+try {
+    System.out.println("avant");
+    int n = Integer.parseInt("douze");          // lance une NumberFormatException
+    System.out.println("jamais affiche");       // sauté
+} catch (NumberFormatException e) {             // rattrape ce type d'exception
+    System.out.println("rattrape : " + e.getMessage());   // For input string: "douze"
+} finally {
+    System.out.println("finally, toujours");    // s'exécute dans TOUS les cas
+}
+System.out.println("le programme continue");
+```
+
+**📖 La leçon : la famille des exceptions.**
+
+```
+Throwable
+├── Error                  (problèmes graves de la machine : on ne les rattrape pas)
+└── Exception              (VÉRIFIÉES : le compilateur t'oblige à t'en occuper)
+    └── RuntimeException   (NON vérifiées : bugs, valeurs interdites…)
+```
+
+- Une exception **vérifiée** doit être soit rattrapée par un `catch`, soit **annoncée** par `throws` dans la signature de la méthode. Sinon `javac` refuse : `error: unreported exception …; must be caught or declared to be thrown`.
+- Une exception **non vérifiée** (`RuntimeException` et ses filles : `IllegalArgumentException`, `ArithmeticException`…) peut être lancée sans rien annoncer.
+
+**📖 La leçon : écrire ta propre exception.** Une classe qui étend `Exception` (vérifiée) ou `RuntimeException` (non vérifiée). Son constructeur passe le message à `super(…)` :
+
+```java
+class FourFroidException extends Exception {
+    private final int manque;
+    FourFroidException(int manque) {
+        super("four trop froid, il manque " + manque + " degres");
+        this.manque = manque;
+    }
+    int manque() { return manque; }
+}
+
+static void cuire(int temperature) throws FourFroidException {     // throws : je peux la lancer
+    if (temperature < 180) throw new FourFroidException(180 - temperature);   // throw : je la lance
+    System.out.println("cuisson a " + temperature);
+}
+```
+
+`throws` (avec un **s**) s'écrit dans la **signature**. `throw` (sans **s**) **lance** une exception.
+
+**📖 Rappel :** une méthode qui en redéfinit une autre (chapitre 6) peut annoncer **moins** d'exceptions vérifiées, ou des exceptions **plus précises**. L'expérience de l'étape 4 te montre l'inverse.
+
+**👉 À toi :**
 
 - **`class BankException extends Exception`** : deux constructeurs, `(String message)` et `(String message, Throwable cause)`, qui appellent `super(…)`.
 - **`InsufficientFundsException extends BankException`** :
@@ -54,6 +118,16 @@ Côté algorithme : un **virement atomique** avec **compensation** (si le crédi
 
 ### ☐ Étape 2 — La banque
 
+**📖 La leçon : lancer une exception non vérifiée.** Pour refuser une valeur interdite, on lance une exception toute faite, sans `throws` :
+
+```java
+if (portions <= 0) throw new IllegalArgumentException("portions invalides : " + portions);
+```
+
+Un **2e constructeur** `(String message, Throwable cause)` permet de garder la trace de l'exception d'origine (le projet 2 te l'apprend en détail).
+
+**👉 À toi :**
+
 - **`Bank`** : une `LinkedHashMap<String, Account>`.
   - `static String money(long cents)` rend `525.00` (deux décimales).
   - `void open(String line)` : `id titulaire solde`. Un 4e mot `gele` crée un `FrozenAccount`, sinon c'est un `StandardAccount`.
@@ -76,6 +150,31 @@ PARTAGE A1 0 -> ERREUR java.lang.ArithmeticException: / by zero
 RETRAIT -> MAL FORMEE ArrayIndexOutOfBoundsException: Index 1 out of bounds for length 1
 traitees 13, erreurs {ArithmeticException=1, ArrayIndexOutOfBoundsException=1, ...}
 ```
+
+**📖 La leçon : plusieurs `catch`.** Un `try` peut être suivi de plusieurs `catch`. Java essaie **le premier**, puis le suivant… et s'arrête au premier qui correspond. L'ordre compte donc : place les exceptions **les plus précises d'abord**. Les questions de l'étape te montrent ce qui arrive sinon.
+
+```java
+try {
+    …
+} catch (ClassCastException e) {              // la plus précise
+    System.out.println("cast : " + e.getClass().getSimpleName());
+} catch (RuntimeException e) {                // plus générale : rattrape le reste
+    System.out.println("autre");
+}
+```
+
+**Le multi-catch** traite plusieurs types de la même façon, séparés par `|` :
+
+```java
+} catch (ArithmeticException | ArrayIndexOutOfBoundsException e) {
+    System.out.println("multi : " + e.getClass().getSimpleName());
+}
+```
+
+`e.getMessage()` donne le message. `e.toString()` donne le nom complet de la classe, puis le message.
+
+**👉 À toi :**
+
 - **`static String execute(Bank bank, String operation) throws BankException`** découpe sur l'espace :
   - `DEPOT id montant` et `RETRAIT id montant` : `find(p[1])`, puis `Long.parseLong(p[2])` (dans cet ordre), et rendent `ok <id> = <solde>` ;
   - `VIREMENT a b montant` : rend `ok <a> = <solde>, <b> = <solde>` ;
@@ -110,6 +209,11 @@ traitees 13, erreurs {ArithmeticException=1, ArrayIndexOutOfBoundsException=1, .
 ```
 frais : impayes [C3 compte gele : C3, D4 manque 2.00] ; soldes : A1=415.00 B2=210.00 C3=300.00 D4=8.00
 ```
+
+**📖 Rappel :** une lambda est l'écriture courte d'une méthode d'interface fonctionnelle (chapitre 8). Si cette méthode n'annonce aucun `throws`, la lambda non plus.
+
+**👉 À toi :**
+
 - `bank.accounts().forEach(a -> { … })` prélève `Data.FEE` avec `withdraw`. La lambda **doit** attraper les exceptions vérifiées :
   - une `InsufficientFundsException` ajoute `<id> manque <money(missing)>` à la liste des impayés ;
   - une autre `BankException` ajoute `<id> <message>`.

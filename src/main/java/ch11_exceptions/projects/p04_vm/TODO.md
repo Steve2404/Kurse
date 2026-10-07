@@ -31,11 +31,24 @@ Côté algorithme : **simuler ce que fait la JVM.**
 
 **Règle du crescendo :** chapitres 1 à 11 (voir `PARCOURS.md`).
 
+**À quoi sert ce projet ?** Une petite **machine virtuelle** : elle exécute un programme d'instructions (`PUSH 2`, `ADD`, `PRINT`…) sur une pile. Ce programme a ses propres `TRY` et `THROW`, que tu implémentes avec les vraies exceptions de Java.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch11-p04 -sourcepath src/main/java src/main/java/ch11_exceptions/projects/p04_vm/VmLab.java
+java "-Duser.language=fr" -cp build/ch11-p04 ch11_exceptions.projects.p04_vm.VmLab
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les exceptions de la machine
+
+**📖 Rappel :** une exception peut être `abstract`, avec une méthode abstraite que chaque fille écrit (chapitre 6). Pour rattraper **toute** la famille, on rattrape la mère.
+
+**👉 À toi :**
 
 - **`abstract class VmException extends Exception`** : un constructeur `protected (String message)`, et `public abstract int code()`.
 - **`StackUnderflowException extends VmException`** : construite avec `(int index)`, message `pile vide (instruction <index>)`, `code()` = -1.
@@ -45,6 +58,10 @@ Côté algorithme : **simuler ce que fait la JVM.**
 - **Question :** pourquoi `StepLimitException` ne doit-elle **pas** étendre `VmException` ?
 
 ### ☐ Étape 2 — La machine
+
+**📖 Conseil :** déroule le programme « calcul » à la main : une colonne « instruction », une colonne « pile après ». Pour `TRY`, note le gestionnaire empilé ; pour `THROW`, retrouve-le.
+
+**👉 À toi :**
 
 - **`Machine(String program)`** : découpe sur `;`. Les instructions qui finissent par `:` sont des **étiquettes**, mémorisées dans une `Map<String, Integer>` (nom → indice).
 - **L'état :**
@@ -102,6 +119,25 @@ boucle infinie : arret StepLimitException plus de 50 pas
 finally : finallyWins 2, valueAlreadyComputed 1, retour du catch [try, catch, finally]
 masquee : IllegalStateException (lancee dans finally), cause null, supprimees 0
 ```
+
+**📖 La leçon : quand s'exécute `finally` ?** Toujours, après le `try` (et le `catch` s'il y en a un), **même** quand le `try` fait un `return` :
+
+```java
+static String essai() {
+    try {
+        System.out.println("dans try");
+        return "valeur du try";
+    } finally {
+        System.out.println("dans finally");
+    }
+}
+// dans try, dans finally, puis l'appelant reçoit "valeur du try"
+```
+
+L'étape te fait observer les cas plus étranges : un `return` **dans** le `finally`, ou une exception lancée **dans** le `finally`.
+
+**👉 À toi :**
+
 - **Quatre méthodes** (les deux qui sortent de `finally` portent `@SuppressWarnings("finally")`) :
   - `int finallyWins()` : `try { return 1; } finally { return 2; }` ;
   - `int valueAlreadyComputed()` : `int x = 1; try { return x; } finally { x = 99; }` ;

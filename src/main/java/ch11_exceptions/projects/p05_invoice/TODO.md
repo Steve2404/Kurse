@@ -29,6 +29,19 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 11 (voir `PARCOURS.md`).
 
+**Ce projet ouvre la 2e partie du chapitre : la localisation.** Un même nombre s'écrit `1,234.50` aux États-Unis et `1.234,5` en Allemagne. Java choisit l'écriture selon une **`Locale`** : une langue et, souvent, un pays.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -encoding UTF-8 -d build/ch11-p05 -sourcepath src/main/java src/main/java/ch11_exceptions/projects/p05_invoice/Billing.java
+java "-Duser.language=fr" -cp build/ch11-p05 ch11_exceptions.projects.p05_invoice.Billing
+```
+
+**`-encoding UTF-8`** dit à `javac` que ton fichier est écrit en UTF-8 (c'est ainsi qu'IntelliJ l'enregistre). Sans cette option, sur Windows avec Java 17, `javac` lit de travers les caractères spéciaux, et refuse de compiler. Dans les projets 5 à 7, ajoute-la toujours.
+
+**Les imports :** `java.text.*` pour `NumberFormat` et `DecimalFormat`, `java.util.Locale`, `java.math.RoundingMode`.
+
 ---
 
 ## Tableau de bord
@@ -39,6 +52,30 @@ Côté algorithmes :
 facture : 4 lignes, total TTC en-US=$835.80 fr-FR=835,80_€ de-DE=835,80_€ de-CH=CHF_835.80 ja-JP=￥836
 TVA : | 0_% ou 0,0_% de 450,00_€ = 0,00_€ | 6_% ou 5,5_% de 35,96_€ = 1,98_€ | 20_% ou 20,0_% de 289,88_€ = 57,98_€
 ```
+
+**📖 La leçon : `Locale`, la langue et le pays.**
+
+```java
+Locale.US                          // en_US
+Locale.FRANCE                      // fr_FR
+Locale.forLanguageTag("pt-BR")     // pt_BR : à partir d'une balise
+new Locale("es", "MX")             // es_MX : langue, puis pays
+Locale.setDefault(Locale.US);      // la locale utilisée quand on n'en donne pas
+```
+
+**📖 La leçon : `NumberFormat`, des nombres à la mode du pays.**
+
+```java
+NumberFormat.getCurrencyInstance(Locale.US).format(1234.5)      // $1,234.50
+NumberFormat.getNumberInstance(Locale.GERMANY).format(1234.5)   // 1.234,5
+NumberFormat.getPercentInstance(Locale.US).format(0.256)        // 26%
+NumberFormat.getIntegerInstance(Locale.US).format(7.6)          // 8
+```
+
+Les formats français utilisent des espaces **insécables** : invisibles, mais différents d'un espace normal. Il en existe deux, de codes `00A0` et `202F`. Le projet te fait les remplacer par `_` pour les voir. Dans ton code, écris-les avec leur **échappement Unicode** (chapitre 1, projet 2, étape 4) : `'\u00A0'` et `'\u202F'`. Ce sont des caractères ordinaires pour `javac`, quel que soit l'encodage.
+
+**👉 À toi :**
+
 - **Première ligne du `main` :** `Locale.setDefault(Locale.US)`. La machine peut être réglée en allemand.
 - **`record InvoiceLine(int quantity, String label, long unitCents, int vatPerMille)`**, avec `parse` (sur `|`) et `long net()` = quantité × prix.
 - **`Invoice`** (une liste de lignes) :
@@ -63,6 +100,19 @@ arrondis : 2 4 3 | 1 2.67 1,234.568 1.234,50
 motif #,##0.00 : [1,234.50] [-7.25] [0.08]
 motif '#'000 : [#1234] [-#007] [#000]
 ```
+
+**📖 La leçon : `DecimalFormat`, ton propre motif.** Dans un motif, `0` est un chiffre **obligatoire** (un zéro s'affiche si besoin), `#` un chiffre **facultatif**, `,` le séparateur de milliers, `.` le séparateur décimal :
+
+```java
+DecimalFormatSymbols us = DecimalFormatSymbols.getInstance(Locale.US);
+new DecimalFormat("#,##0.00", us).format(9876.5)     // 9,876.50
+new DecimalFormat("000.#", us).format(4.25)          // 004.2
+```
+
+`setRoundingMode(RoundingMode.HALF_UP)` change la règle d'arrondi.
+
+**👉 À toi :**
+
 - **La ligne `arrondis`**, dans l'ordre :
   1. `getIntegerInstance(Locale.US)` sur 2.5, puis sur 3.5 ;
   2. le même avec `setRoundingMode(RoundingMode.HALF_UP)` sur 2.5 ;
@@ -79,6 +129,23 @@ compact 1234 : 1K | 1.2K | 1 thousand | 1 Tausend
 lu fr-FR nombre "1 234,56" -> 1
 lu en-US monnaie "12.50" -> ParseException Unparseable number: "12.50" (position 0)
 ```
+
+**📖 La leçon : relire un nombre écrit.** `parse` fait le chemin inverse de `format`. Elle lance une `ParseException`, une exception **vérifiée** : il faut un `try`/`catch` :
+
+```java
+try {
+    NumberFormat.getNumberInstance(Locale.US).parse("1,234.5");   // 1234.5
+    NumberFormat.getNumberInstance(Locale.US).parse("abc");       // ParseException
+} catch (ParseException e) {
+    e.getMessage()       // Unparseable number: "abc"
+    e.getErrorOffset()   // 0 : la position du problème
+}
+```
+
+**📖 La leçon : le format compact.** `NumberFormat.getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT).format(25000)` donne `25K`.
+
+**👉 À toi :**
+
 - **Le format compact** (visible), pour chaque nombre de `Data.BIG` : `compact <n> : ` suivi de quatre formats séparés par ` | ` :
   - `getCompactNumberInstance(Locale.US, NumberFormat.Style.SHORT)` ;
   - le même avec `setMaximumFractionDigits(1)` ;

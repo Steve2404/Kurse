@@ -1,6 +1,13 @@
 # Chapitre 11 (Exceptions and Localization) — Mode d'emploi
 
 Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est le même qu'aux chapitres 1 à 10 :
+
+> **Comment sont faits les énoncés.** Chaque étape d'un projet suit le même schéma :
+> - **📖 La leçon** : la notion expliquée simplement, avec un exemple sur **un autre sujet** que le projet ;
+> - **👉 À toi** : ce que tu construis ;
+> - **🧪 Expériences** et **❓ Questions** : tu essaies, tu observes, tu réponds en commentaire.
+>
+> Les gestes de base sont expliqués une fois pour toutes dans le **projet 0 du chapitre 1** (`ch1_buildingblocks/projects/p00_bonjour`) : créer une classe, lancer, `Check`, arguments, terminal, lire une erreur. Relis-le si l'un d'eux te manque. Chaque projet rappelle aussi ses commandes exactes.
 - des **projets** à construire de A à Z, pour **comprendre** ;
 - des **drills** chronométrés, répétés à intervalles espacés, pour **retenir**.
 

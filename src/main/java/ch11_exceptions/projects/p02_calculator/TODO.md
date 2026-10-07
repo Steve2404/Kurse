@@ -24,11 +24,22 @@ Côté algorithme : un **analyseur à descente récursive** qui évalue en lisan
 
 **Règle du crescendo :** chapitres 1 à 11 (voir `PARCOURS.md`).
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch11-p02 -sourcepath src/main/java src/main/java/ch11_exceptions/projects/p02_calculator/Calculator.java
+java "-Duser.language=fr" -cp build/ch11-p02 ch11_exceptions.projects.p02_calculator.Calculator
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les types
+
+**📖 Rappel :** une exception vérifiée étend `Exception`, une non vérifiée étend `RuntimeException` (projet 1, étape 1). Une interface fonctionnelle peut annoncer `throws` dans sa méthode : les lambdas qui la réalisent ont alors le droit de lancer cette exception.
+
+**👉 À toi :**
 
 - **`class SyntaxException extends Exception`** :
   - un champ `int position` et `int position()` ;
@@ -38,6 +49,24 @@ Côté algorithme : un **analyseur à descente récursive** qui évalue en lisan
 - **`@FunctionalInterface interface ThrowingFunction<T, R>`** : `R apply(T value) throws SyntaxException`.
 
 ### ☐ Étape 2 — L'analyseur
+
+**📖 La leçon : traduire une exception.** Quand une méthode reçoit une exception « technique », elle peut la **remplacer** par une exception de son propre vocabulaire, en gardant l'originale comme **cause** :
+
+```java
+static int portions(String texte) throws RecetteException {
+    try {
+        return Integer.parseInt(texte);
+    } catch (NumberFormatException e) {
+        throw new RecetteException("portions illisibles", e);    // e devient la cause
+    }
+}
+// e.getMessage()                        -> "portions illisibles"
+// e.getCause().getClass().getSimpleName() -> "NumberFormatException"
+```
+
+`Math.addExact(a, b)`, `multiplyExact`… font le calcul **et** lancent une `ArithmeticException` en cas de débordement, au lieu de « faire le tour » en silence (chapitre 2).
+
+**👉 À toi :**
 
 - **`Parser(String text) throws SyntaxException`** découpe le texte en jetons (`static List<Token> tokenize(String)`) :
   - les espaces sont ignorés ;
@@ -73,6 +102,11 @@ Côté algorithme : un **analyseur à descente récursive** qui évalue en lisan
 99999999999999999999 -> syntaxe : nombre trop grand (position 0) <- NumberFormatException
 ^
 ```
+
+**📖 La leçon : relancer.** Dans un `catch`, `throw e;` relance l'exception rattrapée, après avoir fait quelque chose (noter, compter…). Un `finally` s'exécute même quand l'exception est relancée.
+
+**👉 À toi :**
+
 - **Dans `Calculator`**, deux champs : `static int evaluations` et `static final List<String> journal`.
 - **`public static long evaluate(String text) throws SyntaxException`** :
   - rend `new Parser(text).parseAll()` ;
@@ -93,6 +127,13 @@ valides [7, -6, -1], somme 0
 lot interrompu : dans une lambda <- ')' attendu en position 6, resultats [42], evaluations 2
 evaluations 27, journal [EvaluationException, SyntaxException, ...]
 ```
+
+**📖 La leçon : les `Error`.** `StackOverflowError` (une récursion trop profonde, chapitre 5) est une `Error` : un problème de la machine elle-même, pas de ton programme. On peut techniquement l'attraper, mais l'étape te demande pourquoi c'est une mauvaise idée.
+
+**📖 Rappel :** `Optional` et `flatMap(Optional::stream)` (chapitre 10, projet 1). `getClass().getSuperclass()` donne la classe mère d'un objet.
+
+**👉 À toi :**
+
 - **L'imbrication :** évalue `"(".repeat(Data.DEPTH) + "1" + ")".repeat(Data.DEPTH)`.
   - `catch (StackOverflowError e)` affiche son nom simple et celui de sa super-classe (`getClass().getSuperclass()`) ;
   - ajoute un `catch (SyntaxException e)` pour le compilateur.

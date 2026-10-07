@@ -30,11 +30,59 @@ Côté algorithme : un **taux de traduction** par locale. Une clé est traduite 
 
 **Règle du crescendo :** chapitres 1 à 11 (voir `PARCOURS.md`).
 
+**C'est le projet-bilan du chapitre 11.** Il ajoute une dernière notion : les **traductions** rangées dans des fichiers.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -encoding UTF-8 -d build/ch11-p07 -sourcepath src/main/java src/main/java/ch11_exceptions/projects/p07_shop/Shop.java
+java "-Duser.language=fr" -cp build/ch11-p07 ch11_exceptions.projects.p07_shop.Shop
+```
+
+**⚠️ Les fichiers `.properties`** vont dans `src/main/resources/…` (voir l'étape 1). IntelliJ les copie tout seul au moment de lancer. Avec le terminal, il faut **aussi** les mettre à côté des `.class` :
+
+```
+xcopy /E /I /Y src\main\resources\ch11_exceptions\projects\p07_shop build\ch11-p07\ch11_exceptions\projects\p07_shop
+```
+
+(`xcopy` copie un dossier dans PowerShell ou dans l'invite Windows.) Le plus simple est donc de lancer ce projet avec la **flèche verte**.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les bundles (fichiers `.properties`)
+
+**📖 La leçon : un `ResourceBundle`, les traductions dans des fichiers.** On écrit un fichier `.properties` par langue, avec des lignes `clé=valeur` :
+
+```properties
+# fichier menu.properties (la langue par défaut)
+salut=Bonjour
+# fichier menu_en.properties (l'anglais)
+salut=Hello
+```
+
+Puis Java choisit le bon fichier selon la `Locale` :
+
+```java
+ResourceBundle b = ResourceBundle.getBundle("paquet.menu", Locale.ENGLISH);
+b.getString("salut")       // "Hello"
+```
+
+S'il ne trouve pas la clé dans le fichier le plus précis, il la cherche dans les **parents** : `menu_fr_CA` → `menu_fr` → `menu`.
+
+**Créer un fichier `.properties` :** clic droit sur le dossier voulu de `src/main/resources` → **New** → **File** → tape son nom avec l'extension.
+
+**📖 La leçon : `MessageFormat`, des trous numérotés.**
+
+```java
+MessageFormat.format("{0} a {1} chats", "Lea", 3)               // "Lea a 3 chats"
+new MessageFormat("C''est {0}", Locale.FRANCE).format(new Object[] {"ok"})   // "C'est ok"
+```
+
+Dans un motif `MessageFormat`, une apostrophe **seule** a un sens spécial : pour une vraie apostrophe, on la double.
+
+**👉 À toi :**
 
 Le nom de base est **`ch11_exceptions.projects.p07_shop.shop`** : le paquet, puis `shop`, sans suffixe ni extension. Écris exactement ces clés et valeurs, en ASCII :
 
@@ -62,6 +110,19 @@ Le nom de base est **`ch11_exceptions.projects.p07_shop.shop`** : le paquet, pui
 ```
 reglages : [promo.item, shipping.free, shop.name], promo 10 %, stock null (pas une String !), get 42
 ```
+
+**📖 La leçon : `Properties`, des réglages clé → valeur.**
+
+```java
+Properties p = new Properties();
+p.setProperty("couleur", "bleu");
+p.getProperty("couleur")          // "bleu"
+p.getProperty("taille")           // null
+p.getProperty("taille", "M")      // "M" : valeur par défaut
+```
+
+**👉 À toi :**
+
 - **Première instruction du `main` :** `Locale.setDefault(Locale.GERMANY)`.
 - **Les réglages :**
   1. `Properties settings = new Properties()`, remplie avec `setProperty` depuis `Data.SETTINGS` (`cle=valeur`) ;
@@ -123,6 +184,11 @@ locales : fr_CA fr-CA egales true, français (Canada) / Französisch (Kanada), l
 Builder : IllformedLocaleException
 categories : 1_234,50_€ ; German (Germany) ; defaut de_DE, FORMAT fr_FR, DISPLAY en_US
 ```
+
+**📖 Rappel :** les façons de créer une `Locale` (projet 5, étape 1). `Locale.Builder` en est une de plus : `new Locale.Builder().setLanguage("fr").setRegion("CA").build()`.
+
+**👉 À toi :**
+
 - **Quatre locales :**
   - `a = new Locale("FR", "ca")` ;
   - `b = Locale.CANADA_FRENCH` ;
