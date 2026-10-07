@@ -27,11 +27,29 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 8. **Pas de `Comparator` ni d'`Arrays.sort`** : tu écris l'ordre et les tris toi-même.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch8-p06 -sourcepath src/main/java src/main/java/ch8_lambdas/projects/p06_sorting/SortingApp.java
+java "-Duser.language=fr" -cp build/ch8-p06 ch8_lambdas.projects.p06_sorting.SortingApp
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — `Person` et `Order`
+
+**📖 La leçon : comparer avec une lambda.** Pour trier, il faut savoir comparer deux objets. Une fonction de comparaison rend un nombre **négatif** si `a` vient avant `b`, **0** s'ils sont à égalité, **positif** sinon (comme `compareTo`, chapitre 4, projet 8). `Integer.compare(x, y)` le fait pour deux `int`, sans risque de débordement :
+
+```java
+Integer.compare(3, 7)     // négatif
+Integer.compare(7, 7)     // 0
+```
+
+Une méthode `default` peut **fabriquer une nouvelle lambda** à partir de `this` : par exemple, une méthode `reversed()` qui rend `(a, b) -> compare(b, a)`.
+
+**👉 À toi :**
 
 - **`record Person(String name, int age, String city, int score)`**, avec `parse(String)` et `toString()` qui rend le nom.
 - **`@FunctionalInterface interface Order`** :
@@ -43,6 +61,10 @@ Côté algorithmes :
   - `static Order byText(Function<Person, String> key)`, avec `compareTo`.
 
 ### ☐ Étape 2 — Le trieur
+
+**📖 Rappel :** le tri fusion (chapitre 5, projet 6, étape 3), le tri par insertion (chapitre 4, projet 7). Ici, ils reçoivent la comparaison **en paramètre** : le même code trie par nom, par âge ou par score.
+
+**👉 À toi :**
 
 - **`Sorter`** :
   - un **champ** `comparisons`, et `comparisons()` qui le rend **et le remet à zéro** ;
@@ -61,6 +83,11 @@ score decroissant puis age : Emma Hugo Adam Lina Lea Bob Theo Ines Noah Zoe (25)
 stabilite : par ville apres par nom Adam Lea Noah Emma Theo Zoe Bob Hugo Ines Lina = ville puis nom Adam Lea Noah Emma Theo Zoe Bob Hugo Ines Lina
 insertion true : 24 comparaisons contre 25 pour la fusion
 ```
+
+**📖 Rappel :** `Person::name` est une référence vers l'accesseur du `record`. Elle convient à une `Function<Person, String>` (projet 1, étape 1).
+
+**👉 À toi :**
+
 - **Les ordres :**
   - `byName = Order.byText(Person::name)` ;
   - `byAge = Order.by(Person::age)` ;
@@ -83,6 +110,11 @@ top 3 : Emma Adam Hugo (24 comparaisons)
 dichotomie par age : 29->2(Emma) 42->8(Adam) 30->-5
 plus proches de 30 ans : Emma Ines Lea Lina ; ordre inverse du nom : Zoe Theo Noah
 ```
+
+**📖 Rappel :** ce qu'une lambda peut lire (projet 1, étape 4).
+
+**👉 À toi :**
+
 - **Le top :** `top(people, Data.TOP, byScoreDesc.then(byName))`.
 - **La dichotomie :** dans le tableau trié par `byAge.then(byName)`, cherche chaque âge de `Data.AGES` avec `Sorter.search(…, Person::age)`. Affiche `age->indice`, et le nom si l'indice est positif.
 - **La capture :**

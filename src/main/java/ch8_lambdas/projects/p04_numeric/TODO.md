@@ -30,11 +30,57 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 8. Pas de stream (`IntStream` est au chapitre 10). Pas de `%f` : arrondis avec `Math.round(x * 1_000_000) / 1_000_000.0`.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch8-p04 -sourcepath src/main/java src/main/java/ch8_lambdas/projects/p04_numeric/NumericApp.java
+java "-Duser.language=fr" -cp build/ch8-p04 ch8_lambdas.projects.p04_numeric.NumericApp
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les algorithmes de `Numeric`
+
+**📖 La leçon : les interfaces pour les primitifs.** `Function<Integer, Integer>` emballe chaque nombre dans un `Integer`. Pour travailler directement avec des `int`, `long` ou `double`, Java fournit des versions spéciales. Leur méthode a un nom différent :
+
+| Interface | Ce qu'elle fait | Méthode |
+|---|---|---|
+| `IntPredicate` | `int` → `boolean` | `test` |
+| `IntUnaryOperator` | `int` → `int` | `applyAsInt` |
+| `IntBinaryOperator` | deux `int` → `int` | `applyAsInt` |
+| `ToIntFunction<T>` | `T` → `int` | `applyAsInt` |
+| `IntFunction<R>` | `int` → `R` | `apply` |
+| `IntSupplier` | rien → `int` | `getAsInt` |
+| `DoubleUnaryOperator` | `double` → `double` | `applyAsDouble` |
+
+Il en existe de même pour `long` et `double` (`LongPredicate`, `DoubleSupplier`…).
+
+```java
+IntPredicate pair = n -> n % 2 == 0;
+pair.test(4)                        // true
+IntUnaryOperator carre = n -> n * n;
+carre.applyAsInt(5)                 // 25
+ToIntFunction<String> len = String::length;
+len.applyAsInt("abc")               // 3
+IntFunction<String> etoiles = n -> "*".repeat(n);
+etoiles.apply(3)                    // "***"
+DoubleUnaryOperator moitie = x -> x / 2;
+moitie.applyAsDouble(5)             // 2.5
+```
+
+**📖 La leçon : une méthode qui reçoit une fonction.** On peut écrire un algorithme **une fois**, et lui passer la fonction mathématique en paramètre :
+
+```java
+static double milieu(DoubleUnaryOperator f, double a, double b) {
+    return f.applyAsDouble((a + b) / 2);
+}
+milieu(x -> x * x, 0, 4)            // f(2) = 4.0
+milieu(Math::sqrt, 0, 18)           // f(9) = 3.0
+```
+
+**👉 À toi :**
 
 - **`record Result(double value, int iterations)`**, imbriqué. Son `toString()` = `valeur arrondie + " en " + n + " iterations"`.
 - **`static double round(double)`** arrondit à 6 décimales.
@@ -55,6 +101,11 @@ cos(x) = x : dichotomie 0.739085 en 30 iterations, Newton 0.739085 en 4 iteratio
 integrales : x^2 sur [0,3] = 9.0, sin sur [0,pi] = 2.0, exp(-x^2) sur [-5,5] = 1.772454 (racine de pi 1.772454)
 maximum de -(x-1.5)^2+4 : x = 1.5 en 40 iterations ; derivee de sin en 0 = 1.0
 ```
+
+**📖 Rappel :** les références de méthodes `static` comme `Math::sin` (projet 1, étape 1). La dichotomie (chapitre 4, projet 4, étape 3) : couper l'intervalle en deux à chaque tour.
+
+**👉 À toi :**
+
 - **Racine de 2 :** `x -> x * x - 2`, avec la dichotomie sur [0, 2] et Newton depuis 1.
 - **cos(x) = x :** `x -> Math.cos(x) - x`, avec la dichotomie sur [0, 1] et Newton depuis 1.
 - **Les intégrales de Simpson :**
@@ -71,6 +122,11 @@ composition : 9.0 7.0 7.0 ; collatz(27) 111 pas, 22
 reductions : somme 455, max 120, pgcd 1, ppcm 60
 filtres : pairs 6, pairs et grands 4, premiers ou impairs 1, premiers <= 100 : 25
 ```
+
+**📖 Rappel :** `andThen` et `compose` (projet 1, étape 3) existent aussi sur `IntUnaryOperator` et `DoubleUnaryOperator`. `and`, `or` et `negate` (projet 2, étape 1) existent aussi sur `IntPredicate`.
+
+**👉 À toi :**
+
 - **Ligne `composition` :**
   - `plus1.andThen(times3)` et `plus1.compose(times3)` appliqués à 2 ;
   - `DoubleUnaryOperator.identity()` appliqué à 7 ;
@@ -92,6 +148,11 @@ filtres : pairs 6, pairs et grands 4, premiers ou impairs 1, premiers <= 100 : 2
 voyelles : lambda=## fonction=### interface=#### java=## predicat=### 77 ; racine(49) 7.0, 20! 2432902008176640000
 monte-carlo : 15631 / 20000 -> pi ~ 3.1262, proche true ; hypot(3, 4) 5.0
 ```
+
+**📖 Rappel :** la table des interfaces pour les primitifs (étape 1). Le nom de l'interface dit ce qui entre et ce qui sort : `IntToDoubleFunction` reçoit un `int` et rend un `double`.
+
+**👉 À toi :**
+
 - **Ligne `voyelles` :**
   - `ToIntFunction<String> vowels`, qui compte les `aeiouy` avec `replaceAll("[^aeiouy]", "")` ;
   - `IntFunction<String> bar = k -> "#".repeat(k)` ;

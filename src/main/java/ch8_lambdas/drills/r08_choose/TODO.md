@@ -9,6 +9,21 @@
 - Crée la classe **`Recall08`** dans le paquet `ch8_lambdas.drills.r08_choose`.
 - **Pour chaque lambda donnée, c'est toi qui choisis le type de la variable** : l'interface du JDK la plus précise, sans boxing quand c'est possible. Les types attendus sont vérifiés par `Check`.
 
+**Les notions de ce drill ont été apprises dans :** projet 1 (étape 3) et projet 4 (étape 1) : choisir la bonne interface. Si un défi te semble totalement inconnu, ce drill arrive trop tôt : refais d'abord la leçon de ce projet.
+
+<details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
+
+1. **Note l'heure** de départ (montre ou téléphone).
+2. **Crée la classe** : clic droit sur le dossier `r08_choose` → **New** → **Java Class** → `Recall08`. S'il faut d'autres classes, place-les comme le disent les **Règles** ci-dessus ; si elles ne précisent rien, écris-les dans le même fichier, sous `Recall08`, sans `public`.
+3. **Écris `main`**, puis **une ligne par défi**. La ligne qui suit la flèche `→` est **exactement** ce que ton programme doit afficher : `System.out.println("D01 : " + …);`, où les `…` sont des valeurs que **Java** calcule, jamais recopiées.
+4. **Lance `Recall08`** avec la flèche verte, pour voir tes lignes.
+5. **Bloqué plus de 3 minutes sur un défi ?** Écris un commentaire `// D03 : ✗` à sa place, et passe au suivant.
+6. **Lance `Check.java`** (flèche verte). Une ligne `[FAIL]` te montre `attendu` et `obtenu`.
+7. **Ensuite seulement**, ouvre la **carte mémoire** tout en bas (en aperçu Markdown, clique sur le triangle « Ouvrir la carte »), relis tes ✗, et fais les **expériences** (écris la ligne, compile, lis le message, efface la ligne).
+8. **Note** la date, ton temps et tes ✗ dans le tableau de [`drills/README.md`](../README.md).
+
+</details>
+
 ## Défis
 
 - ☐ **D01.** Trois fournisseurs : `() -> "t"`, `() -> 2.5` (un `double`) et `() -> false`.

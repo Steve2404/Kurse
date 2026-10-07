@@ -28,6 +28,28 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 8. Pas de collection ni de stream. Les montants sont en centimes.
 
+**C'est le projet-bilan du chapitre 8.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| une interface fonctionnelle qui étend `Predicate` | projet 1, étape 1 |
+| une lambda dans un `record` | projet 2, étape 3 |
+| les interfaces pour `long` (`LongPredicate`, `LongUnaryOperator`, `LongSupplier`, `ToLongFunction`) | projet 4, étape 1 |
+| une méthode qui rend une lambda | projet 2, étape 1 |
+| `andThen` et `compose` | projet 1, étape 3 |
+| enchaîner des `Consumer` | projet 3, étape 3 |
+| un calcul qui n'a lieu qu'à l'appel (`LongSupplier`) | projet 3, étape 2 |
+| une référence de méthode sur un objet (`promos[i]::apply`, `audit::append`) | projet 1, étape 1 |
+
+**La lambda qui rend une lambda (currying).** `percent -> amount -> …` est une fonction qui reçoit `percent` et **rend une autre fonction**, qui attend `amount`. On l'appelle en deux temps : `PERCENT_OFF.apply(10)` donne la fonction « −10 % », qu'on applique ensuite à un montant.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch8-p07 -sourcepath src/main/java src/main/java/ch8_lambdas/projects/p07_orders/Engine.java
+java "-Duser.language=fr" -cp build/ch8-p07 ch8_lambdas.projects.p07_orders.Engine
+```
+
 ---
 
 ## Tableau de bord

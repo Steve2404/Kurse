@@ -31,11 +31,32 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 8. Pas de `Map` pour la table des fonctions : ce sont des tableaux parallèles.
 
+**À quoi sert ce projet ?** Une calculatrice qui lit une expression comme `3 + 4 * 2`, la transforme en notation **postfixée** (`3 4 2 * +`, comme la calculatrice RPN du chapitre 3), puis la calcule. Chaque fonction mathématique est rangée dans un tableau sous forme de lambda.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch8-p05 -sourcepath src/main/java src/main/java/ch8_lambdas/projects/p05_calculator/Calculator.java
+java "-Duser.language=fr" -cp build/ch8-p05 ch8_lambdas.projects.p05_calculator.Calculator
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les jetons et la table des fonctions
+
+**📖 La leçon : un tableau de lambdas.** Un tableau peut contenir des lambdas, comme n'importe quels objets :
+
+```java
+String[] noms = {"double", "carre"};
+IntUnaryOperator[] ops = {n -> n * 2, n -> n * n};
+ops[1].applyAsInt(5)       // 25 : la lambda rangée en case 1
+```
+
+Avec deux tableaux parallèles (chapitre 4, projet 6), on retrouve une lambda par son nom.
+
+**👉 À toi :**
 
 - **`record Token(String text, Kind kind)`**, avec `enum Kind { NUMBER, VAR, OPERATOR, FUNCTION, LEFT, RIGHT, COMMA }` imbriqué.
   - **`static Token classify(String text)`** :
@@ -63,6 +84,13 @@ Côté algorithmes :
 max ( 3 , 7 ) * 2  =>  3 7 max 2 *  =  14
 ...
 ```
+
+**📖 Conseil :** déroule la « gare de triage » à la main sur `3 + 4 * 2` : trois colonnes, « jeton lu », « pile », « sortie ». Chaque ligne du tableau correspond à un jeton.
+
+**📖 Rappel :** une référence de méthode sur un objet, `vars::lookup` (projet 1, étape 1, 2e ligne du tableau des références).
+
+**👉 À toi :**
+
 - **`Calculator(ToDoubleFunction<String> variables)`**.
 - **`Token[] toPostfix(Token[] tokens)`** : la sortie et la pile viennent de `IntFunction<Token[]> newArray = Token[]::new`.
   - nombre ou variable → sortie ;
@@ -86,6 +114,21 @@ max ( 3 , 7 ) * 2  =>  3 7 max 2 *  =  14
 ```
 references : ref VAR true 42 3.1416 3
 ```
+
+**📖 Rappel :** les quatre sortes de références de méthodes (projet 1, étape 1). Quelques exemples de plus :
+
+```java
+Supplier<StringBuilder> nouveau = StringBuilder::new;           // constructeur sans argument
+Function<String, StringBuilder> fabrique = StringBuilder::new;  // le même nom, le constructeur à 1 argument
+IntFunction<String[]> tableau = String[]::new;                  // fabrique un tableau de la taille donnée
+BiFunction<String, String, Boolean> pareil = String::equalsIgnoreCase;
+pareil.apply("A", "a")                                          // true : "A".equalsIgnoreCase("a")
+```
+
+C'est le **type de la variable** qui dit à Java quel constructeur, ou quelle surcharge, choisir.
+
+**👉 À toi :**
+
 - Dans cet ordre :
   - `Supplier<StringBuilder> fresh = StringBuilder::new`, puis `fresh.get().append("ref")` ;
   - `BiFunction<String, Token.Kind, Token> make = Token::new` (le constructeur du record), puis `make.apply("pi", VAR).kind()` ;

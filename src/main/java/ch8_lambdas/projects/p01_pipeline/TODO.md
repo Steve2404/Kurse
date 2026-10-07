@@ -36,11 +36,66 @@ Côté algorithmes :
 - Pas de type générique déclaré par toi (`interface X<T>`) : tu **utilises** les génériques du JDK, sans en déclarer.
 - Pas de `try/catch`.
 
+**Ce que le chapitre 8 t'apprend :** les **lambdas**, c'est-à-dire des morceaux de code qu'on range dans une variable, qu'on passe à une méthode et qu'on exécute plus tard. Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet.
+
+**Les types avec `<…>`.** Tu vas écrire des types comme `Function<String, Integer>`. Les types entre chevrons disent **ce qui entre et ce qui sort** : ici, une fonction qui reçoit un `String` et rend un `Integer`. Ce sont des types **génériques**. Ici, tu ne fais que les **utiliser** ; le chapitre 9 t'apprendra à en écrire.
+
+**Les imports :** les interfaces de ce chapitre sont dans `java.util.function` : écris `import java.util.function.*;` en haut de tes fichiers.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch8-p01 -sourcepath src/main/java src/main/java/ch8_lambdas/projects/p01_pipeline/PipelineApp.java
+java "-Duser.language=fr" -cp build/ch8-p01 ch8_lambdas.projects.p01_pipeline.PipelineApp
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — L'interface `Step`
+
+**📖 La leçon : une interface fonctionnelle, une lambda.** Une interface qui a **une seule** méthode abstraite est dite **fonctionnelle**. On peut alors écrire sa méthode **sur place**, sans créer de classe : c'est une **lambda**. L'annotation `@FunctionalInterface` demande à `javac` de vérifier qu'il n'y a bien qu'une méthode abstraite.
+
+```java
+@FunctionalInterface
+interface Calcul { int applique(int a, int b); }
+
+Calcul fois = (a, b) -> a * b;          // paramètres -> résultat
+Calcul max = (a, b) -> {                // un corps de plusieurs lignes : accolades et return
+    if (a > b) return a;
+    return b;
+};
+fois.applique(3, 4)                     // 12
+max.applique(3, 9)                      // 9
+```
+
+Avant le chapitre 8, il aurait fallu une classe anonyme (chapitre 7, projet 5) : une lambda est la même chose, en beaucoup plus court.
+
+**📖 La leçon : les façons d'écrire une lambda.** Elles sont toutes équivalentes :
+
+```java
+Function<String, String> a = s -> s.strip();                            // un paramètre : parenthèses facultatives
+Function<String, String> b = (s) -> s.strip();
+Function<String, String> c = (String s) -> s.strip();                   // avec le type
+Function<String, String> d = (var s) -> s.strip();                      // avec var
+Function<String, String> e = s -> { String r = s.strip(); return r; };  // un bloc
+```
+
+Une lambda sans paramètre s'écrit `() -> …`, et une lambda à deux paramètres `(a, b) -> …`.
+
+**📖 La leçon : la référence de méthode `::`.** Quand une lambda ne fait qu'appeler une méthode qui existe déjà, on peut écrire juste son nom. Quatre sortes :
+
+| Écriture | Équivalent lambda | Exemple |
+|---|---|---|
+| `Classe::methodeStatic` | `x -> Classe.methodeStatic(x)` | `Integer::parseInt` |
+| `objet::methode` | `x -> objet.methode(x)` | `prefixe::startsWith` |
+| `Classe::methodeDInstance` | `x -> x.methode()` | `String::length`, `String::toLowerCase` |
+| `Classe::new` | `x -> new Classe(x)` | `StringBuilder::new`, `String[]::new` |
+
+Une interface peut aussi étendre une interface fonctionnelle toute faite, et y ajouter des méthodes `default` et `static` (chapitre 7) : elle reste fonctionnelle tant qu'elle n'a qu'une méthode abstraite.
+
+**👉 À toi :**
 
 - **`@FunctionalInterface public interface Step extends UnaryOperator<String>`** : la seule méthode abstraite est `apply`, héritée.
 - **`default Step then(Step next)`** rend `s -> next.apply(apply(s))`.
@@ -70,6 +125,11 @@ trim | squeeze | title : [Le Java Est Un Langage] [Aaabbbccccd] [Bonjour Le Mond
 rle : [3 1l1e2 1J1a1v1a3 1e1s1t3 1u1n1 1l1a1n1g1a1g1e3 ] [3a3b4c1d] [1B1o1n1j1o1u1r1 1l1e1 1M1o1n1d1e]
 ...
 ```
+
+**📖 Rappel :** `then` et `identity` sont les méthodes de ton interface (étape 1). Pour enchaîner un pipeline, on part de `identity()` et on ajoute chaque étape avec `then`.
+
+**👉 À toi :**
+
 - Pour chaque pipeline de `Data.PIPELINES` : le pipeline, ` :`, puis chaque texte de `Data.TEXTS` transformé, entre crochets.
 - **Question :** pourquoi `rle | unrle` et `caesar 3 | caesar 23` redonnent-ils le texte d'origine ?
 
@@ -79,6 +139,44 @@ rle : [3 1l1e2 1J1a1v1a3 1e1s1t3 1u1n1 1l1a1n1g1a1g1e3 ] [3a3b4c1d] [1B1o1n1j1o1
 andThen ok!ok!, compose okok!, identite meme
 types : ****** <ababab> kotlin kiwi
 ```
+
+**📖 La leçon : les interfaces fonctionnelles toutes faites.** Java en fournit un grand nombre dans `java.util.function`. Les principales :
+
+| Interface | Reçoit | Rend | Méthode à appeler |
+|---|---|---|---|
+| `Supplier<T>` | rien | un `T` | `get()` |
+| `Consumer<T>` | un `T` | rien | `accept(t)` |
+| `BiConsumer<T, U>` | un `T` et un `U` | rien | `accept(t, u)` |
+| `Predicate<T>` | un `T` | un `boolean` | `test(t)` |
+| `BiPredicate<T, U>` | un `T` et un `U` | un `boolean` | `test(t, u)` |
+| `Function<T, R>` | un `T` | un `R` | `apply(t)` |
+| `BiFunction<T, U, R>` | un `T` et un `U` | un `R` | `apply(t, u)` |
+| `UnaryOperator<T>` | un `T` | un `T` | `apply(t)` |
+| `BinaryOperator<T>` | deux `T` | un `T` | `apply(t1, t2)` |
+
+```java
+Predicate<String> court = s -> s.length() <= 4;
+court.test("kiwi")                                         // true
+Function<String, Integer> taille = s -> s.length();
+taille.apply("pomme")                                      // 5
+BiFunction<String, Integer, String> repete = (s, n) -> s.repeat(n);
+repete.apply("ab", 3)                                      // "ababab"
+Supplier<String> salut = () -> "coucou";
+salut.get()                                                // "coucou"
+```
+
+**📖 La leçon : composer des fonctions.** `f.andThen(g)` fait `f` **puis** `g`. `f.compose(g)` fait `g` **puis** `f`.
+
+```java
+Function<Integer, Integer> fois2 = x -> x * 2;
+Function<Integer, Integer> plus1 = x -> x + 1;
+fois2.andThen(plus1).apply(5)        // (5 × 2) + 1 = 11
+fois2.compose(plus1).apply(5)        // (5 + 1) × 2 = 12
+Function.<Integer>identity().apply(7)   // 7 : rend son entrée telle quelle
+```
+
+**👉 À toi :**
+
 - `Function<String, String> exclaim = s -> s + "!"` et `doubled = s -> s + s`. Affiche :
   - `exclaim.andThen(doubled).apply("ok")` ;
   - `exclaim.compose(doubled).apply("ok")` ;
@@ -95,6 +193,11 @@ types : ****** <ababab> kotlin kiwi
 compteur : X apres 2 appels
 memo : [B A] [D C] [B A] [D C] [B A] [E] -> 6 appels, 3 depuis le cache
 ```
+
+**📖 La leçon : ce qu'une lambda peut lire.** Une lambda peut **lire** les variables locales qui l'entourent, si elles ne changent plus jamais (« effectivement `final` », comme pour les classes locales et anonymes du chapitre 7). Pour garder un état qui change, on passe par un **tableau** (on modifie ses cases, pas la variable) ou par un **champ** d'objet.
+
+**👉 À toi :**
+
 - **Le compteur :** `int[] applied = {0};` et une `Step counted` qui incrémente `applied[0]` puis rend `s.strip()`. Puis `counted.then(counted).then(Step.of("upper"))`, appliquée à `"  x  "`.
   - **Question :** pourquoi un `int applied = 0;` ne marcherait-il pas ?
 - **`Memo`** :
