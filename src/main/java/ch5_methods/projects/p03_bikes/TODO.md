@@ -1,6 +1,8 @@
 # Projet 3 — Les vélos en libre-service (le monde `static`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch5_methods/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 5) :**
 - **membres de classe ou d'instance** : ce qui est partagé (`static`) et ce qui appartient à chaque objet ;
@@ -105,7 +107,7 @@ static via null : 5 stations, Campus (#4 sur 5)
   - Tant qu'il existe un couple (surplus, manque), prends le plus proche. Déplace `min(surplus, manque)` vélos et additionne les km.
   - En cas d'égalité de distance, le premier couple trouvé (boucle a, puis b) gagne.
 - **Le `static` via `null`** : `Station nothing = null;`, puis `nothing.count()`.
-  - Ça marche : Java ne regarde que le **type déclaré** pour un membre `static`. `javac` affiche un avertissement : c'est voulu.
+  - Ça marche : Java ne regarde que le **type déclaré** pour un membre `static`. Aucune erreur, et `javac` ne dit rien par défaut : seul `javac -Xlint:static` (ou IntelliJ) signale `[static] static method should be qualified by type name`.
   - **Question :** et `nothing.describe()`, une méthode d'instance ?
 - `describe()` est une méthode **d'instance** : elle lit `name`, `id` et le `static` `created`. La dernière ligne l'appelle sur `Station.get(4)`.
 

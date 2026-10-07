@@ -85,7 +85,7 @@ D07 : 8 314
 
 **`static` :**
 - un membre `static` appartient à la **classe**, pas à un objet : une seule copie, partagée ;
-- il s'appelle par `Classe.membre`. Via une référence, même `null`, ça marche aussi (avec un avertissement), car seul le **type déclaré** compte ;
+- il s'appelle par `Classe.membre`. Via une référence, même `null`, ça marche aussi (IntelliJ et `javac -Xlint:static` le signalent, `javac` seul ne dit rien), car seul le **type déclaré** compte ;
 - une méthode `static` ne voit pas directement les membres d'instance (pas de `this`) ;
 - une méthode d'instance voit tout.
 
