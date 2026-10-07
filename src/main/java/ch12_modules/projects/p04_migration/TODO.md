@@ -1,6 +1,8 @@
 # Projet 4 — La migration (modules nommés, automatiques, sans nom)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 12) :**
 - **les trois sortes de modules** :
@@ -25,11 +27,33 @@ Et ton script `build.sh`, dans ce dossier.
 
 **Règle du crescendo :** chapitres 1 à 12.
 
+**Tes outils pour ce projet :** tes fichiers dans `ch12_modules/p04_migration/`, ton script `build.sh` à côté de ce `TODO.md` (projet 1, en-tête).
+
+```
+& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p04_migration/build.sh
+```
+
+**À quoi sert ce projet ?** Dans la vraie vie, on ne part pas de zéro : il existe des jars écrits **avant** les modules. Ce projet montre comment un programme modulaire peut s'en servir.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Le vieux code (sans `module-info`)
+
+**📖 La leçon : les trois sortes de modules.**
+
+| Sorte | Comment on l'obtient | Ce qu'il exporte | Ce qu'il lit |
+|---|---|---|---|
+| **nommé** | un jar ou dossier **avec** `module-info` | ce qu'il déclare | ce qu'il `requires` |
+| **automatique** | un jar **sans** `module-info`, placé sur le **module path** (`-p`) | **tous** ses paquets | **tous** les modules |
+| **sans nom** | tout ce qui est sur le **classpath** (`-cp`) | tous ses paquets | tous les modules |
+
+**Le nom d'un module automatique** vient de la ligne `Automatic-Module-Name:` du manifeste du jar, si elle existe. Sinon, il est **déduit du nom du fichier** : on retire `.jar` et la version, et les caractères spéciaux deviennent des points. Exemple : `pates-fraiches-1.3.jar` donne le module `pates.fraiches`, version `1.3`.
+
+**📖 Rappel :** `Normalizer` est dans `java.text` ; `replaceAll` remplace selon une expression régulière (chapitre 4).
+
+**👉 À toi :**
 
 - **`legacy/com/acme/text/Slugify.java`** : `static String slug(String title)` :
   1. `Normalizer.normalize(title, Normalizer.Form.NFD).replaceAll("\\p{M}", "")` ;
@@ -41,6 +65,12 @@ Et ton script `build.sh`, dans ce dossier.
 - **`manifest.txt`** : une ligne `Automatic-Module-Name: com.acme.utils`.
 
 ### ☐ Étape 2 — Le module nommé et le cycle
+
+**📖 La leçon : un module nommé ne lit pas le module sans nom.** Un module nommé peut `requires` un module automatique (par son nom), mais **jamais** le code du classpath. D'où la migration « du haut vers le bas » : on fait d'abord de l'**application** un module nommé, et ses vieilles dépendances restent des jars, utilisés comme modules automatiques.
+
+`Main.class.getModule().getDescriptor().isAutomatic()` dit si un module est automatique.
+
+**👉 À toi :**
 
 - **`src/blog.app/module-info.java`** : `requires acme.text;` et `requires com.acme.utils;`.
 - **`blog.app.Main`**, avec les titres :
@@ -66,6 +96,15 @@ acme.text@2.1 automatic
 --- cycle
 error: cyclic dependence involving cycle.b
 ```
+
+**📖 La leçon : le manifeste d'un jar.** Un fichier texte, rangé dans le jar sous `META-INF/MANIFEST.MF`, qui décrit le jar. `jar --create … --manifest manifest.txt …` y recopie les lignes de ton fichier.
+
+**📖 La leçon : `jdeps`, qui dépend de qui.** `jdeps -s fichier.jar` résume les modules dont un jar a besoin. Pour un module : `jdeps -s --module-path dossier -m module`.
+
+**📖 Rappel :** `$(find dossier -name "*.java")` remplace l'expression par la liste des fichiers trouvés, comme si tu les avais tous tapés.
+
+**👉 À toi :**
+
 - **En tête :** `P=ch12_modules/p04_migration` et `OUT=build/ch12/p04_migration`.
 - **Les commandes :**
   1. `javac -d "$OUT/legacy" $(find "$P/legacy" -name "*.java")` ; puis, dans `$OUT/jars` :

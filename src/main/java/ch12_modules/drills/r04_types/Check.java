@@ -23,7 +23,7 @@ public class Check {
             "parser2-1.0.0-SNAPSHOT.jar -> parser2@1.0.0-SNAPSHOT automatic",
             "my.cool.lib.jar -> my.cool.lib automatic",
             "--- D02 paquet partage",
-            "ResolutionException : paquet  dans deux modules",
+            "ResolutionException : paquet t.util dans deux modules",
             "--- D03 module nomme -> module automatique",
             "AUTO! module math.utils automatique true, exporte t.util true, lit le module sans nom true, t.app le lit true",
             "--- D04 Automatic-Module-Name",

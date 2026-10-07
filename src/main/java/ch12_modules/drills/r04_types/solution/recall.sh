@@ -19,7 +19,7 @@ echo "--- D02 paquet partage"
 cp "$OUT/names/math-utils-3.0.jar" "$OUT/names/string_tools.jar" "$OUT/split/"
 # --add-modules ALL-MODULE-PATH : tous les modules du module path deviennent des racines -> resolution, puis echec.
 # L'ordre des deux modules dans le message varie : on ne garde que le paquet en cause.
-java -p "$OUT/split" --add-modules ALL-MODULE-PATH -version 2>&1 | grep -o "ResolutionException: .*"     | sed -E 's/.*contains package ([a-z.]+),.*/ResolutionException : paquet  dans deux modules/' || true
+java -p "$OUT/split" --add-modules ALL-MODULE-PATH -version 2>&1 | grep -o "ResolutionException: .*"     | sed -E 's/.*contains package ([a-z.]+),.*/ResolutionException : paquet \1 dans deux modules/' || true
 
 echo "--- D03 module nomme -> module automatique"
 cp "$OUT/names/math-utils-3.0.jar" "$OUT/lib/"

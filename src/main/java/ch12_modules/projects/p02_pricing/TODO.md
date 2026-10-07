@@ -1,6 +1,8 @@
 # Projet 2 — La caisse à remises (services)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 12) :** les **services**, avec leurs quatre rôles :
 - l'**interface de service** (*service provider interface*) ;
@@ -22,11 +24,35 @@ Côté algorithme : la **meilleure combinaison de remises**. Toutes les combinai
 
 **Règle du crescendo :** chapitres 1 à 12.
 
+**Tes outils pour ce projet :** tes modules dans `ch12_modules/p02_pricing/src/`, ton script `build.sh` à côté de ce `TODO.md`. Pour créer les dossiers et lancer le script : projet 1, en-tête.
+
+```
+& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p02_pricing/build.sh
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — L'API et le localisateur
+
+**📖 La leçon : un service, des modules qui ne se connaissent pas.** Un **service** permet à un programme d'utiliser des implémentations qu'il ne connaît **pas** à l'avance : des « plugins ». Il y a quatre rôles :
+1. **l'interface de service** : le contrat (une interface Java, exportée) ;
+2. **le localisateur** : il déclare `uses Interface;` et cherche les implémentations avec `ServiceLoader` ;
+3. **les fournisseurs** : ils déclarent `provides Interface with Implementation;`. Ils n'exportent rien ;
+4. **le consommateur** : il utilise le localisateur.
+
+```java
+// le localisateur
+ServiceLoader<Saveur> chargeur = ServiceLoader.load(Saveur.class);
+for (Saveur s : chargeur) { … }                        // crée et parcourt chaque fournisseur trouvé
+chargeur.stream().map(ServiceLoader.Provider::get)     // la même chose, en stream
+chargeur.stream().map(ServiceLoader.Provider::type)    // la CLASSE de chaque fournisseur, sans le créer
+```
+
+**📖 Rappel :** un masque de bits pour énumérer toutes les combinaisons (chapitre 2, projet 2, et chapitre 5, projet 7).
+
+**👉 À toi :**
 
 - **`pricing.api`** : exporte `pricing.api`, qui contient l'interface `PricingRule` :
   - `String name()` ;
@@ -44,6 +70,17 @@ Côté algorithme : la **meilleure combinaison de remises**. Toutes les combinai
     - garde la plus forte, et à égalité la combinaison la plus courte.
 
 ### ☐ Étape 2 — Les fournisseurs et le consommateur
+
+**📖 La leçon : écrire un fournisseur.** Une classe `public` qui réalise l'interface, avec **soit** un constructeur `public` sans argument, **soit** une méthode `public static provider()` qui rend l'objet. Le module la déclare :
+
+```java
+module cuisine.epices {
+    requires cuisine.api;
+    provides cuisine.api.Saveur with cuisine.epices.Poivre, cuisine.epices.Cannelle;
+}
+```
+
+**👉 À toi :**
 
 | Module | `module-info.java` | Contenu |
 |---|---|---|
@@ -72,6 +109,13 @@ regles : [3pour2+, soldes-10] ; types [TenPercent, ThreeForTwo]
 pricing.engine binds pricing.basic
 pricing.engine binds pricing.premium
 ```
+
+**📖 La leçon : choisir les modules visibles au lancement.**
+- `--limit-modules m1,m2` : seuls ces modules (et ceux qu'ils requièrent) restent visibles ;
+- `--show-module-resolution` : affiche comment la JVM a trouvé chaque module, et les liens `binds` (un localisateur relié à un fournisseur).
+
+**👉 À toi :**
+
 - **En tête :** `P=ch12_modules/p02_pricing` et `OUT=build/ch12/p02_pricing`, `set -e`, puis `rm -rf "$OUT"`.
 - **Les commandes :**
   1. `javac -d "$OUT/mods" --module-source-path "$P/src" -m shop.app,pricing.basic,pricing.premium` (les fournisseurs ne sont requis par personne : il faut les nommer) ;

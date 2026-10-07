@@ -1,6 +1,8 @@
 # Projet 6 (CAPSTONE) — La plateforme d'événements
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées :** tout le chapitre 12, dans une seule application de **8 modules** (7 à toi, plus un jar hérité) :
 - `requires transitive` (deux fois en chaîne), l'**export qualifié**, l'**`opens` qualifié** ;
@@ -21,6 +23,24 @@ Côté algorithmes :
 Et ton script `build.sh`, dans ce dossier.
 
 **Règle du crescendo :** chapitres 1 à 12.
+
+**C'est le projet-bilan du chapitre 12.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| `requires transitive`, `exports … to …` | projet 1, étape 1 |
+| un service : `uses`, `provides … with …`, `ServiceLoader`, `provider()` | projet 2, étapes 1 et 2 |
+| `opens … to …` et la réflexion (`setAccessible`) | projet 3, étapes 1 et 2 |
+| un jar hérité utilisé comme module automatique | projet 4, étapes 1 et 3 |
+| `--limit-modules` | projet 2, étape 3 |
+| `jar --describe-module`, `jdeps -s -R`, `jlink` | projets 1 et 5 |
+| deux `PriorityQueue` | chapitre 9, projets 2 et 5 |
+
+**Tes outils pour ce projet :** tes fichiers dans `ch12_modules/p06_events/`, ton script `build.sh` à côté de ce `TODO.md`.
+
+```
+& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p06_events/build.sh
+```
 
 ---
 

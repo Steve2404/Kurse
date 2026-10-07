@@ -1,6 +1,8 @@
 # Projet 3 — La configuration par réflexion (`opens`, `--add-opens`, `--add-exports`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 12) :**
 - **`exports` contre `opens`** :
@@ -30,11 +32,29 @@ Côté algorithme : un petit **« binder »** de configuration :
 
 **Règle du crescendo :** chapitres 1 à 12.
 
+**Tes outils pour ce projet :** tes modules dans `ch12_modules/p03_config/src/`, ton script `build.sh` à côté de ce `TODO.md` (projet 1, en-tête).
+
+```
+& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p03_config/build.sh
+```
+
+**La réflexion**, nouvelle ici : c'est la possibilité, pour un programme, d'**examiner et modifier** des objets dont il ne connaît pas la classe à l'avance, y compris leurs champs `private`. Des outils comme les bibliothèques de configuration ou de base de données s'en servent. Les modules la contrôlent avec `opens`.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les modules
+
+**📖 La leçon : `exports` ou `opens` ?**
+- `exports p;` : les autres modules peuvent **utiliser** les types `public` de `p` dans leur code ;
+- `opens p;` : les autres modules peuvent **fouiller** `p` par réflexion, y compris le **privé**, mais seulement pendant l'exécution ;
+- `opens p to m;` : seulement le module `m` ;
+- `open module nom { … }` : **tout** le module est ouvert à la réflexion, pour tous.
+
+Un paquet peut être exporté **et** ouvert, l'un, l'autre, ou aucun des deux.
+
+**👉 À toi :**
 
 | Module | `module-info.java` | Contenu |
 |---|---|---|
@@ -53,6 +73,23 @@ Côté algorithme : un petit **« binder »** de configuration :
 
 ### ☐ Étape 2 — Le binder
 
+**📖 La leçon : la réflexion, en quatre gestes.**
+
+```java
+Class<?> type = Recette.class;                                  // ou Class.forName("cuisine.Recette")
+Object o = type.getDeclaredConstructor().newInstance();        // crée un objet sans écrire new Recette()
+Field f = type.getDeclaredField("minutes");                    // un champ, même private
+f.setAccessible(true);                                         // force l'accès (il faut que le paquet soit OUVERT)
+f.set(o, 20);                                                  // écrit la valeur
+f.get(o)                                                       // lit la valeur
+f.getType()                                                    // int.class
+type.getDeclaredFields()                                       // tous les champs déclarés
+```
+
+`Field` est dans `java.lang.reflect`. Ces méthodes lancent des exceptions **vérifiées** (`ReflectiveOperationException` et ses filles) : déclare-les avec `throws` (chapitre 11).
+
+**👉 À toi :**
+
 - **`static Object convert(String text, Class<?> type)`** convertit vers `int`, `long`, `boolean`, `List` (découpée sur `,` avec `List.of`), et sinon garde le texte.
 - **`static <T> T bind(Class<T> type, Map<String, String> values) throws ReflectiveOperationException`** :
   1. crée l'objet avec le constructeur sans argument, rendu accessible ;
@@ -66,6 +103,15 @@ lie : example.org:8443 (debug) [web, api] ; dump {debug=true, host=example.org, 
 coffre refuse : InaccessibleObjectException - Unable to make public config.model.secret.Vault() accessible: ...
 interne refuse : IllegalAccessError - class config.app.Main (in module config.app) cannot access class config.model.internal.Defaults ...
 ```
+
+**📖 La leçon : deux refus, deux exceptions.**
+- **Réflexion refusée** (le paquet n'est pas ouvert) : `setAccessible` lance une `InaccessibleObjectException`, une `RuntimeException` ;
+- **accès direct refusé à l'exécution** (le paquet n'est pas exporté) : la JVM lance une `IllegalAccessError`, une `Error`.
+
+`module.isOpen("paquet", autreModule)` teste l'ouverture vers un module ; `isOpen("paquet")` teste l'ouverture à tous.
+
+**👉 À toi :**
+
 - **`main(String[]) throws ReflectiveOperationException`**, dans l'ordre :
   1. `bind(ServerConfig.class, …)`, avec une `TreeMap` de `host=example.org`, `port=8443`, `debug=true` et `tags=web,api`. Affiche la config, puis son `dump` ;
   2. `bind(LegacyConfig.class, Map.of("mode", "batch", "retries", "3"))`, puis affiche `module ouvert : ` et son `dump` ;
@@ -78,6 +124,17 @@ interne refuse : IllegalAccessError - class config.app.Main (in module config.ap
 - **Question :** pourquoi le refus du coffre parle-t-il de `exports`, alors qu'on cherche à ouvrir ?
 
 ### ☐ Étape 4 — Le script `build.sh`
+
+**📖 La leçon : forcer un accès en ligne de commande.** Sans toucher aux `module-info`, on peut ajouter un export ou une ouverture :
+
+```bash
+javac … --add-exports module/paquet=moduleCible …
+java  … --add-exports module/paquet=moduleCible --add-opens module/paquet=moduleCible …
+```
+
+`--add-exports` agit sur la compilation **ou** sur l'exécution : il faut le donner aux deux. `--add-opens` n'a de sens qu'à l'exécution.
+
+**👉 À toi :**
 
 - **En tête :** `P=ch12_modules/p03_config` et `OUT=build/ch12/p03_config`.
 - **Les commandes :**

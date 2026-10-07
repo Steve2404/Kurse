@@ -1,6 +1,8 @@
 # Projet 1 — La bibliothèque en trois modules
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 12) :**
 - **`module-info.java`** : `module`, `exports`, `requires`, `requires transitive`, l'**export qualifié** `exports … to …` ;
@@ -26,11 +28,67 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 12. Pas de threads, de fichiers ni de JDBC dans le code Java.
 
+**Ce que le chapitre 12 t'apprend :** les **modules**. Un module est un groupe de paquets qui porte un **nom** et un **contrat**, écrit dans un fichier `module-info.java` :
+- ce qu'il **montre** aux autres (`exports`) ;
+- ce dont il **a besoin** (`requires`).
+
+Ce qui n'est pas exporté est **invisible** de l'extérieur, même `public`.
+
+**Où ranger tes fichiers.** Ce chapitre travaille **hors de Maven**, avec les vrais outils `javac`, `java` et `jar` :
+- tes modules vont dans `ch12_modules/p01_library/src/`, à la **racine** du dépôt (à côté de `src/` et de `pom.xml`) ;
+- ton script `build.sh` va dans le dossier de ce `TODO.md`.
+
+**Créer les dossiers et fichiers dans IntelliJ :**
+1. Clic droit sur le dossier racine `Kurse` → **New** → **Directory**, puis tape le chemin entier avec des `/` : `ch12_modules/p01_library/src/library.model/library/model`. IntelliJ crée tous les dossiers d'un coup.
+2. Clic droit sur `library.model` (le dossier du module) → **New** → **File** → `module-info.java`.
+3. Pour une classe : clic droit sur le dossier du paquet → **New** → **File** → `Book.java`. Écris toi-même la ligne `package library.model;` en haut.
+
+IntelliJ ne connaît pas ces dossiers comme du code Java : il peut souligner en rouge ou ne rien colorer. **Ce n'est pas grave** : c'est ton script qui compile, avec `javac`.
+
+**Lancer ton script** (dans le terminal PowerShell, depuis `Kurse`, comme au chapitre 1, projet 4) :
+
+```
+& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p01_library/build.sh
+```
+
+Puis lance `Check.java` avec la flèche verte : il exécute ton script de la même façon.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les trois modules
+
+**📖 La leçon : le `module-info.java`.** Exemple sur une cuisine, avec deux modules :
+
+```java
+// fichier src/cuisine.recettes/module-info.java
+module cuisine.recettes {
+    exports cuisine.recettes;              // ce paquet est visible des autres modules
+}
+
+// fichier src/cuisine.app/module-info.java
+module cuisine.app {
+    requires cuisine.recettes;             // j'ai besoin de ce module
+}
+```
+
+Les classes vont **sous** le dossier du module, rangées par paquet : `src/cuisine.recettes/cuisine/recettes/Recette.java`. Le nom d'un module ressemble à un nom de paquet ; par habitude, on lui donne le nom de son paquet principal.
+
+**Les directives à connaître :**
+
+| Directive | Sens |
+|---|---|
+| `exports p;` | le paquet `p` est visible de **tous** les modules qui me lisent |
+| `exports p to m1, m2;` | **export qualifié** : visible **seulement** de `m1` et `m2` |
+| `requires m;` | je lis le module `m` |
+| `requires transitive m;` | je lis `m`, **et** ceux qui me lisent le lisent aussi |
+
+`java.base` (qui contient `String`, `List`…) est requis **automatiquement** par tous les modules.
+
+Pour qu'un module utilise une classe d'un autre, il faut **deux** choses : qu'il le **lise** (`requires`), **et** que le paquet soit **exporté** vers lui.
+
+**👉 À toi :**
 
 | Module | `module-info.java` | Contenu |
 |---|---|---|
@@ -55,6 +113,22 @@ catalogue : 9 livres, par genre {ROMAN=3, SF=4, POLAR=1, ESSAI=1}
 library.service.internal exporte a library.app true, a library.model false, a tous false
 library.app lit library.model true (par transitivite), library.model lit library.app false
 ```
+
+**📖 La leçon : interroger les modules pendant l'exécution.** Chaque classe sait à quel module elle appartient :
+
+```java
+Module m = Main.class.getModule();
+m.getName()                              // "cuisine.app"
+m.isNamed()                              // true : un module avec un module-info
+m.canRead(Recette.class.getModule())     // true : cuisine.app lit cuisine.recettes
+recettes.isExported("cuisine.recettes")              // exporté à tous ?
+recettes.isExported("cuisine.recettes", autreModule) // exporté vers ce module-là ?
+```
+
+**📖 Rappel :** `subMap` d'une `TreeMap` (chapitre 9, projet 5), `groupingBy` (chapitre 10, projet 5).
+
+**👉 À toi :**
+
 - **Les données**, à recopier dans `Main` :
   ```java
   static final String[] BOOKS = {
@@ -73,6 +147,10 @@ library.app lit library.model true (par transitivite), library.model lit library
 
 ### ☐ Étape 3 — L'intrus
 
+**📖 Rappel :** un paquet non exporté vers un module lui est invisible (étape 1). Le message de `javac` dit **quelle** directive manque : lis-le jusqu'au bout.
+
+**👉 À toi :**
+
 - `intruder/library.intruder/module-info.java` : `requires library.service`.
 - `library.intruder.Spy` appelle `Normalizer.sortKey("Le Secret")`. Ce module **ne doit pas compiler**.
 
@@ -87,6 +165,33 @@ qualified exports library.service.internal to library.app
 --- intrus
 error: package library.service.internal is not visible
 ```
+
+**📖 La leçon : compiler et lancer des modules.** Sur l'exemple de la cuisine :
+
+```bash
+# Compiler : --module-source-path = le dossier qui contient UN dossier par module ;
+#            -m = les modules à compiler ; -d = où ranger (un dossier par module).
+javac -d out/mods --module-source-path src -m cuisine.app
+
+# Lancer : -p (ou --module-path) = où chercher les modules ; -m module/classe.
+java -p out/mods -m cuisine.app/cuisine.app.Main
+
+# Décrire un module, tel que la JVM le voit.
+java -p out/mods --describe-module cuisine.app
+
+# Un jar par module ; --main-class inscrit la classe principale dans le jar.
+jar --create --file out/jars/cuisine.recettes.jar -C out/mods/cuisine.recettes .
+jar --create --file out/jars/cuisine.app.jar --main-class cuisine.app.Main -C out/mods/cuisine.app .
+java -p out/jars -m cuisine.app          # plus besoin du nom de la classe
+jar --describe-module --file out/jars/cuisine.app.jar
+```
+
+`--describe-module` affiche des lignes comme `requires java.base mandated` (« requis d'office »).
+
+**📖 Rappel :** les scripts bash, `|`, `set -e` (chapitre 1, projet 4, étape 5). `sed 's/ file:.*//'` efface, sur chaque ligne, tout ce qui suit ` file:`. `sort` trie les lignes. `head -1` garde la première.
+
+**👉 À toi :**
+
 - **En tête :**
   - `#!/bin/bash` et `set -e` ;
   - `P=ch12_modules/p01_library` et `OUT=build/ch12/p01_library` ;

@@ -12,6 +12,22 @@
   - `src/t.app/`, le module nommé.
 - Ton script `recall.sh` va dans ce dossier, avec `P=ch12_modules/drills/r04_types` et `OUT=build/ch12/r04_types`. Il commence par compiler `Tools.java` dans `$OUT/legacy`, puis crée `$OUT/names`, `$OUT/split` et `$OUT/lib`.
 
+**Les notions de ce drill ont été apprises dans :** projet 4 (étapes 1 à 3). Si un défi te semble totalement inconnu, ce drill arrive trop tôt : refais d'abord la leçon de ce projet.
+
+<details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
+
+1. **Note l'heure** de départ.
+2. **Crée tes modules** dans `ch12_modules/drills/r04_types/src/`, un dossier par module (comme au projet 1, en-tête : clic droit sur `Kurse` → **New** → **Directory**, puis **New** → **File** pour chaque `module-info.java` et chaque classe).
+3. **Crée ton script** : clic droit sur le dossier `r04_types` (celui de ce `TODO.md`) → **New** → **File** → `recall.sh`. Recopie l'en-tête donné dans les **Règles**.
+4. **Lance-le** depuis le dossier `Kurse`, dans le terminal PowerShell :
+   `& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/drills/r04_types/recall.sh`
+5. **Bloqué plus de 3 minutes sur un défi ?** Écris `# D03 : ✗` dans ton script, et passe au suivant.
+6. **Lance `Check.java`** (flèche verte). Une ligne `[FAIL]` te montre `attendu` et `obtenu`.
+7. **Ensuite seulement**, ouvre la **carte mémoire** tout en bas, relis tes ✗, et fais les **expériences**.
+8. **Note** la date, ton temps et tes ✗ dans le tableau de [`drills/README.md`](../README.md).
+
+</details>
+
 ## Défis
 
 - ☐ **D01.** `echo "--- D01 noms automatiques"`. Pour chacun des fichiers `math-utils-3.0.jar`, `string_tools.jar`, `parser2-1.0.0-SNAPSHOT.jar` et `my.cool.lib.jar` :
@@ -23,7 +39,7 @@
   2. lance `java -p "$OUT/split" --add-modules ALL-MODULE-PATH -version` ;
   3. garde la ligne `ResolutionException: …`, puis réduis-la au paquet en cause (l'ordre des deux modules dans le message varie) :
      ```bash
-     2>&1 | grep -o "ResolutionException: .*" | sed -E 's/.*contains package ([a-z.]+),.*/ResolutionException : paquet  dans deux modules/' || true
+     2>&1 | grep -o "ResolutionException: .*" | sed -E 's/.*contains package ([a-z.]+),.*/ResolutionException : paquet \1 dans deux modules/' || true
      ```
   → `ResolutionException : paquet t.util dans deux modules`
 - ☐ **D03.** `echo "--- D03 module nomme -> module automatique"`.
@@ -54,7 +70,7 @@ string_tools.jar -> string.tools automatic
 parser2-1.0.0-SNAPSHOT.jar -> parser2@1.0.0-SNAPSHOT automatic
 my.cool.lib.jar -> my.cool.lib automatic
 --- D02 paquet partage
-ResolutionException : paquet  dans deux modules
+ResolutionException : paquet t.util dans deux modules
 --- D03 module nomme -> module automatique
 AUTO! module math.utils automatique true, exporte t.util true, lit le module sans nom true, t.app le lit true
 --- D04 Automatic-Module-Name

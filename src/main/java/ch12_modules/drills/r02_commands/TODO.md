@@ -12,6 +12,22 @@
   - `cp/Legacy.java` : **sans paquet**. Son `main` affiche `"classpath : somme " + Calc.add(10, 5) + ", module sans nom " + !<isNamed()>`.
 - Ton script `recall.sh` va dans ce dossier, avec `P=ch12_modules/drills/r02_commands` et `OUT=build/ch12/r02_commands`. Chaque défi commence par `echo "--- Dnn"`.
 
+**Les notions de ce drill ont été apprises dans :** projet 1 (étape 4), projet 4 (étape 3) et projet 5 (étape 3). Si un défi te semble totalement inconnu, ce drill arrive trop tôt : refais d'abord la leçon de ce projet.
+
+<details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
+
+1. **Note l'heure** de départ.
+2. **Crée tes modules** dans `ch12_modules/drills/r02_commands/src/`, un dossier par module (comme au projet 1, en-tête : clic droit sur `Kurse` → **New** → **Directory**, puis **New** → **File** pour chaque `module-info.java` et chaque classe).
+3. **Crée ton script** : clic droit sur le dossier `r02_commands` (celui de ce `TODO.md`) → **New** → **File** → `recall.sh`. Recopie l'en-tête donné dans les **Règles**.
+4. **Lance-le** depuis le dossier `Kurse`, dans le terminal PowerShell :
+   `& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/drills/r02_commands/recall.sh`
+5. **Bloqué plus de 3 minutes sur un défi ?** Écris `# D03 : ✗` dans ton script, et passe au suivant.
+6. **Lance `Check.java`** (flèche verte). Une ligne `[FAIL]` te montre `attendu` et `obtenu`.
+7. **Ensuite seulement**, ouvre la **carte mémoire** tout en bas, relis tes ✗, et fais les **expériences**.
+8. **Note** la date, ton temps et tes ✗ dans le tableau de [`drills/README.md`](../README.md).
+
+</details>
+
 ## Défis
 
 - ☐ **D01.** Compile `c.app` (et donc `c.lib`) dans `$OUT/mods`, puis `ls "$OUT/mods"`.

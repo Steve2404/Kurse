@@ -1,6 +1,8 @@
 # Projet 5 — L'image d'exécution (`jdeps`, `jlink`, graphe des modules)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch12_modules/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 12) :**
 - **`jdeps`** : `-s` (résumé), `-R` (récursif), `--module-path`, `--print-module-deps` ;
@@ -21,11 +23,25 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 12.
 
+**Tes outils pour ce projet :** tes modules dans `ch12_modules/p05_runtime/src/`, ton script `build.sh` à côté de ce `TODO.md` (projet 1, en-tête).
+
+```
+& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p05_runtime/build.sh
+```
+
+**À quoi sert ce projet ?** Livrer un programme **avec son propre Java**, réduit au strict nécessaire : l'utilisateur n'a rien à installer. C'est le rôle de `jlink`.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les modules
+
+**📖 La leçon : les modules du JDK.** Le JDK lui-même est découpé en modules. `java.base` (`String`, `List`…) est toujours là ; les autres doivent être requis. Par exemple, `java.util.logging.Logger` est dans `java.logging`. `java --list-modules` les liste tous.
+
+**📖 Rappel :** la programmation dynamique avec un tableau à deux dimensions (chapitre 5, projet 6 : la monnaie, avec mémoïsation).
+
+**👉 À toi :**
 
 - **`inv.core`** : `requires java.logging;`, exporte `inv.core`.
   - `record Item(String name, int cost, int value)` ;
@@ -46,6 +62,22 @@ inv.app requiert [inv.core, java.base], inv.core requiert [java.base, java.loggi
 ordre de chargement : [java.base, java.logging, inv.core, inv.app]
 inv.app : paquets [inv.app], classe principale inv.app.Main, version 1.2
 ```
+
+**📖 La leçon : le graphe des modules pendant l'exécution.**
+
+```java
+Module m = ModuleLayer.boot().findModule("java.logging").orElseThrow();   // un module chargé, par son nom
+ModuleDescriptor d = m.getDescriptor();
+d.requires()          // les Requires ; chacun a un name()
+d.packages()          // les noms des paquets
+d.mainClass()         // Optional : la classe principale, si le jar l'indique
+d.version()           // Optional : la version, si le jar l'indique
+```
+
+**📖 Rappel :** le parcours en profondeur (chapitre 9, projet 3) ; `Optional.map(…).orElse(…)` (chapitre 10, projet 1).
+
+**👉 À toi :**
+
 - **`static Set<String> requiresOf(String name)`** : les noms des `requires` du descripteur de `ModuleLayer.boot().findModule(name).orElseThrow()`, dans un `TreeSet`.
 - **`static void visit(String name, Set<String> seen, List<String> order)`** : un parcours en profondeur. Un module est ajouté **après** ses dépendances.
 - **Les 5 lignes :**
@@ -70,6 +102,24 @@ java.logging
 --- lanceur
 reassort (budget 30) : [cafe, the, miel], cout 30, valeur 69
 ```
+
+**📖 La leçon : `jdeps` et `jlink`.**
+
+```bash
+jdeps -s -R --module-path jars -m app                 # résumé (-s) des dépendances, récursif (-R)
+jdeps --print-module-deps --module-path jars app.jar  # la liste des modules, séparés par des virgules
+jlink --module-path jars --add-modules app --output image --launcher nom=app
+#     où chercher       départ            dossier créé    un lanceur à ton nom
+image/bin/java --list-modules                         # les modules DE L'IMAGE
+image/bin/nom                                         # lance le programme
+```
+
+Les options `--strip-debug`, `--no-header-files` et `--no-man-pages` retirent ce qui ne sert pas à l'exécution, pour une image plus petite.
+
+**📖 Rappel :** `sed -E 's/^(java\.[a-z.]+)@.*/\1/'` garde le nom avant le `@` (le groupe entre parenthèses, recopié par `\1`), pour les lignes qui commencent par `java.`.
+
+**👉 À toi :**
+
 - **En tête :** `P=ch12_modules/p05_runtime` et `OUT=build/ch12/p05_runtime`.
 - **Les commandes :**
   1. `javac -d "$OUT/mods" --module-source-path "$P/src" -m inv.app` ;

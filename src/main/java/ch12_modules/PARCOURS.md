@@ -1,6 +1,13 @@
 # Chapitre 12 (Modules) — Mode d'emploi
 
 Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement ressemble à celui des chapitres 1 à 11 :
+
+> **Comment sont faits les énoncés.** Chaque étape d'un projet suit le même schéma :
+> - **📖 La leçon** : la notion expliquée simplement, avec un exemple sur **un autre sujet** que le projet ;
+> - **👉 À toi** : ce que tu construis ;
+> - **🧪 Expériences** et **❓ Questions** : tu essaies, tu observes, tu réponds en commentaire.
+>
+> Les gestes de base sont expliqués une fois pour toutes dans le **projet 0 du chapitre 1** (`ch1_buildingblocks/projects/p00_bonjour`) : créer une classe, lancer, `Check`, arguments, terminal, lire une erreur. Relis-le si l'un d'eux te manque. Chaque projet rappelle aussi ses commandes exactes.
 - des **projets** à construire de A à Z, pour **comprendre** ;
 - des **drills** chronométrés, répétés à intervalles espacés, pour **retenir**.
 
@@ -68,8 +75,10 @@ src/main/java/ch12_modules/
 ├── PARCOURS.md                  ← ce fichier
 ├── projects/p01_library/
 │   ├── TODO.md                  ← L'ÉNONCÉ
+│   ├── INDICES.md               ← 2 indices repliés par étape, sans code (si tu bloques)
 │   ├── Check.java               ← le correcteur : tu le LANCES
 │   ├── solution/build.sh        ← le script de la correction
+│   ├── solution/CORRIGE.md      ← étape par étape : directives, réponses aux questions, messages des expériences
 │   └── (ton build.sh)           ← TON script
 └── drills/r01_directives/ …     ← même chose, avec recall.sh
 
@@ -106,8 +115,9 @@ build/ch12/…                     ← ce que tes scripts produisent (ignoré pa
 
 1. **Sur papier**, dessine le **graphe des modules** : qui requiert qui (transitif ou non), qui exporte quoi à qui, qui fournit et qui utilise.
 2. **Écris les `module-info.java` d'abord**, puis les classes.
-3. **Écris le script au fur et à mesure.** Lance-le directement dans Git Bash (`bash src/main/java/ch12_modules/projects/p01_library/build.sh`, depuis la racine), puis lance `Check`.
+3. **Écris le script au fur et à mesure.** Lance-le toi-même depuis le dossier `Kurse`, dans le terminal PowerShell d'IntelliJ : `& "C:\Program Files\Git\bin\bash.exe" src/main/java/ch12_modules/projects/p01_library/build.sh` (le chemin complet de Git Bash, comme au chapitre 1, projet 4). Puis lance `Check`.
 4. **Fais les expériences et réponds aux questions** : casser une directive pour lire le message, c'est **le** meilleur entraînement pour l'examen.
+5. **Vérifie l'étape** : ouvre la section de cette étape (et **seulement** elle) dans `solution/CORRIGE.md`. Compare tes réponses et le résultat de tes expériences. Une réponse fausse : corrige ton commentaire avec tes propres mots.
 
 ### 5.3 Lire la réponse de `Check`
 
@@ -126,8 +136,8 @@ L'argument `solution` vérifie la solution. Lance `Check` depuis la racine du d�
 | Palier | Temps | Ce que tu fais |
 |---|---|---|
 | 1 | jusqu'à 20 min | lance chaque commande seule, sans filtre, et lis le **message complet** |
-| 2 | 20 min de plus | relis la carte mémoire du drill du même thème, ou demande-moi un **indice** |
-| 3 | en dernier recours | lis **uniquement** le `module-info` ou la commande concernée dans `solution/`, ferme, réécris |
+| 2 | 20 min de plus | ouvre l'**indice 1** de l'étape dans `INDICES.md`, puis l'**indice 2** s'il ne suffit pas ; relis la carte mémoire du drill du même thème, ou demande-moi un **indice** |
+| 3 | en dernier recours | lis **uniquement** la section de l'étape dans `solution/CORRIGE.md` (ou le `module-info` concerné dans `ch12_modules/<projet>/solution/`), ferme, réécris, et note `# AIDE : solution consultée` |
 
 ---
 
