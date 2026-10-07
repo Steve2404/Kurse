@@ -1,6 +1,8 @@
 # Projet 5 — Le tri externe (fichiers texte avec NIO.2)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch14_io/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 14) :**
 - **`Files.newBufferedWriter`** et **`Files.newBufferedReader`** (UTF-8 par défaut) ;
@@ -19,6 +21,13 @@ Côté algorithme : le **tri externe**, pour un fichier trop gros pour la mémoi
 
 **Règle du crescendo :** chapitres 1 à 14.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch14-p05 -sourcepath src/main/java src/main/java/ch14_io/projects/p05_sort/SortLab.java
+java "-Duser.language=fr" -cp build/ch14-p05 ch14_io.projects.p05_sort.SortLab
+```
+
 ---
 
 ## Tableau de bord
@@ -28,6 +37,19 @@ Côté algorithme : le **tri externe**, pour un fichier trop gros pour la mémoi
 ```
 fichier : 60000 lignes, 622 scores >= 9900 ; par millier {0=6010, 1=5990, ...}
 ```
+
+**📖 La leçon : lire un gros fichier ligne par ligne.** `Files.lines(chemin)` rend un `Stream<String>` qui lit le fichier **au fur et à mesure**, sans le charger en entier. Il garde le fichier ouvert : ferme-le avec un try-with-resources :
+
+```java
+try (Stream<String> lignes = Files.lines(tarte)) {
+    long n = lignes.filter(l -> l.startsWith("f")).count();
+}
+```
+
+`Files.newBufferedWriter(chemin)` et `Files.newBufferedReader(chemin)` donnent directement les flux tamponnés du projet 3.
+
+**👉 À toi :**
+
 - **Le bac à sable :** supprime-le s'il existe, puis `createDirectories(sandbox/paquets)`.
 - **`scores.txt`** : avec `Files.newBufferedWriter`, écris les `Data.LINES` lignes `Data.line(i)`, chacune suivie de `newLine()`.
 - **Trois parcours**, chacun avec **son propre** `Files.lines(...)` dans un try-with-resources :
@@ -42,6 +64,11 @@ fichier : 60000 lignes, 622 scores >= 9900 ; par millier {0=6010, 1=5990, ...}
 tri externe : 9 paquets de 7000 lignes max, fusion de 60000 lignes, identique au tri en memoire true
 podium : [joueur25366;9999, joueur39869;9999, joueur50438;9999] ; dernier joueur82825;0
 ```
+
+**📖 Rappel :** le tas (`PriorityQueue`, chapitre 9) et la fusion de listes triées (chapitre 5, projet 6). `Files.write(chemin, liste)` écrit une liste de lignes d'un coup.
+
+**👉 À toi :**
+
 - **`final class ExternalSort`** :
   - `public static final Comparator<String> ORDER` : le score décroissant, puis le joueur croissant ;
   - `record Head(String line, BufferedReader reader)` ;
@@ -61,6 +88,15 @@ podium : [joueur25366;9999, joueur39869;9999, joueur50438;9999] ; dernier joueur
 ```
 resume : [lignes=60000, paquets=9, meilleur=joueur25366;9999] ; CREATE_NEW sur un fichier existant FileAlreadyExistsException ; readString 3 lignes
 ```
+
+**📖 La leçon : les options d'ouverture.** `writeString` et `write` acceptent des options (`StandardOpenOption`) :
+- `APPEND` : ajouter à la fin ;
+- `CREATE_NEW` : créer, mais refuser si le fichier existe déjà.
+
+Sans option, le comportement par défaut est l'objet de l'expérience de l'étape.
+
+**👉 À toi :**
+
 - **`resume.txt`**, dans cet ordre :
   1. `writeString("lignes=" + n + System.lineSeparator())` ;
   2. puis `writeString(…, APPEND)` pour les paquets ;

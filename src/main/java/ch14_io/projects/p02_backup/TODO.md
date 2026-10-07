@@ -1,6 +1,8 @@
 # Projet 2 — La sauvegarde incrémentale (`Files`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch14_io/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 14) :**
 - **créer et écrire :** `createDirectories` contre `createDirectory`, `writeString` ;
@@ -24,11 +26,50 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 14.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch14-p02 -sourcepath src/main/java src/main/java/ch14_io/projects/p02_backup/BackupLab.java
+java "-Duser.language=fr" -cp build/ch14-p02 ch14_io.projects.p02_backup.BackupLab
+```
+
+Tu peux regarder ce que ton programme a créé : dans le panneau Project d'IntelliJ, ouvre `build/ch14/p02_backup` (clic droit → **Reload from Disk** si rien n'apparaît).
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les outils sur les arbres
+
+**📖 La leçon : `Files`, agir sur le disque.** La classe `Files` contient des méthodes `static` qui, elles, touchent **vraiment** le disque :
+
+```java
+Path recettes = Path.of("carnet/recettes");
+Files.createDirectories(recettes);                            // crée le dossier ET ses parents
+Path tarte = recettes.resolve("tarte.txt");
+Files.writeString(tarte, "farine\nbeurre\npommes");           // écrit un texte (crée ou remplace)
+Files.write(recettes.resolve("crepes.txt"), List.of("farine", "lait", "oeufs"));   // écrit des lignes
+Files.exists(tarte)              // true
+Files.isDirectory(recettes)      // true
+Files.size(tarte)                // 20 (octets)
+Files.readAllLines(tarte)        // [farine, beurre, pommes]
+Files.readString(tarte)          // tout le texte
+Files.copy(tarte, autre);        // copie
+Files.move(autre, ailleurs);     // déplace ou renomme
+Files.delete(ailleurs);          // supprime
+```
+
+**📖 La leçon : parcourir un dossier.** `Files.walk(dossier)` donne un `Stream<Path>` du dossier et de **tout** ce qu'il contient, à tous les niveaux. Il garde le dossier ouvert : il faut le fermer, avec un try-with-resources (chapitre 11) :
+
+```java
+try (Stream<Path> s = Files.walk(Path.of("carnet"))) {
+    s.filter(Files::isRegularFile).forEach(System.out::println);
+}
+```
+
+Ces méthodes lancent des `IOException` (vérifiées) : déclare `throws IOException` (chapitre 11).
+
+**👉 À toi :**
 
 - **`final class Backup`**, avec `static String show(Path)` (avec `/`) et :
   - `deleteTree(Path root)` : rien si le dossier n'existe pas. Sinon, `Files.walk` dans un try-with-resources, trié par `Comparator.reverseOrder()`, puis `Files.delete` de chaque chemin ;
@@ -51,6 +92,11 @@ apres modifications :
   notes/todo.txt : modifie (octet 26)
 increment : 3 fichiers [notes/budget.csv, notes/courses.txt, notes/todo.txt]
 ```
+
+**📖 La leçon : comparer deux fichiers.** `Files.mismatch(a, b)` (Java 12) rend `-1` si les deux fichiers ont exactement le même contenu, sinon la position du premier octet différent.
+
+**👉 À toi :**
+
 - **La source :** `deleteTree(Path.of(Data.SANDBOX))`, puis, pour chaque `chemin|contenu` de `Data.FILES`, `createDirectories(parent)` et `writeString` dans `source/`.
 - **La sauvegarde complète :** `copyTree(source, sauvegarde-complete)`, puis les valeurs **distinctes** du `diff`.
 - **Les modifications de la source**, dans cet ordre :
@@ -73,6 +119,13 @@ increment : 3 fichiers [notes/budget.csv, notes/courses.txt, notes/todo.txt]
 isSameFile true, equals false, size 27, ...
 list [notes, photos] ; find *.txt [notes/courses.txt, notes/idees.txt, notes/todo.txt]
 ```
+
+**📖 La leçon : les options et les erreurs de `Files`.** Sans option, `copy` refuse d'écraser un fichier existant ; `StandardCopyOption.REPLACE_EXISTING` l'autorise. Chaque échec a sa propre exception (toutes filles d'`IOException`) : l'étape te les fait rencontrer une par une. `Files.deleteIfExists` ne se plaint pas si le fichier manque : elle rend `false`.
+
+`Files.list(dossier)` ne donne que le **premier** niveau ; `Files.find(dossier, profondeur, test)` filtre en recevant chaque chemin **et** ses attributs.
+
+**👉 À toi :**
+
 - **Quatre erreurs**, chacune dans son `try`, plus un `deleteIfExists`. Affiche-les une par ligne, avec deux espaces devant :
   1. `copy` de `notes/todo.txt` sur `increment/notes/todo.txt`, sans option ;
   2. `delete(source/notes)` ;

@@ -1,6 +1,8 @@
 # Projet 4 — La sauvegarde de partie (sérialisation)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch14_io/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 14) :**
 - **`Serializable`** : une interface **sans méthode** ; `serialVersionUID` ;
@@ -23,11 +25,41 @@ Côté algorithme : une **pile d'annulation**. Avant chaque action, on empile un
 
 **Règle du crescendo :** chapitres 1 à 14.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch14-p04 -sourcepath src/main/java src/main/java/ch14_io/projects/p04_savegame/SaveGame.java
+java "-Duser.language=fr" -cp build/ch14-p04 ch14_io.projects.p04_savegame.SaveGame
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les classes
+
+**📖 La leçon : la sérialisation, sauver un objet entier.** Un objet d'une classe qui réalise `Serializable` peut être écrit **tel quel** dans un flux, avec tous ses champs (et les objets qu'ils contiennent), puis relu plus tard :
+
+```java
+class Gateau implements Serializable {
+    private static final long serialVersionUID = 1L;   // le numéro de version du format
+    String nom = "tarte";
+    transient int cuisson = 40;                        // transient : NON sauvegardé
+    List<String> ingredients = new ArrayList<>(List.of("farine"));
+}
+
+try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("g.ser"))) {
+    out.writeObject(new Gateau());
+}
+try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("g.ser"))) {
+    Gateau g = (Gateau) in.readObject();     // un cast : readObject rend un Object
+    // g.nom = "tarte", g.cuisson = 0 (transient), g.ingredients = [farine]
+}
+```
+
+`readObject` lance aussi une `ClassNotFoundException` (vérifiée) : déclare-la.
+
+**👉 À toi :**
 
 - **`Entity`** (non sérialisable) :
   - `static int constructions` et `protected String origin` ;
@@ -50,6 +82,11 @@ relu   : Ayla niv 1 [baton(2)] session 0 min, origine neuf ; suite fin de sauveg
 constructeurs : Entity 1 (sans argument, classe mere non serialisable), Item 1 (record), Hero.heroes reste 99 (static), meme objet false
 ecriture refusee : NotSerializableException (java.lang.Object)
 ```
+
+**📖 Rappel :** `writeObject` et `readObject` dans le même ordre (étape 1). Lire après la fin lance une `EOFException` (chapitre 11 pour le `try`/`catch`).
+
+**👉 À toi :**
+
 - **L'écriture :** `createDirectories(Data.SANDBOX)`, puis le fichier `partie.ser`.
   1. Un héros `Ayla`, avec `loot(new Item("baton", 2))` et `play(45)` ;
   2. note `Entity.constructions` et `Item.validations` ;
@@ -75,6 +112,11 @@ loot epee 7     -> Bram niv 1 [epee(7)] (pile 1)
 undo            -> Bram niv 2 [epee(7), arc(5)] (pile 3)
 copie profonde independante : original 2 objets, copie 3
 ```
+
+**📖 La leçon : des flux en mémoire.** `ByteArrayOutputStream` est un flux qui écrit dans un **tableau d'octets** en mémoire, au lieu d'un fichier ; `toByteArray()` le rend. `ByteArrayInputStream(tableau)` le relit. En les combinant avec la sérialisation, on fabrique une copie complète d'un objet.
+
+**👉 À toi :**
+
 - **`static <T> T deepCopy(T object) throws IOException, ClassNotFoundException`** : `writeObject` vers un `ByteArrayOutputStream`, puis `readObject` depuis un `ByteArrayInputStream`.
 - **Un héros `Bram`** et une `Deque<Hero> undo`. Pour chaque action de `Data.ACTIONS` :
   - `undo` : dépile, s'il y a quelque chose ;

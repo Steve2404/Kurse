@@ -17,6 +17,21 @@ Le programme n'affiche donc que des **vérités valables partout** (« cohérent
 - Ajoute `static boolean checkPassword(char[] typed)` : elle compare à `"s3cret".toCharArray()` avec `Arrays.equals`, puis **efface** `typed` avec `Arrays.fill(typed, '\0')` dans un `finally`.
 - Le bac à sable `build/ch14/r07_bonus` est supprimé au départ (avec `Files.exists(box, LinkOption.NOFOLLOW_LINKS)`), puis tu crées `donnees/a.txt` (contenu `contenu`).
 
+**Les notions de ce drill :** les attributs viennent du projet 6 (étape 2) et `Console` du projet 3 (étape 3) ; les liens symboliques et les droits POSIX sont **nouveaux** (c'est un bonus) : lis d'abord leur partie dans la carte mémoire, en bas.
+
+<details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
+
+1. **Note l'heure** de départ (montre ou téléphone).
+2. **Crée la classe** : clic droit sur le dossier `r07_bonus` → **New** → **Java Class** → `Recall07`. S'il faut d'autres classes, place-les comme le disent les **Règles** ci-dessus ; si elles ne précisent rien, écris-les dans le même fichier, sous `Recall07`, sans `public`.
+3. **Écris `main`**, puis **une ligne par défi**. La ligne qui suit la flèche `→` est **exactement** ce que ton programme doit afficher : `System.out.println("D01 : " + …);`, où les `…` sont des valeurs que **Java** calcule, jamais recopiées.
+4. **Lance `Recall07`** avec la flèche verte, pour voir tes lignes.
+5. **Bloqué plus de 3 minutes sur un défi ?** Écris un commentaire `// D03 : ✗` à sa place, et passe au suivant.
+6. **Lance `Check.java`** (flèche verte). Une ligne `[FAIL]` te montre `attendu` et `obtenu`.
+7. **Ensuite seulement**, ouvre la **carte mémoire** tout en bas (en aperçu Markdown, clique sur le triangle « Ouvrir la carte »), relis tes ✗, et fais les **expériences** (écris la ligne, compile, lis le message, efface la ligne).
+8. **Note** la date, ton temps et tes ✗ dans le tableau de [`drills/README.md`](../README.md).
+
+</details>
+
 ## Défis
 
 - ☐ **D01.** `Files.createSymbolicLink(box/raccourci, cible.toAbsolutePath())`, où la cible est le dossier `donnees`.
