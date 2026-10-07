@@ -38,6 +38,19 @@ Côté algorithmes :
 - Pas de collection, de lambda ni de `try/catch`.
 - Pas de `%f` : arrondis avec `Math.round(x * 100) / 100.0`.
 
+**Ce que le chapitre 6 t'apprend :** à construire des **familles de classes**. Une classe **mère** décrit ce qui est commun, et des classes **filles** ajoutent ou changent ce qui leur est propre. C'est l'**héritage**. Tu vas aussi écrire tes **propres constructeurs**, interdits au chapitre 5.
+
+Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet : des animaux.
+
+**Une classe par fichier.** Mets chaque classe dans son propre fichier : clic droit sur le dossier du projet → **New** → **Java Class**. Les classes **imbriquées** (une classe écrite à l'intérieur d'une autre) sont interdites ici : elles arrivent au chapitre 7.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch6-p01 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p01_shapes/ShapesApp.java
+java "-Duser.language=fr" -cp build/ch6-p01 ch6_classdesign.projects.p01_shapes.ShapesApp
+```
+
 ---
 
 ## Tableau de bord
@@ -52,6 +65,64 @@ carre aire=9.0 perimetre=12.0 3.0x3.0 (cote 3.0)
 triangle aire=6.0 perimetre=12.0
 triangle aire=0.0 perimetre=8.0 INVALIDE
 ```
+
+**📖 La leçon : écrire un constructeur.** Un constructeur porte **le nom de la classe** et n'a **pas** de type rendu. Il s'exécute à chaque `new`, et remplit les champs (chapitre 1, projet 1). Une classe peut en avoir plusieurs (surcharge, chapitre 5). L'un peut **déléguer** à un autre avec `this(…)`, qui doit être la **1re ligne** :
+
+```java
+public Chat(String nom) { super(nom); }
+public Chat() { this("Minou"); }          // un chat sans nom s'appelle Minou
+```
+
+**📖 La leçon : `extends`, la classe fille.** `class Chien extends Animal` : un `Chien` **est un** `Animal`. Il hérite de ses champs et de ses méthodes. Le constructeur de la fille doit d'abord construire la partie « mère », avec **`super(…)`** en **1re ligne**. Si tu ne l'écris pas, Java ajoute tout seul `super()`, sans argument.
+
+**📖 La leçon : `abstract`, une classe incomplète.** Une méthode `abstract` n'a **pas de corps** : chaque fille **doit** l'écrire. Une classe qui a une méthode abstraite est `abstract` : on ne peut pas en faire de `new` directement, seulement de ses filles.
+
+**📖 La leçon : redéfinir une méthode.** Une fille peut **remplacer** une méthode de sa mère, en l'écrivant avec la même signature. On met **`@Override`** devant : `javac` vérifie alors qu'elle remplace bien quelque chose. `super.methode()` appelle la version de la mère. Une méthode **`final`** ne peut pas être redéfinie.
+
+```java
+abstract class Animal {
+    private static int nes;
+    private final String nom;
+    protected Animal(String nom) {           // protected : seules les filles l'appellent
+        this.nom = nom;
+        nes++;
+    }
+    public abstract String cri();            // pas de corps : chaque animal a le sien
+    public final String presente() {         // final : personne ne la change
+        return nom + " fait " + cri() + bonus();
+    }
+    protected String bonus() { return ""; }  // une version par défaut
+}
+
+class Chien extends Animal {
+    public Chien(String nom) { super(nom); }
+    @Override
+    public String cri() { return "ouaf"; }
+    @Override
+    protected String bonus() { return super.bonus() + " (remue la queue)"; }
+}
+
+class Chat extends Animal {
+    public Chat(String nom) { super(nom); }
+    public Chat() { this("Minou"); }
+    @Override
+    public String cri() { return "miaou"; }
+}
+```
+
+```java
+Animal[] zoo = {new Chien("Rex"), new Chat("Felix")};
+for (Animal a : zoo) {
+    System.out.println(a.presente());
+}
+// Rex fait ouaf (remue la queue)
+// Felix fait miaou
+```
+
+Si tu fais une faute de frappe dans le nom d'une méthode marquée `@Override`, `javac` te prévient : `error: method does not override or implement a method from a supertype`.
+
+**👉 À toi :**
+
 - **`Shape`** (`abstract`) :
   - `private static int created` et un champ `private final String name` ;
   - un constructeur **`protected Shape(String name)`**, qui incrémente `created` ;
@@ -80,6 +151,11 @@ triangle aire=0.0 perimetre=8.0 INVALIDE
 par aire : cercle rectangle carre triangle cercle triangle
 aire totale 42.71, plus grand perimetre : rectangle
 ```
+
+**📖 Rappel :** le tri par insertion (chapitre 4, projet 7, étape 1) marche sur un tableau d'objets : on compare `t[j].area()` au lieu de `t[j]`.
+
+**👉 À toi :**
+
 - Un **tri par insertion** du tableau, par `area()` décroissante. Le tri est stable : à égalité, l'ordre initial reste.
 - Puis le total des aires, et la forme au plus grand périmètre. Garde la première en cas d'égalité (`>` strict).
 
@@ -88,6 +164,20 @@ aire totale 42.71, plus grand perimetre : rectangle
 ```
 Rectangle r = new Square(5) : carre aire=25.0 perimetre=20.0 5.0x5.0 (cote 5.0) | carre ? true | Square
 ```
+
+**📖 La leçon : le polymorphisme, c'est l'objet qui décide.** Une variable de type `Animal` peut désigner un `Chat`. Deux règles :
+- **ce qu'on a le droit d'appeler** dépend du type de la **variable** (`Animal` : seulement les méthodes d'`Animal`) ;
+- **la version qui s'exécute** dépend de l'**objet** réel (le `Chat` répond `miaou`).
+
+```java
+Animal a = new Chat("Tom");
+a.cri()                         // "miaou" : c'est un Chat
+a instanceof Chat               // true
+a.getClass().getSimpleName()    // "Chat" : le nom de la classe de l'OBJET
+```
+
+**👉 À toi :**
+
 - La référence est de type `Rectangle`, l'objet est un `Square`.
 - Affiche, dans cet ordre :
   - `r` (son `toString`) ;
@@ -102,6 +192,13 @@ enveloppe : (0,0)(4,0)(5,1)(4,3)(2,4)(0,3) -> polygone(6) aire=15.5 perimetre=15
 dedans : (2.0,2.0)=true (5.0,3.0)=false (1.0,3.4)=true (-1.0,1.0)=false
 formes creees : 8
 ```
+
+**📖 La leçon : copier pour se protéger.** Si un constructeur range directement un tableau reçu, l'appelant garde une étiquette sur **le même** tableau et peut le modifier en douce. Avec `clone()`, l'objet garde sa propre copie (chapitre 4, projet 4).
+
+**📖 Conseil :** pour l'enveloppe convexe, place les points sur du papier quadrillé et fais tourner un élastique autour : les sommets touchés forment l'enveloppe. Puis déroule l'algorithme à la main sur 5 points.
+
+**👉 À toi :**
+
 - **`Polygon(double[][] points)`** :
   - appelle `super("polygone(" + points.length + ")")` ;
   - **copie** chaque point (`clone()`).

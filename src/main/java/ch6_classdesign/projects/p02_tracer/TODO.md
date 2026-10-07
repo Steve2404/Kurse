@@ -23,11 +23,40 @@
 
 **Méthode :** pour chaque étape, **écris d'abord sur papier** l'ordre des lignes que tu attends, puis compare.
 
+**Tes outils pour ce projet** (pas d'arguments, pas de `Data`) :
+
+```
+javac -d build/ch6-p02 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p02_tracer/TracerApp.java
+java "-Duser.language=fr" -cp build/ch6-p02 ch6_classdesign.projects.p02_tracer.TracerApp
+```
+
+**Conseil :** ce projet est un **journal numéroté**, comme le chapitre 1, projet 3. Avant de coder, écris sur papier, dans l'ordre, tout ce que tu crois que Java va exécuter. Puis compare.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Le journal et les classes
+
+**📖 La leçon : qui se construit en premier ?** Quand on crée une fille, Java construit **d'abord la partie mère**, puis la partie fille. La 1re ligne d'un constructeur de fille est `super(…)`, écrite ou ajoutée par Java :
+
+```java
+class Mere {
+    Mere() { System.out.println("constructeur de Mere"); }
+}
+class Fille extends Mere {
+    Fille() {                                   // Java ajoute ici : super();
+        System.out.println("constructeur de Fille");
+    }
+}
+new Fille();
+// constructeur de Mere
+// constructeur de Fille
+```
+
+Pour chaque classe, de la plus haute à la plus basse, l'ordre du chapitre 1 s'applique : champs et blocs d'instance dans l'ordre du texte, **puis** le corps du constructeur. Et avant tout cela, une seule fois, le chargement des classes avec leurs blocs `static` (chapitre 5, projet 3), de la mère à la fille.
+
+**👉 À toi :**
 
 - **`Tracer`** :
   - un compteur `private static int step` ;
@@ -65,6 +94,11 @@
 04 [static] Vehicle bloc
 05 main : Car.count = 0 (Vehicle charge, pas Car)
 ```
+
+**📖 Rappel :** une classe se charge à son **premier usage** (chapitre 5, projet 3, étape 1). L'étape te fait découvrir ce qui compte, ou non, comme un « usage ».
+
+**👉 À toi :**
+
 - Dans `main`, journalise :
   - d'abord `main : KIND = ` + `ElectricCar.KIND` + ` (aucune classe chargee)` ;
   - puis `main : Car.count = ` + `Car.count` + ` (Vehicle charge, pas Car)`.
@@ -82,6 +116,11 @@
 ...
 18 main : apres construction label() = electrique Zoe batterie 300
 ```
+
+**📖 Rappel :** l'objet décide de la version d'une méthode, **même** quand c'est le constructeur de la mère qui l'appelle (projet 1, étape 3). Et un champ pas encore initialisé vaut sa valeur par défaut (chapitre 1, projet 3).
+
+**👉 À toi :**
+
 - Avant chaque construction, journalise `main : ` suivi de l'expression : `new ElectricCar("Zoe", 300)`, puis `new ElectricCar()`, puis `new Car("Clio")`.
 - Après la première, journalise `main : apres construction label() = ` + `zoe.label()`.
 - **Le piège de la ligne 13 :** `label()` de `ElectricCar` s'exécute pendant le constructeur de `Vehicle`. `battery` vaut alors **0**, ni 50 ni 300. Pourquoi ?

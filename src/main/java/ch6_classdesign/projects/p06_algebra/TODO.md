@@ -30,11 +30,26 @@ Côté algorithmes :
 - Pas d'interface ni de `record`.
 - Pas de cast d'objet : le pattern `e instanceof Num n` suffit.
 
+**À quoi sert ce projet ?** Représenter une formule comme `3 * x ^ 2 + 2 * x - 5` sous forme d'**arbre** : chaque opération est un nœud, avec deux enfants. Un arbre se calcule, se dérive et s'affiche **récursivement**, et chaque type de nœud sait faire **sa** part grâce au polymorphisme.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch6-p06 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p06_algebra/Algebra.java
+java "-Duser.language=fr" -cp build/ch6-p06 ch6_classdesign.projects.p06_algebra.Algebra
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — L'arbre
+
+**📖 La leçon : une classe abstraite au milieu.** Une classe abstraite peut hériter d'une autre classe abstraite, écrire **une partie** des méthodes abstraites, et laisser les autres à ses filles. C'est utile quand plusieurs filles partagent du code.
+
+**📖 Conseil :** dessine l'arbre de `(2 * x) + 1` : un nœud `+`, avec à gauche un nœud `*` (enfants `2` et `x`), à droite `1`. `eval` d'un nœud = `eval` de ses enfants, combinés par son opération.
+
+**👉 À toi :**
 
 - **`Expr`** (`abstract`) :
   - `public abstract double eval(double x)`, `public abstract Expr derive()`, `public abstract String show()`, `public abstract int size()` ;
@@ -57,6 +72,10 @@ Côté algorithmes :
 
 ### ☐ Étape 2 — L'analyseur
 
+**📖 La leçon : un analyseur, une méthode par niveau de priorité.** Pour respecter « `*` avant `+` », chaque niveau appelle le niveau **plus prioritaire** pour lire ses morceaux : `expr` appelle `term`, qui appelle `factor`, qui appelle `atom`. Un champ `pos` avance dans le texte, caractère par caractère (`charAt`, chapitre 4). Déroule-le à la main sur `1+2*3`.
+
+**👉 À toi :**
+
 - **`Parser`** :
   - un champ `private final String text` (sans les espaces) et un `private int pos` ;
   - le constructeur `public Parser(String text)` ;
@@ -74,6 +93,11 @@ Côté algorithmes :
 f = (((3 * (x ^ 2)) + (2 * x)) - 5) | simplifiee (((3 * (x ^ 2)) + (2 * x)) - 5) | f(2.0) = 11.0
   f' = ((3 * (2 * x)) + 2) | f'(2.0) = 14.0 | noeuds 23 -> 7
 ```
+
+**📖 Rappel :** chaque classe redéfinit `simplify()` à sa façon, et l'objet décide (projet 1, étape 3). Simplifie d'abord les enfants, puis le nœud lui-même.
+
+**👉 À toi :**
+
 - **Les règles de `simplify()`** (simplifier d'abord les enfants, puis appliquer) :
   - `Num op Num` → un `Num` (sauf pour `Div`) ;
   - `0 + e`, `e + 0` et `e - 0` → `e` ;
@@ -91,6 +115,11 @@ f = (((3 * (x ^ 2)) + (2 * x)) - 5) | simplifiee (((3 * (x ^ 2)) + (2 * x)) - 5)
 newton (((x ^ 3) - (2 * x)) - 5) : 2.1 2.0946 2.0946 2.0946 2.0946 2.0946 ; f(x) = 0.0
 polymorphisme : Add (1 + (x * 1)) -> (1 + x) (Add)
 ```
+
+**📖 Rappel :** `getClass().getSimpleName()` (projet 1, étape 3). L'arrondi : chapitre 4, projet 4, étape 2.
+
+**👉 À toi :**
+
 - **Newton :** x ← x − f(x)/f′(x), avec 6 itérations depuis `Data.START`, sur `Data.NEWTON`. f′ est la dérivée simplifiée. Affiche chaque x arrondi, puis f(x) final.
 - **La dernière ligne :** construis à la main `new Add(new Num(1), new Mul(new Var(), new Num(1)))`. Affiche :
   - son nom de classe, puis l'expression ;

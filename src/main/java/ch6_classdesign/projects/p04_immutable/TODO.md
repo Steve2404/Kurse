@@ -32,6 +32,15 @@ Côté algorithmes :
 - Pas de `try/catch` : une addition de devises différentes rend `null`.
 - Pas de `record` (chapitre 7) : c'est justement ce que tu écris à la main.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch6-p04 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p04_immutable/ImmutableLab.java
+java "-Duser.language=fr" -cp build/ch6-p04 ch6_classdesign.projects.p04_immutable.ImmutableLab
+```
+
+**À quoi sert ce projet ?** Une classe **immuable** fabrique des objets qui ne changent **jamais** après leur création, comme `String` (chapitre 4). Ils sont plus sûrs : personne ne peut les modifier dans ton dos.
+
 ---
 
 ## Tableau de bord
@@ -43,6 +52,45 @@ money : 19.99 EUR + 5.01 EUR = 25.00 EUR ; prix inchange 19.99 EUR ; 15 % = 3.75
 partage 3 : [33.34 EUR, 33.33 EUR, 33.33 EUR] ; 50/30/20 de 0.07 : [0.04 EUR, 0.02 EUR, 0.01 EUR]
 egalite : true false true false
 ```
+
+**📖 La leçon : la recette d'une classe immuable.**
+1. la classe est **`final`** : personne ne peut en faire une fille qui tricherait ;
+2. tous les champs sont **`private final`** ;
+3. **pas de setter** ; une « modification » rend un **nouvel** objet ;
+4. les tableaux reçus ou rendus sont **copiés**.
+
+**📖 La leçon : redéfinir `equals`, `hashCode` et `toString`.** Toute classe hérite de `Object`, qui a ces trois méthodes. Par défaut, `equals` fait comme `==` (mêmes étiquettes), et `toString` affiche quelque chose comme `Point@1b6d3586`. On les redéfinit pour comparer et afficher le **contenu** :
+
+```java
+final class Point {
+    private final int x;
+    private final int y;
+    Point(int x, int y) { this.x = x; this.y = y; }
+    Point decale(int dx) { return new Point(x + dx, y); }    // un NOUVEAU point
+
+    @Override
+    public boolean equals(Object o) {                        // le paramètre est un Object
+        return o instanceof Point p && x == p.x && y == p.y;
+    }
+    @Override
+    public int hashCode() { return 31 * x + y; }             // égaux => même hashCode
+    @Override
+    public String toString() { return "(" + x + "," + y + ")"; }
+}
+
+Point a = new Point(1, 2);
+Point b = new Point(1, 2);
+a == b              // false : deux objets
+a.equals(b)         // true  : même contenu
+a.decale(5)         // (6,2) ; a vaut toujours (1,2)
+```
+
+**La règle de `hashCode` :** deux objets `equals` doivent avoir le **même** `hashCode`. Le chapitre 9 (les collections) en a besoin.
+
+**📖 La leçon : un constructeur `private` et une fabrique.** Avec un constructeur `private`, seule la classe peut faire `new`. Les autres passent par une méthode `static` (chapitre 5, projet 2) : `Money.of(1999, "EUR")`.
+
+**👉 À toi :**
+
 - **Les champs et la création :**
   - `private final long cents` et `private final String currency` ;
   - un constructeur **`private`** ;
@@ -67,6 +115,11 @@ egalite : true false true false
 ```
 fractions : -3/4 1/2 3/2 H(10)=7381/2520 true
 ```
+
+**📖 Rappel :** le PGCD d'Euclide en récursif (chapitre 5, projet 6). Une constante partagée : `public static final Fraction ZERO = …;`.
+
+**👉 À toi :**
+
 - **Le constructeur `private` normalise** :
   - il divise par le PGCD (récursif, en valeur absolue) ;
   - il met le signe au numérateur.
@@ -90,6 +143,23 @@ fractions : -3/4 1/2 3/2 H(10)=7381/2520 true
 copies defensives : [[1, 2], [3, 4]] intacte ; transposee [[1, 3], [2, 4]] ; carre [[7, 10], [15, 22]] ; egal a lui-meme reconstruit true
 fibonacci par puissance : F(10)=55 F(50)=12586269025 F(90)=2880067194370816120
 ```
+
+**📖 La leçon : la copie défensive.** Pour un tableau 2D, `clone()` ne copie **que** la rangée des lignes : les lignes elles-mêmes restent partagées. Il faut donc copier **chaque ligne**.
+
+```java
+final class Bulletin {
+    private final int[] notes;
+    Bulletin(int[] notes) { this.notes = notes.clone(); }   // copie à l'entrée
+    int premiere() { return notes[0]; }
+}
+int[] notes = {12, 15};
+Bulletin bu = new Bulletin(notes);
+notes[0] = 0;              // l'appelant modifie SON tableau…
+bu.premiere()              // 12 : …le bulletin n'est pas touché
+```
+
+**👉 À toi :**
+
 - **Les champs et la création :**
   - `private final long[][] cells` et un constructeur `private` qui reçoit un tableau **déjà neuf** ;
   - `static Matrix of(long[][] source)` **copie** chaque ligne ;
@@ -112,6 +182,11 @@ fibonacci par puissance : F(10)=55 F(50)=12586269025 F(90)=2880067194370816120
 ```
 determinants : 49 30 0 5 ; det(A^3) = det(A)^3 : 117649
 ```
+
+**📖 Conseil :** fais l'élimination de Gauss à la main sur une matrice 2 × 2 : `det [[a, b], [c, d]] = ad − bc`. Vérifie que ton programme donne la même chose.
+
+**👉 À toi :**
+
 - **`Fraction determinant()`**, par élimination de Gauss sur un `Fraction[][]` :
   1. pour chaque colonne, cherche un pivot non nul (sinon, rends `ZERO`) ;
   2. un échange de lignes change le signe ;

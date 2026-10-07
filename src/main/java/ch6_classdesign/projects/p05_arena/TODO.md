@@ -27,6 +27,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 6. Pas de collection ni de cast d'objet.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch6-p05 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p05_arena/Arena.java
+java "-Duser.language=fr" -cp build/ch6-p05 ch6_classdesign.projects.p05_arena.Arena
+```
+
 ---
 
 ## Tableau de bord
@@ -36,6 +43,25 @@ Côté algorithmes :
 ```
 equipes : Warrior Conan 120/120 Mage Merlin 70/70 mana 30 Healer Mira 80/80 VS Tank Golem 100/100 Warrior Brutus 110/110 Mage Sabrina 65/65 mana 30
 ```
+
+**📖 La leçon : le constructeur de copie.** Un constructeur qui reçoit un objet de **sa propre classe** et en recopie les champs. Il délègue souvent à l'autre constructeur avec `this(…)` (projet 1).
+
+**📖 La leçon : le retour covariant.** Une fille qui redéfinit une méthode peut rendre un type **plus précis** que celui de la mère :
+
+```java
+class Animal { Animal copie() { return new Animal(); } }
+class Chien extends Animal {
+    @Override
+    Chien copie() { return new Chien(); }    // rend un Chien, pas seulement un Animal
+}
+Chien c = new Chien();
+Chien copie = c.copie();                     // pas besoin de cast
+```
+
+**📖 Rappel :** `getClass().getSimpleName()` donne le nom de la classe de l'objet (projet 1, étape 3). Une redéfinition peut **compléter** la version de la mère avec `super.methode(…)`.
+
+**👉 À toi :**
+
 - **`Fighter`** (`abstract`) :
   - champs : `private final String name`, `private final int maxHp`, `private int hp`, `protected final int attack`, `private final int speed` ;
   - `protected Fighter(String name, int hp, int attack, int speed)` ;
@@ -70,6 +96,11 @@ T1 Sabrina -> Merlin : 33 (Merlin 37/70 mana 20)
 vainqueur : equipe A
 apres : Conan 120/120 Merlin 0/70 mana 0 Mira 49/80
 ```
+
+**📖 Rappel :** l'objet décide de la version d'une méthode (projet 1, étape 3). Le tri par insertion stable (chapitre 4, projet 7).
+
+**👉 À toi :**
+
 - **Avant le combat**, fais la copie des deux équipes (`copy()`), et un `Warrior conanCopy = new Warrior("Conan", 120, 18, 6).copy();` **sans cast**.
 - **`static String battle(Fighter[] a, Fighter[] b, boolean verbose)`** :
   1. réunis les 6 combattants dans un tableau, A d'abord ;
@@ -89,6 +120,11 @@ apres : Conan 120/120 Merlin 0/70 mana 0 Mira 49/80
 ```
 revanche avec les copies, B en premier : equipe B ; les copies partaient a 120 pv ; Warrior Conan 120/120
 ```
+
+**📖 Rappel :** le retour covariant (étape 1). Ce qui compte pour savoir ce qu'on a le droit d'écrire, c'est le type **déclaré** de la variable (projet 1, étape 3).
+
+**👉 À toi :**
+
 - `battle(b2, a2, false)` : les copies de B passent en **premier** paramètre.
 - Affiche ensuite `a2[0].getMaxHp()` et `conanCopy`.
 - **Question :** pourquoi `Warrior w = conan.copy();` compile-t-il sans cast ? Et `Warrior w = someFighter.copy();` ?

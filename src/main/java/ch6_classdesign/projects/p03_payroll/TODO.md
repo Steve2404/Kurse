@@ -28,11 +28,22 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 6. **Pas de cast d'objet** `(Manager) e` (chapitre 7) : utilise `if (e instanceof Manager m)` (chapitre 3). Les montants sont en centimes (`long`).
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch6-p03 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p03_payroll/Payroll.java
+java "-Duser.language=fr" -cp build/ch6-p03 ch6_classdesign.projects.p03_payroll.Payroll
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — La hiérarchie
+
+**📖 Rappel :** `abstract`, `super(…)`, `@Override`, `super.methode()` et `final` (projet 1, étape 1). Une fille peut **aussi** déclarer un champ ou une méthode `static` du **même nom** que sa mère : ce n'est **pas** une redéfinition, mais un **masquage**. L'étape 4 te le fait observer.
+
+**👉 À toi :**
 
 - **`Employee`** (`abstract`) :
   - un champ package-private `String type = "employe";` ;
@@ -65,6 +76,11 @@ Côté algorithmes :
 ...
 masse salariale 38825.00 ; equipe Bruno 13900.00 ; equipe Chloe 18625.00
 ```
+
+**📖 Rappel :** `instanceof Manager m` avec une variable (chapitre 3, projet 4) donne directement un `Manager`, sans cast. La récursion (chapitre 5, projet 4) : un arbre se parcourt en traitant le nœud, puis chacun de ses enfants.
+
+**👉 À toi :**
+
 - Lis `Data.STAFF` dans un tableau `byId` (case 0 inutilisée). Crée le bon type selon `M`, `E` ou `I`.
 - **Le nombre de subordonnés directs** de chaque manager se calcule **après** la lecture, avec `instanceof Manager m`, puis `m.setReports(…)`.
 - `static int[] children(int id)` : les subordonnés directs, par id croissant.
@@ -78,6 +94,11 @@ masse salariale 38825.00 ; equipe Bruno 13900.00 ; equipe Chloe 18625.00
 manager commun : David+Ines=Alice Ines+Jules=Hugo Gina+Hugo=Chloe Emma+Farid=Bruno
 plus longue chaine : Alice > Chloe > Hugo > Ines (4 niveaux)
 ```
+
+**📖 Conseil :** dessine l'organigramme sur papier. Pour deux personnes, remonte leurs chefs avec ton doigt jusqu'à ce que les deux chemins se rejoignent.
+
+**👉 À toi :**
+
 - `static int depth(int id)` (récursif) et `static int lca(int a, int b)` :
   1. fais monter le plus profond jusqu'au même niveau ;
   2. puis fais monter les deux ensemble jusqu'à ce qu'ils se rejoignent.
@@ -91,6 +112,23 @@ champ masque : manager / employe / manager/employe
 static masquee : encadrement / employe ; redefinie : 4500.00 = 4500.00
 prive redeclare : hausse de Hugo 126.00 (3 %, pas 10 %) ; badge final #8 Hugo
 ```
+
+**📖 La leçon : ce qui est polymorphe, et ce qui ne l'est pas.** Seules les **méthodes d'instance** redéfinies suivent l'**objet**. Les **champs** et les méthodes **`static`** suivent le type de la **variable** : une fille qui en déclare du même nom les **masque**, sans les remplacer.
+
+```java
+class Mere  { String nom = "mere";  String qui() { return "objet mere"; }  static String titre() { return "T-mere"; } }
+class Fille extends Mere { String nom = "fille"; @Override String qui() { return "objet fille"; } static String titre() { return "T-fille"; } }
+
+Mere m = new Fille();
+m.nom          // "mere"        : champ -> le type de la variable
+m.qui()        // "objet fille" : méthode d'instance -> l'objet
+Mere.titre()   // "T-mere"      : static -> la classe écrite
+```
+
+Une méthode **`private`** n'est visible que dans sa classe : une fille ne peut donc pas la redéfinir, seulement en écrire une **autre**, du même nom.
+
+**👉 À toi :**
+
 - Avec `if (byId[8] instanceof Manager hugo)`, puis `Employee asEmployee = hugo;` :
   - **champs** : `hugo.type`, `asEmployee.type`, `hugo.typeSeenFromInside()` ;
   - **static** : `Manager.category()` et `Employee.category()` ;

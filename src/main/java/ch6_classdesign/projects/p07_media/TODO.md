@@ -30,6 +30,27 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 6. Pas de collection : le catalogue est un tableau. Pas de cast d'objet.
 
+**C'est le projet-bilan du chapitre 6.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| une classe mère `abstract` avec un constructeur `protected` | projet 1, étape 1 |
+| appeler `super(…)`, redéfinir avec `@Override`, `super.methode()` | projet 1, étape 1 |
+| une méthode `final` | projet 1, étape 1 |
+| une classe abstraite au milieu de la famille | projet 6, étape 1 |
+| copier les tableaux reçus avec `clone()` | projet 4, étape 3 |
+| redéfinir `equals`, `hashCode`, `toString` | projet 4, étape 1 |
+| compter les objets créés avec un `static` | projet 1, étape 1 |
+| `instanceof Book b` | chapitre 3, projet 4 |
+| trier une copie par insertion | chapitre 4, projet 7 |
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch6-p07 -sourcepath src/main/java src/main/java/ch6_classdesign/projects/p07_media/MediaApp.java
+java "-Duser.language=fr" -cp build/ch6-p07 ch6_classdesign.projects.p07_media.MediaApp
+```
+
 ---
 
 ## Tableau de bord
