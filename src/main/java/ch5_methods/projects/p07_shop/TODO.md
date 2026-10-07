@@ -27,6 +27,27 @@
 
 **Règle du crescendo :** chapitres 1 à 5. Pas de constructeur écrit par toi, pas d'héritage, pas de collection, pas de `try/catch`.
 
+**C'est le projet-bilan du chapitre 5.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| créer des sous-paquets et compiler avec `-sourcepath` | projet 2, en-tête |
+| choisir `private`, package-private ou `public` | projet 2, étape 1 |
+| une fabrique `static` | projet 2, étape 1 |
+| un tableau qui double de taille | projet 2, étape 2 |
+| rendre une **copie** d'un tableau interne | projet 1, étape 3, et projet 4, étape 1 |
+| des surcharges qui se distinguent par le type | projet 5, étapes 1 et 2 |
+| un varargs | projet 1, étapes 1 et 2 |
+| `import static` | projet 2, étape 1 |
+| le retour arrière | projet 4, étape 3, et projet 6 |
+
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch5-p07 -sourcepath src/main/java src/main/java/ch5_methods/projects/p07_shop/app/ShopApp.java
+java "-Duser.language=fr" -cp build/ch5-p07 ch5_methods.projects.p07_shop.app.ShopApp
+```
+
 ---
 
 ## Tableau de bord

@@ -28,6 +28,17 @@
 - Pas de collection ni de `try/catch`.
 - Les montants sont en **centimes** (`long`).
 
+**Ce projet est rangé en plusieurs paquets**, comme au chapitre 1, projet 4 : `core`, `premium` et `app`. Crée chaque sous-paquet avec clic droit → **New** → **Package** (chapitre 1, projet 4).
+
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch5-p02 -sourcepath src/main/java src/main/java/ch5_methods/projects/p02_bank/app/BankApp.java
+java "-Duser.language=fr" -cp build/ch5-p02 ch5_methods.projects.p02_bank.app.BankApp
+```
+
+Avec `-sourcepath`, `javac` suit les `import` de `BankApp` et compile aussi les classes de `core` et de `premium`.
+
 ---
 
 ## Tableau de bord
@@ -40,6 +51,41 @@ ouvert 2 Bob premium 500.00
 ouvert 3 Chloe courant 0.00
 ouvert 4 Dan premium 3000.00
 ```
+
+**📖 La leçon : les 4 niveaux d'accès.** Chaque champ et chaque méthode dit **qui** a le droit de s'en servir :
+
+| Mot | Qui peut s'en servir |
+|---|---|
+| `private` | seulement **sa propre classe** |
+| *(rien)* | les classes du **même paquet** (« package-private ») |
+| `protected` | le même paquet, **plus** les classes filles, même dans un autre paquet |
+| `public` | **tout le monde** |
+
+Si une autre classe essaie d'utiliser un membre `private` :
+
+```java
+class Coffre {
+    private int code = 1234;
+}
+// dans une autre classe : new Coffre().code
+// error: code has private access in Coffre
+```
+
+**📖 La leçon : `static`, ce qui appartient à la classe.** Un champ `static` existe en **un seul exemplaire**, partagé (chapitre 1, projet 3, étape 3). Une méthode `static` s'appelle avec le **nom de la classe** (`Account.opened()`), sans objet. Elle ne peut donc pas lire les champs **d'un** objet sans qu'on lui en donne un.
+
+**📖 La leçon : une fabrique.** Au lieu de laisser l'appelant écrire `new Account()`, la classe propose une méthode `static` qui fabrique l'objet, le remplit, et le rend : `Account.open("Alice", 120000)`. La classe garde ainsi le contrôle de la création (numéro, compteur…).
+
+**📖 La leçon : `extends`, une classe fille.** `class PremiumAccount extends Account` veut dire : un `PremiumAccount` **est** un `Account`, avec quelque chose en plus. Il hérite de ses champs et de ses méthodes. Le chapitre 6 détaillera l'héritage ; ici, il sert seulement à observer `protected`.
+
+**📖 La leçon : `import static`.** Pour appeler une méthode `static` d'une autre classe **sans** écrire le nom de la classe :
+
+```java
+import static java.lang.Math.max;   // en haut du fichier
+max(2, 9)                           // au lieu de Math.max(2, 9)
+```
+
+**👉 À toi :**
+
 - **`core.Money`** : `public static String format(long cents)`. Elle gère le signe et met toujours 2 chiffres après le point (`-100.50`, `0.00`).
   - `BankApp` l'importe en **static** : `import static …core.Money.format;`, puis appelle simplement `format(…)`.
 - **`core.Account`** :
@@ -70,6 +116,13 @@ OK retrait 10.00 sur 3 -> 980.50
 OK retrait 10.00 sur 3 -> 970.50 ALERTE 3 retraits de suite
 REFUS DEPOT 1 -500 (compte inconnu ou montant <= 0)
 ```
+
+**📖 Rappel :** sans modificateur, un membre n'est visible que **dans son paquet**. C'est un moyen simple d'avoir une « seule porte » : seules les classes du paquet `core` peuvent modifier un solde.
+
+**📖 Rappel :** agrandir un tableau plein : `t = Arrays.copyOf(t, t.length * 2);` (chapitre 4, projet 4). Un `switch` sur le premier mot d'une commande : chapitre 3, projet 1.
+
+**👉 À toi :**
+
 - **Dans `Account`, sans modificateur (package-private)** : `void deposit(long)`, `boolean withdraw(long)`, `int withdrawStreak()`, `void applyInterest(long)`.
   - Seul `Ledger`, **du même paquet**, peut les appeler.
   - **Expérience :** appelle `a.deposit(100)` depuis `BankApp`. Lis l'erreur.
@@ -96,6 +149,11 @@ releve 3 Chloe (courant, solde 971.47) : ouverture 0.00 | depot 250.00 | depot 7
 classement : 1.Dan=2255.12 2.Alice=1201.20 3.Chloe=971.47 4.Bob=398.50
 total 4826.29, comptes ouverts 4, operations 14, max 8
 ```
+
+**📖 Rappel :** trier une **copie** par sélection (chapitre 4, projet 7, étape 1). `Math.round` (chapitre 4, projet 4, étape 2).
+
+**👉 À toi :**
+
 - **Les intérêts**, en dix-millièmes :
   - un solde négatif paie −1,50 % (150) ;
   - un premium positif reçoit +0,25 % (25) ;

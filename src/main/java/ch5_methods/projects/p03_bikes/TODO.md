@@ -25,6 +25,13 @@ Côté algorithmes : les plus courts chemins de **Floyd-Warshall**, la station l
 
 **Règle du crescendo :** chapitres 1 à 5. Pas de constructeur écrit par toi : `Station.create(…)` est une fabrique `static`. Pas de collection.
 
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch5-p03 -sourcepath src/main/java src/main/java/ch5_methods/projects/p03_bikes/BikeApp.java
+java "-Duser.language=fr" -cp build/ch5-p03 ch5_methods.projects.p03_bikes.BikeApp
+```
+
 ---
 
 ## Tableau de bord
@@ -39,6 +46,40 @@ main commence
 [charge] Network : bloc static 2 (Floyd-Warshall, 12 raccourcis trouves)
 Gare -> Parc : 5 km, diametre 9 km, voisin le plus proche du Parc 3 km
 ```
+
+**📖 La leçon : quand une classe se charge-t-elle ?** Java ne prépare une classe que la **première fois** qu'on s'en sert. À ce moment-là, il exécute, de haut en bas, les initialisations des champs `static` et les **blocs `static { … }`**. Une seule fois, pour toute la durée du programme :
+
+```java
+public class Atelier {
+    static { System.out.println("Atelier chargee"); }      // avant même le main
+    public static void main(String[] args) {
+        System.out.println("debut du main");
+        System.out.println(Outil.VALEUR);                  // 1er usage d'Outil : il se charge ICI
+        System.out.println(Outil.VALEUR);                  // déjà chargé : rien de plus
+    }
+}
+class Outil {
+    static int VALEUR = calcule();
+    static { System.out.println("bloc static d'Outil"); }
+    static int calcule() { System.out.println("Outil chargee"); return 42; }
+}
+```
+
+affiche :
+
+```
+Atelier chargee
+debut du main
+Outil chargee
+bloc static d'Outil
+42
+42
+```
+
+C'est le même principe que l'ordre d'initialisation d'un **objet** (chapitre 1, projet 3), mais pour la **classe**, et une seule fois.
+
+**👉 À toi :**
+
 - **`BikeApp`** a un bloc `static` qui affiche `[charge] BikeApp`. Il s'exécute **avant** la première ligne de `main`.
 - **`Network`**, dans cet ordre exact du fichier :
   1. `static final String[] NAMES = load();` : la méthode `private static` `load()` affiche sa trace et rend une copie de `Data.STATIONS` ;
@@ -66,6 +107,31 @@ Gare -> Parc : 5 km, diametre 9 km, voisin le plus proche du Parc 3 km
 [objet] station #4
 depart : Gare=6/8 Centre=1/6 Parc=0/5 Port=3/6 Campus=8/10
 ```
+
+**📖 La leçon : un champ `static` contre un champ d'objet.**
+
+```java
+public class Atelier {
+    static int total;          // un seul, pour toute la classe
+    int perso;                 // un par objet
+    void clic() { perso++; total++; }
+    public static void main(String[] args) {
+        Atelier a = new Atelier();
+        Atelier b = new Atelier();
+        a.clic(); a.clic(); b.clic();
+        System.out.println(a.perso + " " + b.perso + " " + Atelier.total);   // 2 1 3
+    }
+}
+```
+
+Une méthode `static` ne peut pas appeler directement une méthode d'objet : il lui faudrait savoir **sur quel** objet.
+
+```
+error: non-static method plus() cannot be referenced from a static context
+```
+
+**👉 À toi :**
+
 - **`Station`** :
   - champs d'instance : `final int id`, `String name`, `int bikes`, `int capacity` ;
   - champs `static` : `private static final Station[] ALL = new Station[10]` et `private static int created`.
@@ -90,6 +156,11 @@ Gare->Port : plein, depot a Campus (+2 km a pied) 7 km
 arrivee : Gare=3/8 Centre=0/6 Parc=1/5 Port=6/6 Campus=8/10
 km a velo 34, km a pied 13
 ```
+
+**📖 Rappel :** `import static` (projet 2, étape 1). Chercher le plus proche : une boucle qui garde le meilleur trouvé jusqu'ici (chapitre 4).
+
+**👉 À toi :**
+
 - `static Station nearest(Station from, boolean needBike)` : la station la plus proche **par la route** (`Network.km`) qui a un vélo (ou une place libre), autre que `from`. À égalité de distance, la première trouvée (indice le plus petit) gagne.
 - Dans `BikeApp`, une méthode `private static String ride(Station from, Station to)` :
   - si le départ est vide, on marche vers la station la plus proche qui a un vélo ;
@@ -103,6 +174,11 @@ km a velo 34, km a pied 13
 camion : 1 Port->Parc 3 Campus->Centre 1 Port->Gare (18 km) => Gare=4/8 Centre=3/6 Parc=2/5 Port=4/6 Campus=5/10
 static via null : 5 stations, Campus (#4 sur 5)
 ```
+
+**📖 Rappel :** un membre `static` appartient à la classe, pas à l'objet (étape 2). L'étape te fait observer ce que cela implique quand la variable vaut `null`.
+
+**👉 À toi :**
+
 - **Le rééquilibrage glouton.** Une station a un **surplus** si `bikes > capacity / 2`, un **manque** si `bikes < capacity / 2`.
   - Tant qu'il existe un couple (surplus, manque), prends le plus proche. Déplace `min(surplus, manque)` vélos et additionne les km.
   - En cas d'égalité de distance, le premier couple trouvé (boucle a, puis b) gagne.

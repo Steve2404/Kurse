@@ -14,7 +14,7 @@
 <details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
 
 1. **Note l'heure** de départ (montre ou téléphone).
-2. **Crée la classe** : clic droit sur le dossier `r07_kata` → **New** → **Java Class** → `Recall07`. S'il faut d'autres classes, écris-les dans le même fichier, sous `Recall07` (sans `public`).
+2. **Crée la classe** : clic droit sur le dossier `r07_kata` → **New** → **Java Class** → `Recall07`. S'il faut d'autres classes, place-les comme le disent les **Règles** ci-dessus ; si elles ne précisent rien, écris-les dans le même fichier, sous `Recall07`, sans `public`.
 3. **Écris `main`**, puis **une ligne par défi**. La ligne qui suit la flèche `→` est **exactement** ce que ton programme doit afficher : `System.out.println("D01 : " + …);`, où les `…` sont des valeurs que **Java** calcule, jamais recopiées.
 4. **Lance `Recall07`** avec la flèche verte, pour voir tes lignes.
    Ce drill reçoit des **arguments** : lance `Recall07` une fois, puis Run → Edit Configurations… → **Recall07** → Program arguments : `29 5 1011`.

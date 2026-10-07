@@ -13,7 +13,7 @@
 <details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
 
 1. **Note l'heure** de départ (montre ou téléphone).
-2. **Crée la classe** : clic droit sur le dossier `r04_logic` → **New** → **Java Class** → `Recall04`. S'il faut d'autres classes, écris-les dans le même fichier, sous `Recall04` (sans `public`).
+2. **Crée la classe** : clic droit sur le dossier `r04_logic` → **New** → **Java Class** → `Recall04`. S'il faut d'autres classes, place-les comme le disent les **Règles** ci-dessus ; si elles ne précisent rien, écris-les dans le même fichier, sous `Recall04`, sans `public`.
 3. **Écris `main`**, puis **une ligne par défi**. La ligne qui suit la flèche `→` est **exactement** ce que ton programme doit afficher : `System.out.println("D01 : " + …);`, où les `…` sont des valeurs que **Java** calcule, jamais recopiées.
 4. **Lance `Recall04`** avec la flèche verte, pour voir tes lignes.
 5. **Bloqué plus de 3 minutes sur un défi ?** Écris un commentaire `// D03 : ✗` à sa place, et passe au suivant.

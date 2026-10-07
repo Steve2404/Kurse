@@ -29,11 +29,51 @@ Chaque surcharge de `Printer` **rend son nom** (`"int"`, `"Integer"`, `"int..."`
 
 **Méthode de travail :** pour chaque appel, écris ta **prédiction** en commentaire **avant** de lancer. Compte tes erreurs.
 
+**Tes outils pour ce projet** (pas d'arguments, pas de `Data`) :
+
+```
+javac -d build/ch5-p05 -sourcepath src/main/java src/main/java/ch5_methods/projects/p05_overload/OverloadLab.java
+java "-Duser.language=fr" -cp build/ch5-p05 ch5_methods.projects.p05_overload.OverloadLab
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — La famille `show`
+
+**📖 La leçon : la surcharge, plusieurs méthodes du même nom.** Une classe peut avoir plusieurs méthodes du même nom, si leurs **paramètres** diffèrent (en nombre ou en type). Java choisit selon les valeurs passées :
+
+```java
+static String decris(int x)    { return "int"; }
+static String decris(double x) { return "double"; }
+static String decris(String s) { return "String"; }
+
+decris(5)      // "int"
+decris(2.5)    // "double"
+decris("a")    // "String"
+decris('x')    // "int" : pas de version char, le char s'élargit vers int
+```
+
+**📖 La leçon : comment Java choisit, en 4 phases.** Il essaie une phase après l'autre, et s'arrête **dès qu'une phase trouve** une méthode. Dans une phase, il prend la plus **précise** :
+1. **le type exact**, ou un **élargissement** sans boîte : `byte` → `short` → `int` → `long` → `float` → `double`, ou une classe vers sa classe mère (`String` → `Object`) ;
+2. **avec emballage ou déballage** (`int` ↔ `Integer`) ;
+3. **avec varargs** (`int...`) ;
+4. rien ne convient : erreur de compilation.
+
+```java
+static String g(double d)  { return "double"; }
+static String g(Integer i) { return "Integer"; }
+g(3)                         // "double" : phase 1 (élargissement) avant phase 2 (emballage)
+
+static String h(Object o)  { return "Object"; }
+static String h(int... v)  { return "int..."; }
+h(3)                         // "Object" : phase 2 (emballage en Integer, qui est un Object) avant phase 3
+```
+
+**Méthode :** pour chaque appel de l'étape, écris en commentaire **la phase** qui a trouvé, puis vérifie en lançant.
+
+**👉 À toi :**
 
 Six surcharges `static String show(…)` : `int`, `long`, `double`, `Integer`, `Object`, `int...`.
 
@@ -48,6 +88,10 @@ show : Integer Integer, Short Object, String Object, rien int..., 1,2 int..., in
 - **Expérience :** `Printer.show(null)` → ambigu entre `Integer` et `int[]`. Lis le message.
 
 ### ☐ Étape 2 — `box`, `pick`, `text`
+
+**📖 Rappel :** les 4 phases de l'étape 1. Retiens aussi : c'est le **type déclaré** de la variable qui compte, pas l'objet réellement rangé dedans. Une variable `Object` qui contient un texte choisit la version `Object`.
+
+**👉 À toi :**
 
 Les surcharges : `box(long)`, `box(Integer)`, `box(Object)` ; `pick(Long)`, `pick(Object)` ; `text(String)`, `text(CharSequence)`, `text(Object)`.
 
@@ -67,6 +111,11 @@ text : "a" String, builder CharSequence, null String, Object "z" Object, cast Ch
 ```
 sum : 1,2 int,int, 1,2,3 int... ; add : 1,2 long,long, Integer Integer,Integer ; twice 42 abab
 ```
+
+**📖 La leçon : ce qui compte pour distinguer deux surcharges.** Seuls le **nom** et la **liste des types des paramètres** (la « signature ») comptent. L'expérience te fait vérifier si le type rendu, ou `[]` contre `...`, suffisent.
+
+**👉 À toi :**
+
 - `sum(int a, int b)` et `sum(int... v)` : les paramètres fixes gagnent.
 - `add(long, long)` et `add(Integer, Integer)` : l'élargissement gagne.
 - `String twice(String s)` est **d'instance** (appelée sur `new Printer()`), et `static String twice(int n)` coexiste : signatures différentes.
@@ -83,6 +132,11 @@ type declare Object : "7" 7 "sept" null
 [1,"deux",3.0,false,null,[4,5],["six"]]
 {"nom":"Ada","age":36,"langages":["Java","C"],"notes":[[18,15],[12]],"adresse":{"ville":"Paris"},"vide":{}}
 ```
+
+**📖 Rappel :** le pattern matching `instanceof Type variable` (chapitre 3, projet 4). Les guillemets et l'antislash dans un texte s'écrivent `\"` et `\\` (chapitre 1, projet 2). `replace` remplace toutes les occurrences (chapitre 4, projet 1).
+
+**👉 À toi :**
+
 - **Les surcharges `static String toJson(…)`**, sept en tout : `int`, `boolean`, `double`, `String`, `int[]`, `int[][]`, `String[]`. Plus **`toJson(Object)`**.
   - **`toJson(String)`** : `null` → `null` ; sinon entre guillemets. Échappe d'abord `\` en `\\`, puis `"` en `\"`, puis le saut de ligne en `\n`.
     - **Question :** pourquoi l'ordre des `replace` compte-t-il ?
