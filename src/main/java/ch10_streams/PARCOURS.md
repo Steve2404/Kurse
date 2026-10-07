@@ -68,9 +68,11 @@ ch10_streams/
 │   ├── README.md            ← la liste des 8 projets, à cocher
 │   └── p01_loandesk/
 │       ├── TODO.md          ← L'ÉNONCÉ : tu le lis
+│       ├── INDICES.md       ← 2 indices repliés par étape, sans code (si tu bloques)
 │       ├── Data.java        ← les données : tu les lis, tu ne les modifies pas
 │       ├── Check.java       ← le correcteur : tu le LANCES, tu ne le modifies pas
 │       ├── solution/        ← la correction : tu ne l'ouvres qu'à la fin
+│       │   └── CORRIGE.md   ← étape par étape : code, réponses aux questions, résultats des expériences
 │       └── (tes fichiers)   ← TOUT le reste, c'est TOI qui le crées ici
 └── drills/
     ├── README.md            ← règles des drills + tableau de suivi des répétitions
@@ -109,6 +111,7 @@ ch10_streams/
 3. **Crée la classe du `main`** tout de suite, même vide. Cela te permet de lancer `Check` dès le début.
 4. **Fais une étape à la fois.** Code-la, lance `Check`, corrige, puis coche ☐ → ☑ dans le `TODO.md`.
 5. **Réponds aux questions de l'étape par écrit**, en commentaire dans ton code, au-dessus de l'endroit concerné. Ce sont exactement les pièges de l'examen OCP. Une étape dont tu n'as pas répondu aux questions n'est pas finie.
+6. **Vérifie l'étape** : ouvre la section de cette étape (et **seulement** elle) dans `solution/CORRIGE.md`. Compare tes réponses et le résultat de tes expériences. Une réponse fausse : corrige ton commentaire avec tes propres mots.
 
 ### 4.3 Lancer `Check` et lire sa réponse
 
@@ -144,8 +147,8 @@ Clic droit sur `Check.java` → **Run 'Check.main()'**. Voici ce qu'il affiche a
 | Palier | Combien de temps | Ce que tu fais |
 |---|---|---|
 | 1 | jusqu'à 20 min | relis l'étape, ses contraintes et ses questions ; recalcule à la main ; ouvre la **Javadoc** de la classe concernée |
-| 2 | 20 min de plus | relis la **carte mémoire** du drill du même thème (bas du `TODO.md` dans `drills/`) ; ou demande-moi un **indice** sur ce point précis, sans la solution |
-| 3 | en dernier recours | ouvre `solution/`, mais lis **uniquement** la méthode qui te bloque, puis **ferme**, et réécris-la de mémoire. Note `// AIDE : solution consultée` dans ton code : cette étape devra être refaite plus tard |
+| 2 | 20 min de plus | ouvre l'**indice 1** de l'étape dans `INDICES.md`, puis l'**indice 2** s'il ne suffit pas ; relis la **carte mémoire** du drill du même thème (bas du `TODO.md` dans `drills/`) ; ou demande-moi un **indice** sur ce point précis, sans la solution |
+| 3 | en dernier recours | ouvre la section de l'étape dans `solution/CORRIGE.md`, ou lis **uniquement** la méthode qui te bloque dans `solution/`, puis **ferme**, et réécris-la de mémoire. Note `// AIDE : solution consultée` dans ton code : cette étape devra être refaite plus tard |
 
 **Ce qu'il ne faut jamais faire :**
 - copier-coller depuis `solution/` ;

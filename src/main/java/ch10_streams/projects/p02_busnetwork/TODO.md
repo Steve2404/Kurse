@@ -1,6 +1,8 @@
 # Projet 2 — Le calculateur d'itinéraires d'un réseau de bus
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch10_streams/PARCOURS.md`](../../PARCOURS.md) : comment lire cette fiche, lancer `Check`, quoi faire en cas de blocage.
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **API visée :** créer des streams (`iterate`, `generate`, `concat`, `ofNullable`), leur **paresse**, les opérations intermédiaires (`flatMap`, `distinct`, `sorted`, `skip`, `limit`, `peek`, `takeWhile`, `dropWhile`) et les opérations terminales de recherche (`findFirst`, `min`, `anyMatch`, `allMatch`, `noneMatch`).
 

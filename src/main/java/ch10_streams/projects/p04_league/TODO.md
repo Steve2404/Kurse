@@ -1,6 +1,8 @@
 # Projet 4 — Le classement d'un championnat (sans `Collectors` !)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch10_streams/PARCOURS.md`](../../PARCOURS.md) : comment lire cette fiche, lancer `Check`, quoi faire en cas de blocage.
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **API visée :** la réduction sous toutes ses formes :
 - les **trois** `reduce` : `reduce(identité, accumulateur)`, `reduce(accumulateur)` → `Optional`, et `reduce(identité, accumulateur, combiner)` ;
