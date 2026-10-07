@@ -26,6 +26,15 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 9. Pas de stream.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p03 -sourcepath src/main/java src/main/java/ch9_collections/projects/p03_graphs/Graphs.java
+java "-Duser.language=fr" -cp build/ch9-p03 ch9_collections.projects.p03_graphs.Graphs
+```
+
+**À quoi sert ce projet ?** Un **graphe** : des points (des cours, des villes) reliés par des flèches ou des routes. On le range dans une `Map` : chaque point → la liste (ou la `Map`) de ses voisins.
+
 ---
 
 ## Tableau de bord
@@ -36,6 +45,29 @@ Côté algorithmes :
 ordre des cours : [bases, algo, io, poo, collections, jdbc, lambdas, streams, concurrence]
 avec un cycle : [] -> cycle detecte
 ```
+
+**📖 La leçon : `Queue`, une file d'attente.** On ajoute à la fin, on sert au début. Deux familles de méthodes font la même chose, mais réagissent différemment quand c'est impossible (file vide…) :
+
+| Action | Famille « valeur spéciale » | Famille « exception » |
+|---|---|---|
+| ajouter | `offer(x)` | `add(x)` |
+| retirer le premier | `poll()` | `remove()` |
+| regarder le premier | `peek()` | `element()` |
+
+```java
+Queue<String> file = new ArrayDeque<>();
+file.offer("Lea");
+file.offer("Tom");
+file.peek()      // "Lea" : sans retirer
+file.poll()      // "Lea" : retiré
+file.poll()      // "Tom"
+file.poll()      // null : la file est vide
+```
+
+Une `PriorityQueue` (projet 2, étape 1) est aussi une `Queue` : `poll()` rend le plus petit.
+
+**👉 À toi :**
+
 - **`static List<String> topoSort(String[] edges)`** (`A>B` = A avant B) :
   1. une `TreeMap<String, List<String>> next`, et une `TreeMap<String, Integer> inDegree` (avec `putIfAbsent(A, 0)` et `merge(B, 1, Integer::sum)`) ;
   2. une **`Queue<String> ready = new PriorityQueue<>()`** des sommets de degré entrant 0 : à égalité, l'ordre alphabétique ;
@@ -50,6 +82,23 @@ moins d'etapes Lille-Toulouse : [Lille, Paris, Lyon, Marseille, Toulouse]
 moins de km : Lille > Paris > Nantes > Bordeaux > Toulouse = 1200 km (9 villes fixees)
 composantes : [[Ajaccio, Bastia], [Bordeaux, Bruxelles, Geneve, Lille, Lyon, Marseille, Nantes, Paris, Toulouse]]
 ```
+
+**📖 La leçon : `Deque`, une file à deux bouts, et une pile.** Une `Deque` (« deck ») ajoute et retire aux **deux** bouts : `offerFirst`, `offerLast`, `pollFirst`, `pollLast`, `peekFirst`, `peekLast`. Elle sert aussi de **pile** (le dernier arrivé sort le premier) avec `push`, `pop` et `peek` :
+
+```java
+Deque<String> pile = new ArrayDeque<>();
+pile.push("a"); pile.push("b"); pile.push("c");
+pile            // [c, b, a] : le sommet est à gauche
+pile.pop()      // "c"
+pile.peek()     // "b"
+```
+
+**Parcours en profondeur** = une **pile** ; **parcours en largeur** = une **file**. Dessine un petit graphe et déroule les deux à la main.
+
+**📖 Rappel :** des `TreeMap` imbriquées : `Map<String, Map<String, Integer>>` (ville → (voisine → km)). `computeIfAbsent` crée la `Map` intérieure au besoin (projet 2, étape 1).
+
+**👉 À toi :**
+
 - **`static Map<String, Map<String, Integer>> roads()`** construit le graphe à double sens (des `TreeMap` imbriquées).
 - **`dfs(g, start)`** utilise une **`Deque<String>` comme pile** :
   - `pop`, et ignore une ville déjà vue ;
@@ -74,6 +123,11 @@ composantes : [[Ajaccio, Bastia], [Bordeaux, Bruxelles, Geneve, Lille, Lyon, Mar
 max glissant (3) : [12, 12, 12, 8, 8, 8, 9, 9]
 deque : sommet z, pop z, pollLast c, reste [a, b], peekLast b ; vide : poll null, peek null
 ```
+
+**📖 Rappel :** les méthodes aux deux bouts d'une `Deque` (étape 2). La fenêtre glissante (chapitre 4, projet 7, étape 3).
+
+**👉 À toi :**
+
 - **`windowMax(int[] a, int k)`** : une `Deque<Integer>` d'**indices** aux valeurs décroissantes. Pour chaque i :
   1. retire en tête les indices sortis de la fenêtre (`peekFirst`, `pollFirst`) ;
   2. retire en queue ceux dont la valeur est `<= a[i]` (`peekLast`, `pollLast`) ;

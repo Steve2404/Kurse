@@ -29,6 +29,15 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 9. Pas de stream.
 
+**Ce projet t'apprend à écrire tes propres types génériques**, comme `List<T>`.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p04 -sourcepath src/main/java src/main/java/ch9_collections/projects/p04_generics/GenericsLab.java
+java "-Duser.language=fr" -cp build/ch9-p04 ch9_collections.projects.p04_generics.GenericsLab
+```
+
 ---
 
 ## Tableau de bord
@@ -39,6 +48,43 @@ Côté algorithmes :
 paires : Pair[first=age, second=30] Pair[first=30, second=age] Pair[first=x, second=x] Pair[first=7, second=7] Integer
 intervalles : Range[low=13, high=19] true false true false
 ```
+
+**📖 La leçon : une classe générique.** Une lettre entre chevrons après le nom de la classe (souvent `T`, pour « type ») est un **paramètre de type** : un trou, rempli par celui qui utilise la classe :
+
+```java
+class Boite<T> {
+    private T contenu;
+    void ranger(T x) { contenu = x; }
+    T sortir() { return contenu; }
+}
+Boite<String> b = new Boite<>();
+b.ranger("kiwi");
+String s = b.sortir();          // pas de cast : Java sait que c'est un String
+
+record Duo<A, B>(A gauche, B droite) { }       // plusieurs paramètres de type
+new Duo<>("age", 8)                            // Duo[gauche=age, droite=8]
+```
+
+**📖 La leçon : une méthode générique.** Une méthode peut avoir **ses propres** paramètres de type, déclarés **avant** le type rendu :
+
+```java
+static <T> List<T> trois(T x) { return List.of(x, x, x); }
+trois("x")                     // [x, x, x] : Java devine T = String
+Atelier.<Integer>trois(7)      // [7, 7, 7] : T donné explicitement
+```
+
+**📖 La leçon : borner un paramètre de type.** `T extends Comparable<T>` veut dire « n'importe quel type, **pourvu qu'il sache se comparer** ». On peut alors appeler `compareTo` sur un `T` :
+
+```java
+static <T extends Comparable<T>> T plusGrand(T a, T b) {
+    return a.compareTo(b) >= 0 ? a : b;
+}
+plusGrand("kiwi", "pomme")     // "pomme"
+plusGrand(3, 9)                // 9
+```
+
+**👉 À toi :**
+
 - **`record Pair<A, B>(A first, B second)`** :
   - `Pair<B, A> swap()` ;
   - `public static <X> Pair<X, X> twin(X value)`.
@@ -59,6 +105,11 @@ intervalles : Range[low=13, high=19] true false true false
 tas : 1 3 7 11 19 25 30 42 | set map deque lambda generique collection
 tri fusion : [map, set, deque, lambda, generique, collection] [1, 3, 7, 11, 19, 25, 30, 42] ; recherche 25 -> 5, 20 -> -6
 ```
+
+**📖 Rappel :** un `Comparator` passé en paramètre (projet 1, étape 2). Le tas et la fusion : chapitre 8, projet 3, et chapitre 5, projet 6. `numbers.forEach(tas::push)` appelle `push` pour chaque élément (chapitre 8 : référence de méthode).
+
+**👉 À toi :**
+
 - **`class Heap<T>`** :
   - `private final List<T> items` et `private final Comparator<? super T> order` ;
   - `push`, `pop`, `size`, `isEmpty`.
@@ -76,6 +127,32 @@ tri fusion : [map, set, deque, lambda, generique, collection] [1, 3, 7, 11, 19, 
 bornes : max 42 set, argMax collection, somme 138.0 4.0
 jokers : [1, 4, 9, 16] [1, 4, 9, 16, texte] | 5 elements : Integer Integer Integer Integer String | [ab, ab, ab]
 ```
+
+**📖 La leçon : les jokers `?`.** Une `List<Integer>` n'est **pas** une `List<Number>`, même si un `Integer` est un `Number`. Pour écrire une méthode qui accepte plusieurs sortes de listes, on utilise le joker `?` :
+- `List<? extends Number>` : une liste de `Number` **ou d'un sous-type** (`Integer`, `Double`…). On peut y **lire** des `Number` ;
+- `List<? super Integer>` : une liste d'`Integer` **ou d'un super-type** (`Number`, `Object`). On peut y **ajouter** des `Integer` ;
+- `List<?>` : une liste de n'importe quoi.
+
+```java
+static double total(List<? extends Number> nombres) {
+    double s = 0;
+    for (Number n : nombres) s += n.doubleValue();
+    return s;
+}
+total(List.of(1, 2.5))        // 3.5 : une liste qui mélange Integer et Double
+
+static void remplir(List<? super Integer> cible) {
+    cible.add(1);
+    cible.add(2);
+}
+List<Number> nums = new ArrayList<>();
+remplir(nums);                // [1, 2]
+```
+
+**Le moyen mnémotechnique PECS** : *Producer Extends, Consumer Super*. Une collection qui te **fournit** des valeurs : `extends`. Une collection qui **reçoit** tes valeurs : `super`.
+
+**👉 À toi :**
+
 - **Dans `Algos`** :
   - `<T extends Comparable<? super T>> T max(Collection<? extends T> values)` ;
   - `<K, V extends Comparable<? super V>> K argMax(Map<K, V> map)` ;
@@ -101,6 +178,13 @@ jokers : [1, 4, 9, 16] [1, 4, 9, 16, texte] | 5 elements : Integer Integer Integ
 LRU : [a] [a, b] [a, b, c] [b, c, a] [c, a, d] [a, d, b] [d, b, e] [b, e, a] [e, a, c] [e, c, a] -> 2 succes, 8 echecs
 transformer : ********* ; effacement : true
 ```
+
+**📖 La leçon : hériter d'une collection.** Une classe peut **étendre** une collection générique (`class Cache<K, V> extends LinkedHashMap<K, V>`) et redéfinir une de ses méthodes `protected` pour changer son comportement.
+
+**📖 La leçon : l'effacement.** Les types entre chevrons n'existent que pour `javac`, qui les vérifie puis les **efface**. À l'exécution, une `ArrayList<String>` et une `ArrayList<Integer>` sont de la même classe. Les expériences de l'étape te montrent ce que cela interdit.
+
+**👉 À toi :**
+
 - **`class Cache<K, V> extends LinkedHashMap<K, V>`** :
   - le constructeur appelle `super(16, 0.75f, true)` : l'ordre devient celui des **accès** ;
   - `removeEldestEntry` rend `size() > capacity` ;

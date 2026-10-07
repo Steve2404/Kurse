@@ -25,6 +25,23 @@ Côté algorithme : l'**analyse ABC** d'un stock (tri par valeur, puis classemen
 
 **Règle du crescendo :** chapitres 1 à 9. **Pas de stream** (`stream()`, `Collectors`) ni d'`Optional` : ils sont au chapitre 10. Pas de `try/catch`.
 
+**Ce que le chapitre 9 t'apprend :** les **collections**, des conteneurs qui **grandissent tout seuls**, contrairement aux tableaux :
+- les listes ;
+- les ensembles ;
+- les tables d'association ;
+- les files.
+
+Puis à écrire tes **propres types génériques**. Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet : des fruits.
+
+**Les imports :** les collections sont dans `java.util` : écris `import java.util.*;` en haut de tes fichiers.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p01 -sourcepath src/main/java src/main/java/ch9_collections/projects/p01_inventory/Inventory.java
+java "-Duser.language=fr" -cp build/ch9-p01 ch9_collections.projects.p01_inventory.Inventory
+```
+
 ---
 
 ## Tableau de bord
@@ -35,6 +52,37 @@ Côté algorithme : l'**analyse ABC** d'un stock (tri par valeur, puis classemen
 charge : 10 articles, premier clavier, dernier horloge, vide false
 ventes : [3, 12, 7, 3, 1], frequence de 3 : 2, indexOf(3) 0, lastIndexOf(3) 3, contains(12) true
 ```
+
+**📖 La leçon : la liste, un tableau qui grandit.** Une `List` garde ses éléments **dans l'ordre**, numérotés à partir de 0, et accepte les doublons. On déclare la variable avec l'**interface** `List`, et on crée l'objet avec une **classe** concrète, `ArrayList`. Le type des éléments va entre chevrons ; à droite, le **diamant** `<>` le reprend tout seul :
+
+```java
+List<String> fruits = new ArrayList<>();
+fruits.add("pomme");               // ajoute à la fin
+fruits.add("kiwi");
+fruits.add(0, "fraise");           // insère en position 0 : [fraise, pomme, kiwi]
+fruits.size()                      // 3
+fruits.get(1)                      // "pomme"
+fruits.contains("kiwi")            // true
+fruits.indexOf("kiwi")             // 2
+fruits.set(2, "mangue");           // remplace la case 2 : [fraise, pomme, mangue]
+fruits.remove("pomme");            // retire cette valeur : [fraise, mangue]
+for (String f : fruits) { … }      // le for-each marche aussi
+```
+
+Une collection ne contient que des **objets**. Pour des nombres, on écrit `List<Integer>`, et Java emballe et déballe tout seul (chapitre 5, projet 4) :
+
+```java
+List<Integer> notes = new ArrayList<>();
+notes.add(12);                     // 12 est emballé en Integer
+int premiere = notes.get(0);       // déballé en int
+```
+
+`System.out.println(liste)` affiche directement `[fraise, mangue]` : pas besoin d'`Arrays.toString`.
+
+**📖 La leçon : la classe `Collections`.** Comme `Arrays` pour les tableaux, `Collections` (avec un **s**) offre des outils `static` : `Collections.sort(l)`, `Collections.max(l)`, `Collections.frequency(l, x)` (combien de fois `x` apparaît)…
+
+**👉 À toi :**
+
 - **`record Item(String sku, String name, String category, int stock, long price)`** :
   - `parse` ;
   - `value()` = stock × prix ;
@@ -54,6 +102,38 @@ ruptures retirees [souris, poele], reste 8 ; cuisine +10 % : tasse=9.79 bouilloi
 par categorie puis prix decroissant : [bouilloire, tasse, ecran, clavier, cable, vase, lampe, horloge]
 subList(0, 3) : [bouilloire, tasse, ecran], max par valeur clavier, min par stock vase
 ```
+
+**📖 La leçon : modifier avec une lambda.** Les listes acceptent des lambdas (chapitre 8) :
+
+```java
+List<String> fruits = new ArrayList<>(List.of("pomme", "kiwi", "banane", "figue", "ananas"));
+fruits.removeIf(f -> f.length() < 5);       // retire ceux qui passent le test : [pomme, banane, figue, ananas]
+fruits.replaceAll(f -> f.toUpperCase());    // remplace chacun : [POMME, BANANE, FIGUE, ANANAS]
+```
+
+`new ArrayList<>(autreCollection)` fabrique une **copie** indépendante.
+
+**📖 La leçon : trier avec un `Comparator`.** `liste.sort(comparateur)` trie sur place. `Comparator` fabrique les comparateurs à partir d'une méthode qui donne la **clé** de tri :
+
+```java
+fruits.sort(Comparator.naturalOrder());                       // ordre alphabétique
+fruits.sort(Comparator.comparing(String::length)              // par longueur…
+                      .thenComparing(Comparator.reverseOrder())); // …puis, à égalité, alphabétique inversé
+fruits.sort(Comparator.comparingInt(String::length).reversed());  // par longueur décroissante
+
+record Livre(String titre, int pages) { }
+livres.sort(Comparator.comparingInt(Livre::pages));           // par nombre de pages
+```
+
+- `comparing(clé)` pour une clé objet, `comparingInt` / `comparingLong` pour une clé `int` / `long` ;
+- `thenComparing(…)` départage les égalités ;
+- `reversed()` inverse tout l'ordre ;
+- `thenComparing(clé, Comparator.reverseOrder())` inverse **seulement** ce critère.
+
+`Collections.max(liste, comparateur)` et `Collections.min(…)` rendent le plus grand et le plus petit selon ce comparateur.
+
+**👉 À toi :**
+
 - **Les ruptures :**
   1. copie la liste (`new ArrayList<>(items)`) et garde seulement les ruptures (`removeIf(i -> i.stock() > 0)`) ;
   2. retire-les de `items` avec `removeIf`.
@@ -71,6 +151,28 @@ subList(0, 3) : [bouilloire, tasse, ecran], max par valeur clavier, min par stoc
 reassort de 3 articles ; sans les noms en c : [bouilloire, tasse, ecran, vase, lampe, horloge]
 ABC : ecran=A tasse=A vase=B horloge=B bouilloire=C lampe=C (total 1916.70)
 ```
+
+**📖 La leçon : l'itérateur, pour retirer pendant le parcours.** Pour retirer des éléments **pendant** qu'on parcourt une liste, il faut passer par un `Iterator` et **sa** méthode `remove()` :
+
+```java
+Iterator<String> it = fruits.iterator();
+while (it.hasNext()) {              // reste-t-il un élément ?
+    String f = it.next();           // prends le suivant
+    if (f.startsWith("c")) it.remove();   // retire celui qu'on vient de prendre
+}
+```
+
+Un `ListIterator` permet en plus de **remplacer** l'élément courant avec `set` :
+
+```java
+ListIterator<String> li = fruits.listIterator();
+while (li.hasNext()) {
+    li.set(li.next().toUpperCase());
+}
+```
+
+**👉 À toi :**
+
 - **Le réassort :** un `ListIterator<Item>`. Pour chaque article sous `Data.TARGET_STOCK`, `it.set(i.withStock(TARGET_STOCK))` ; compte-les.
 - **Le retrait :** un `Iterator<Item>` qui retire (`remover.remove()`) les noms qui commencent par `c`.
   - **Expérience :** fais plutôt `items.remove(x)` dans un for-each. Quelle exception ?
@@ -87,6 +189,21 @@ file : servi urgent, restant [cmd4, cmd1, cmd2, cmd3], inverse+swap [cmd3, cmd4,
 trie [1, 3, 3, 7, 12], binarySearch(7) 3, binarySearch(5) -4
 asList [X, y, z], List.of [a, b], toArray 6, egalite true, copyOf [X, y, z]
 ```
+
+**📖 La leçon : `LinkedList`, ajouter aux deux bouts.** Une `LinkedList` est aussi une `List`, avec des méthodes pratiques aux extrémités :
+
+```java
+LinkedList<String> file = new LinkedList<>(List.of("b", "c"));
+file.addFirst("a");             // [a, b, c]
+file.addLast("d");              // [a, b, c, d]
+file.removeFirst()              // "a" ; reste [b, c, d]
+file.getLast()                  // "d"
+```
+
+**📖 La leçon : les listes toutes faites.** Il existe plusieurs façons rapides de créer une liste : `List.of(…)`, `Arrays.asList(…)`, `List.copyOf(…)`. Elles **n'ont pas toutes les mêmes droits** (ajouter ? modifier ? contenir `null` ?) : les expériences de l'étape te le font découvrir. Si tu as besoin d'une liste que tu modifieras librement, copie-la dans un `new ArrayList<>(…)`.
+
+**👉 À toi :**
+
 - **La file :**
   1. `LinkedList<String> orders` à partir de `List.of("cmd1", "cmd2", "cmd3")` ;
   2. `addFirst("urgent")`, `addLast("cmd4")`, puis `removeFirst()` (le servi) ;

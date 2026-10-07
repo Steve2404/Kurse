@@ -30,6 +30,26 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 9. Pas de stream.
 
+**C'est le projet-bilan du chapitre 9.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| une classe générique bornée (`T extends Comparable<T>`) | projet 4, étape 1 |
+| une `Map` remplie avec `computeIfAbsent` ou `merge` | projet 2, étape 1 |
+| un `TreeSet`, une copie, `retainAll`, `removeAll` | projet 2, étape 2 |
+| trier une liste d'entrées avec `Map.Entry.comparingByValue()` | projet 1, étape 2, et projet 2, étape 2 |
+| un parcours en largeur avec une `Queue` | projet 3, étapes 1 et 2 |
+| une `PriorityQueue` avec un comparateur | projet 2, étape 1, et projet 5, étape 3 |
+| un `record` avec une copie défensive (`Set.copyOf`) | chapitre 6, projet 4, et chapitre 7, projet 2 |
+| `subList` | projet 1, étape 2 |
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p07 -sourcepath src/main/java src/main/java/ch9_collections/projects/p07_social/Social.java
+java "-Duser.language=fr" -cp build/ch9-p07 ch9_collections.projects.p07_social.Social
+```
+
 ---
 
 ## Tableau de bord

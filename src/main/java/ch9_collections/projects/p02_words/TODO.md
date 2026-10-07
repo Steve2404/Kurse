@@ -27,6 +27,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 9. Pas de stream ni de `Collectors.groupingBy` : tu fais tout avec `merge` et `computeIfAbsent`.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p02 -sourcepath src/main/java src/main/java/ch9_collections/projects/p02_words/Words.java
+java "-Duser.language=fr" -cp build/ch9-p02 ch9_collections.projects.p02_words.Words
+```
+
 ---
 
 ## Tableau de bord
@@ -37,6 +44,54 @@ Côté algorithmes :
 mots distincts 20, java 2, python null, getOrDefault(python) 0, containsKey(set) true, containsValue(4) false
 ordre d'apparition : java aime collections liste map set associe cle ...
 ```
+
+**📖 La leçon : `Map`, un dictionnaire clé → valeur.** Une `Map` associe chaque **clé** (unique) à une **valeur**, comme un dictionnaire associe un mot à sa définition :
+
+```java
+Map<String, Integer> prix = new HashMap<>();
+prix.put("pomme", 3);
+prix.put("kiwi", 2);
+prix.put("pomme", 4);                  // même clé : la valeur est remplacée
+prix.get("pomme")                      // 4
+prix.get("mangue")                     // null : clé absente
+prix.getOrDefault("mangue", 0)         // 0
+prix.containsKey("kiwi")               // true
+prix.size()                            // 2
+```
+
+**Les trois `Map` principales** se distinguent par l'**ordre** de leurs clés :
+- `HashMap` : aucun ordre garanti (la plus rapide) ;
+- `LinkedHashMap` : l'ordre d'**insertion** ;
+- `TreeMap` : l'ordre **trié** des clés.
+
+**📖 La leçon : compter et regrouper en une ligne.**
+
+```java
+Map<String, Integer> compte = new TreeMap<>();
+for (String f : List.of("kiwi", "pomme", "kiwi")) {
+    compte.merge(f, 1, Integer::sum);       // absent : met 1 ; présent : ancienne + 1
+}
+// {kiwi=2, pomme=1}
+
+Map<Character, List<String>> parLettre = new TreeMap<>();
+for (String f : List.of("kiwi", "pomme", "poire")) {
+    parLettre.computeIfAbsent(f.charAt(0), k -> new ArrayList<>()).add(f);   // crée la liste si besoin, puis ajoute
+}
+// {k=[kiwi], p=[pomme, poire]}
+
+ordre.putIfAbsent("z", 9);                  // ne met 9 que si "z" n'a pas encore de valeur
+```
+
+**📖 La leçon : `Set`, un ensemble sans doublons.** Un `Set` refuse les doublons : `add` rend `false` si l'élément y est déjà. Mêmes trois variantes que pour `Map` : `HashSet` (sans ordre), `LinkedHashSet` (ordre d'insertion), `TreeSet` (trié).
+
+```java
+Set<String> vus = new HashSet<>();
+vus.add("kiwi")       // true
+vus.add("kiwi")       // false : déjà présent
+```
+
+**👉 À toi :**
+
 - **`static List<String> tokens(String text, Set<String> stop)`** : en minuscules, découpe sur `[^a-z]+`, et ignore les chaînes vides (`isEmpty()`) et les mots de `stop`.
   - `stop` est un `HashSet` construit depuis `Arrays.asList(Data.STOP)`.
 - **Pour chaque document d (numéroté à partir de 1) et chaque mot w :**
@@ -54,6 +109,35 @@ index : collections[1, 3] java[1, 3] liste[1, 3] map[1, 2] set[1, 2, 3]
 requete java & collections -> [1, 3]
 ...
 ```
+
+**📖 La leçon : parcourir une `Map`.** `keySet()` donne les clés, `values()` les valeurs, et `entrySet()` les couples, de type `Map.Entry`, avec `getKey()` et `getValue()` :
+
+```java
+for (Map.Entry<String, Integer> e : tri.entrySet()) {
+    System.out.print(e.getKey() + "=" + e.getValue() + ";");     // kiwi=2;pomme=4;
+}
+```
+
+**📖 La leçon : intersection, union, différence.** Sur une **copie**, pour ne pas abîmer l'original :
+
+```java
+Set<String> a = new TreeSet<>(List.of("kiwi", "pomme", "fraise"));
+Set<String> b = new TreeSet<>(List.of("pomme", "mangue"));
+Set<String> inter = new TreeSet<>(a); inter.retainAll(b);    // [pomme]
+Set<String> union = new TreeSet<>(a); union.addAll(b);       // [fraise, kiwi, mangue, pomme]
+Set<String> diff  = new TreeSet<>(a); diff.removeAll(b);     // [fraise, kiwi]
+```
+
+**📖 La leçon : `PriorityQueue`, une file où le plus petit sort d'abord.** Quel que soit l'ordre d'ajout, `poll()` rend toujours le **plus petit** élément, selon l'ordre naturel ou le comparateur donné à la création :
+
+```java
+PriorityQueue<Integer> tas = new PriorityQueue<>(List.of(5, 1, 4, 2));
+tas.poll()      // 1
+tas.poll()      // 2
+```
+
+**👉 À toi :**
+
 - **Le top-k :**
   - le comparateur `weakestFirst` = `Map.Entry.comparingByValue()`, puis `.thenComparing(Map.Entry.comparingByKey(Comparator.reverseOrder()))` ;
   - une `PriorityQueue` avec cet ordre : ajoute chaque entrée, et dès que la taille dépasse `Data.TOP`, `poll()` (le plus faible sort) ;
@@ -71,6 +155,13 @@ anagrammes : [[arme, mare, rame], [chien, chine, niche]]
 merge/compute : {java=20, set=12}, remove(set, 999) false, entry k=1, ofEntries {a=1, b=2}
 sets : hash 4 elements, linked [set, map, java, liste], tree [java, liste, map, set], add en double false
 ```
+
+**📖 La leçon : modifier une `Map` à travers ses vues.** `keySet()`, `values()` et `entrySet()` ne sont pas des copies : ce sont des **fenêtres** sur la `Map`. Retirer un élément d'une vue (par exemple avec `removeIf`) le retire de la `Map`.
+
+**📖 Rappel :** `merge`, `computeIfAbsent` et `putIfAbsent` (étape 1). Les autres méthodes de l'étape (`compute`, `computeIfPresent`, `replaceAll`, `remove(clé, valeur)`) suivent la même idée : une lambda reçoit la clé et l'ancienne valeur, et rend la nouvelle. Si la lambda rend `null`, la clé est supprimée.
+
+**👉 À toi :**
+
 - **Les anagrammes :**
   - pour chaque mot distinct (`freq.keySet()`), une `TreeMap<String, List<String>>` dont la clé est le mot aux lettres triées (`toCharArray`, `Arrays.sort`, `new String(c)`) ;
   - puis `groups.values().removeIf(g -> g.size() < 2)` (on modifie la map à travers sa **vue**) ;

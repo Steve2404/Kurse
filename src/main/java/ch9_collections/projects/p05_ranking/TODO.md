@@ -29,6 +29,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 9. Pas de stream.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p05 -sourcepath src/main/java src/main/java/ch9_collections/projects/p05_ranking/Ranking.java
+java "-Duser.language=fr" -cp build/ch9-p05 ch9_collections.projects.p05_ranking.Ranking
+```
+
 ---
 
 ## Tableau de bord
@@ -41,6 +48,28 @@ classement (score desc, age, nom) : [Hugo, Ines, Bob, Zoe, Lea, Noah, Adam, Emma
 par equipe : [Hugo, Noah, Zoe, Ines, Lea, Emma, Bob, Adam] ; par bonus (null a la fin) : [Zoe, Lea, Noah, Ines, Bob, Adam, Emma, Hugo]
 rangs : Hugo=1/1 Ines=1/1 Bob=1/1 Zoe=4/2 Lea=4/2 Noah=4/2 Adam=7/3 Emma=8/4
 ```
+
+**📖 La leçon : `Comparable`, l'ordre naturel d'une classe.** Une classe qui réalise `Comparable<Elle-même>` dit comment **ses** objets se comparent, avec `compareTo`. `Collections.sort(liste)` et `TreeSet` utilisent alors cet ordre sans qu'on leur donne de comparateur :
+
+```java
+record Note(String eleve, int valeur) implements Comparable<Note> {
+    @Override
+    public int compareTo(Note autre) { return Integer.compare(valeur, autre.valeur); }
+}
+Collections.sort(notes);       // de la plus petite à la plus grande valeur
+```
+
+**`Comparable`** = **un** ordre, écrit dans la classe. **`Comparator`** = autant d'ordres qu'on veut, écrits à côté (projet 1, étape 2).
+
+**📖 La leçon : les `null` dans un tri.** `Comparator.nullsLast(…)` place les `null` à la fin, et trie les autres avec le comparateur donné :
+
+```java
+List<String> v = new ArrayList<>(Arrays.asList("b", null, "a"));
+v.sort(Comparator.nullsLast(Comparator.naturalOrder()));   // [a, b, null]
+```
+
+**👉 À toi :**
+
 - **`record Player(String name, String team, int score, int age, Integer bonus) implements Comparable<Player>`** :
   - `parse` (un bonus `-` devient `null`) ;
   - `compareTo` compare les **noms** ;
@@ -62,6 +91,33 @@ navigation : floorKey(1300) 1200, ceilingKey(1300) 1500, lowerKey(1200) 980, hig
 vues : headMap(1200) {870=[Emma], 980=[Adam]}, tailMap(1200) [1200, 1500], subMap(900, 1300) [980, 1200], descending [1500, 1200, 980, 870]
 ages : [25, 29, 31, 37, 42], first 25, last 42, floor(30) 29, ceiling(30) 31, headSet(31) [25, 29], tailSet(31, false) [37, 42], pollFirst 25 -> [29, 31, 37, 42]
 ```
+
+**📖 La leçon : naviguer dans une `TreeMap` ou un `TreeSet`.** Comme leurs éléments sont triés, ils savent répondre à « le plus proche de… » :
+
+```java
+TreeMap<Integer, String> paliers = new TreeMap<>(Map.of(0, "bronze", 100, "argent", 500, "or"));
+paliers.floorKey(250)          // 100  : la plus grande clé <= 250
+paliers.ceilingKey(250)        // 500  : la plus petite clé >= 250
+paliers.lowerKey(100)          // 0    : strictement plus petite
+paliers.higherKey(500)         // null : aucune
+paliers.headMap(500)           // {0=bronze, 100=argent} : les clés < 500
+paliers.tailMap(100).keySet()  // [100, 500] : les clés >= 100
+paliers.descendingMap().keySet()   // [500, 100, 0]
+
+TreeSet<Integer> t = new TreeSet<>(List.of(10, 20, 30, 40));
+t.floor(25)                    // 20
+t.ceiling(25)                  // 30
+t.headSet(30)                  // [10, 20]
+t.subSet(15, 35)               // [20, 30]
+t.pollFirst()                  // 10, et le retire
+```
+
+Ces méthodes existent grâce aux interfaces `NavigableMap` et `NavigableSet`.
+
+**📖 Rappel :** un `TreeSet` construit avec un `Comparator` range ses éléments selon **ce** comparateur. L'étape te fait découvrir une conséquence surprenante.
+
+**👉 À toi :**
+
 - **Le piège :** `new TreeSet<>(Comparator.comparingInt(Player::score))`, puis `addAll(players)`.
   - **Question :** pourquoi n'en reste-t-il que 4 ? Lesquels sont gardés ?
 - **`NavigableMap<Integer, List<String>> byScore = new TreeMap<>()`** : score → noms, remplie avec `computeIfAbsent` en parcourant `players` (dans l'ordre du classement). Appelle chaque méthode de navigation **dans l'ordre affiché**.
@@ -75,6 +131,17 @@ ages : [25, 29, 31, 37, 42], first 25, last 42, floor(30) 29, ceiling(30) 31, he
 intervalles tries [[1,3], [2,6], [5,7], [8,10], [9,12], [15,18], [17,20]] -> fusion [[1,7], [8,12], [15,20]] ; planning max [[1,3], [5,7], [8,10], [15,18]]
 medianes : 5.0 10.0 5.0 4.0 5.0 6.0 7.0 7.5 8.0 7.5
 ```
+
+**📖 La leçon : un tas « max ».** Par défaut, une `PriorityQueue` sort le **plus petit**. Avec `Collections.reverseOrder()`, elle sort le **plus grand** :
+
+```java
+PriorityQueue<Integer> tasMax = new PriorityQueue<>(Collections.reverseOrder());
+tasMax.addAll(List.of(5, 1, 4, 2));
+tasMax.poll()      // 5
+```
+
+**👉 À toi :**
+
 - **`record Interval(int start, int end) implements Comparable<Interval>`** : le début, puis la fin ; `toString()` = `[a,b]`. La liste est remplie depuis `Data.INTERVALS`.
 - **La fusion :** trie (`Collections.sort`). Si le dernier intervalle fusionné chevauche (`end >= start`), retire-le, puis ajoute l'union.
 - **Le planning :** trie une copie **par fin** (`comparingInt(Interval::end)`), et garde chaque intervalle qui commence **après** la fin du dernier gardé.

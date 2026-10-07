@@ -26,6 +26,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 9. Pas de stream.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch9-p06 -sourcepath src/main/java src/main/java/ch9_collections/projects/p06_editor/Editor.java
+java "-Duser.language=fr" -cp build/ch9-p06 ch9_collections.projects.p06_editor.Editor
+```
+
 ---
 
 ## Tableau de bord
@@ -39,6 +46,13 @@ ADD int x = (a + b;  =>  add -> [int x = (a + b;] (annulables 1)
 UNDO  =>  annule DELETE -> [// debut, int x = (a + b);, list.add(map.get(k));]
 REDO  =>  retabli SET -> [// debut, int x = (a + b);, list.add(map.get(k));]
 ```
+
+**📖 La leçon : annuler et rétablir avec deux piles.** Chaque modification est rangée dans un petit objet (un `record`) qui décrit l'avant et l'après. Annuler = **dépiler** de la pile « annuler », appliquer à l'envers, puis **empiler** dans la pile « rétablir ». Rétablir = l'inverse. Dessine les deux piles sur papier, et suis-les commande par commande.
+
+**📖 Rappel :** une `Deque` comme pile, avec `push`, `pop` et `poll` (projet 3, étape 2). `computeIfAbsent` (projet 2, étape 1). `removeFirstOccurrence(x)` retire la 1re apparition de `x` dans une `Deque`.
+
+**👉 À toi :**
+
 - **`record Edit(String type, int index, String before, String after)`**.
 - **Les champs d'`Editor`** :
   - `Map<String, List<String>> files` (une `TreeMap`) et `List<String> lines`, le fichier courant ;
@@ -71,6 +85,11 @@ REDO  =>  retabli SET -> [// debut, int x = (a + b);, list.add(map.get(k));]
 COMPLETE ma  =>  completer ma : [main, map, math] (ceiling main)
 COMPLETE zz  =>  completer zz : [] (ceiling null)
 ```
+
+**📖 Rappel :** `subSet(début, inclus, fin, inclus)` et `ceiling` d'un `NavigableSet` (projet 5, étape 2). `Character.MAX_VALUE` est le plus grand caractère possible (chapitre 1, projet 2).
+
+**👉 À toi :**
+
 - `dictionary.subSet(p, true, p + Character.MAX_VALUE, false)` donne tous les mots qui commencent par p. Ajoute `dictionary.ceiling(p)`.
 - **Question :** pourquoi `p + Character.MAX_VALUE` comme borne haute ?
 
@@ -82,6 +101,11 @@ main.java : 4 lignes [ok] [ok] [ok] [erreur colonne 9]
 orthographe : retrun->[return] mapp->[map] lsit->[list] deqeu->[deque] set->[set] xyz->[]
 dictionnaire : premier add, dernier set, avant list int, apres list listiterator, descendant [set, return, retain, queue, math, map, main]
 ```
+
+**📖 Rappel :** une pile pour vérifier des parenthèses : chaque ouvrant est empilé, chaque fermant doit correspondre au sommet. `retainAll` garde seulement les éléments présents dans l'autre ensemble (projet 2, étape 2). `descendingSet()` est une vue **à l'envers** d'un `TreeSet`.
+
+**👉 À toi :**
+
 - **`static String brackets(String line)`**, une pile `Deque<Character>` :
   - un ouvrant `([{` → `push` ;
   - un fermant → la pile ne doit pas être vide et `pop` doit correspondre, sinon `erreur colonne i` (i est l'indice **à partir de 0**) ;
