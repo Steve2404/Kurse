@@ -1,6 +1,8 @@
 # Projet 7 (capstone) — Les vélos en libre-service
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch15_jdbc/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées :** **tout le chapitre 15**, dans une seule application :
 - connexion et `PreparedStatement` ;
@@ -19,6 +21,29 @@ Côté algorithmes :
 **Ce que TU crées :** dans `ch15_jdbc.projects.p07_bikes` : **`public final class Tariff`**, `BikeService`, `Rebalancer` et **`BikeApp`** (le `main`, qui déclare `throws SQLException`).
 
 **Règle du crescendo :** chapitres 1 à 15.
+
+**C'est le projet-bilan du chapitre 15, et de tout le cours.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| enregistrer une méthode Java comme fonction SQL (`CREATE ALIAS`) | projet 5, étape 1 |
+| des lots (`addBatch`, `executeBatch`) | projet 4, étape 2 |
+| une transaction par commande, `commit` / `rollback` | projet 2, étape 2 |
+| une erreur métier : ta propre `SQLException` | projet 2, étape 2 |
+| un `Savepoint` pour défaire une seule partie | projet 3, étape 2 |
+| `{? = call …}` avec un paramètre OUT | projet 5, étape 2 |
+| la clé générée | projet 2, étape 2 |
+| une interface fonctionnelle qui lance une exception vérifiée | chapitre 11, projet 2 |
+| `LEFT JOIN` et `COALESCE` | projet 3, étape 3 |
+
+**Tes outils pour ce projet :** la flèche verte, ou le terminal avec le pilote H2 (projet 1, en-tête) :
+
+```
+javac -d build/ch15-p07 -sourcepath src/main/java src/main/java/ch15_jdbc/projects/p07_bikes/BikeApp.java
+java -cp "build/ch15-p07;$env:USERPROFILE\.m2\repository\com\h2database\h2\2.3.232\h2-2.3.232.jar" ch15_jdbc.projects.p07_bikes.BikeApp
+```
+
+`ps.setObject(i, valeur)` remplit un paramètre de **n'importe quel** type : pratique pour un outil qui reçoit des `Object...` (chapitre 5).
 
 ---
 

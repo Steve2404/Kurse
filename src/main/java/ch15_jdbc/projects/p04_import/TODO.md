@@ -1,6 +1,8 @@
 # Projet 4 — L'import des fichiers clients (lots, clés générées)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch15_jdbc/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 15) :**
 - **les lots (batch)** :
@@ -23,6 +25,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 15.
 
+**Tes outils pour ce projet :** la flèche verte, ou le terminal avec le pilote H2 (projet 1, en-tête) :
+
+```
+javac -d build/ch15-p04 -sourcepath src/main/java src/main/java/ch15_jdbc/projects/p04_import/ImportApp.java
+java -cp "build/ch15-p04;$env:USERPROFILE\.m2\repository\com\h2database\h2\2.3.232\h2-2.3.232.jar" ch15_jdbc.projects.p04_import.ImportApp
+```
+
 ---
 
 ## Tableau de bord
@@ -32,6 +41,11 @@ Côté algorithmes :
 ```
 nettoyage : 13 lignes, invalides [ligne 4 : email sans @, ligne 9 : nom vide, ligne 11 : 4 champs], doublons [ANA@MAIL.FR]
 ```
+
+**📖 Rappel :** `LinkedHashMap` et `putIfAbsent` (chapitre 9, projet 2), `split` et `trim` (chapitre 4).
+
+**👉 À toi :**
+
 - **`record Customer(String email, String name, String city)`**.
 - **`final class Importer`**, construit avec `(Connection conn, int chunk)` : son constructeur coupe l'auto-commit. Il garde deux listes, rendues par `problems()` et `duplicates()`.
 - **`private Customer parse(int number, String line)`** (numéro à partir de 1) : `split(";")`, puis, dans cet ordre :
@@ -47,6 +61,24 @@ nettoyage : 13 lignes, invalides [ligne 4 : email sans @, ligne 9 : nom vide, li
 ```
 clients.csv : 9 inseres, lots [4, 4, 1], cles [1, 2, 3, 4, 5, 6, 7, 8, 9], rejets []
 ```
+
+**📖 La leçon : les lots (batch).** Au lieu d'envoyer chaque `INSERT` séparément, on les **met de côté**, puis on les envoie **d'un coup** :
+
+```java
+try (PreparedStatement ps = conn.prepareStatement("INSERT INTO bocaux (nom, grammes) VALUES (?, ?)")) {
+    for (String n : List.of("sel", "the", "cafe")) {
+        ps.setString(1, n);
+        ps.setInt(2, 100);
+        ps.addBatch();                  // met l'ordre de côté
+    }
+    int[] r = ps.executeBatch();        // [1, 1, 1] : une case par ordre, le nombre de lignes touchées
+}
+```
+
+Si un ordre du lot échoue, `executeBatch()` lance une `BatchUpdateException` : `getUpdateCounts()` dit, case par case, ce qui a marché (`Statement.EXECUTE_FAILED` pour un échec).
+
+**👉 À toi :**
+
 - **Le schéma :** `Data.SCHEMA`, avant de créer l'`Importer`.
 - **Dans `Importer`**, trois listes remises à zéro à chaque import : `batchSizes`, `keys` et `rejected`.
 - **`private void collectKeys(PreparedStatement ps)`** : ajoute à `keys` chaque `getInt(1)` de `ps.getGeneratedKeys()`.
@@ -73,6 +105,11 @@ delta.csv : ANNULE (strict), rejets [ben@mail.fr (23505), gus@mail.fr (23505)]
   clients apres l'import strict : [clients=9]
 delta.csv : 3 inseres, lots [4, 1], cles [14, 16, 18], rejets [ben@mail.fr (23505), gus@mail.fr (23505)]
 ```
+
+**📖 Rappel :** `rollback()` défait toute la transaction (projet 2, étape 2).
+
+**👉 À toi :**
+
 - **`static List<String> rows(Connection conn, String sql)`** : chaque ligne vaut `getString(1) + "=" + getString(2)`.
 - Importe `Data.DELTA` (`delta.csv`) en **strict**, puis affiche `  clients apres l'import strict : ` suivi de `rows(conn, "SELECT 'clients', COUNT(*) FROM customers")`.
 - Puis importe **le même** fichier en mode **tolérant**.
@@ -89,6 +126,11 @@ zoe : cle 19
 par ville : [LYON=6, PARIS=3, LILLE=1]
 journal : [clients.csv=9/0, delta.csv=3/2, nettoyage=0/0]
 ```
+
+**📖 La leçon : un lot de `Statement`.** Un `Statement` a aussi `addBatch(sql)` et `executeBatch()` : chaque ordre du lot peut être différent. `clearBatch()` vide le lot sans l'envoyer.
+
+**👉 À toi :**
+
 - **Un `Statement`**, avec trois `addBatch` :
   1. `UPDATE customers SET city = UPPER(city)` ;
   2. `DELETE FROM customers WHERE city = 'NICE'` ;

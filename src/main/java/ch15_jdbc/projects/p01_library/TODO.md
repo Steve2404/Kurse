@@ -1,6 +1,8 @@
 # Projet 1 — Le catalogue de la bibliothèque (`Connection`, `Statement`, `PreparedStatement`, `ResultSet`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch15_jdbc/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 15) :**
 - **l'URL JDBC** : `jdbc:` + le fournisseur + le reste (propre au fournisseur) ;
@@ -27,6 +29,23 @@ Côté algorithmes : le découpage d'une URL, une pagination (`LIMIT ? OFFSET ?`
 
 **Règle du crescendo :** chapitres 1 à 15.
 
+**Ce que le chapitre 15 t'apprend :** **JDBC**, la façon standard dont un programme Java parle à une **base de données**. Une base range des données dans des **tables** (des lignes et des colonnes), et on lui parle en **SQL** : `CREATE TABLE`, `INSERT`, `SELECT`, `UPDATE`, `DELETE`. Ici, la base est **H2**, qui tourne en mémoire, dans ton programme : rien à installer.
+
+Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet : un placard de cuisine.
+
+**Les imports :** `java.sql.*`.
+
+**Le plus simple : lance avec la flèche verte.** IntelliJ ajoute tout seul le pilote H2, déclaré dans `pom.xml`.
+
+**Dans le terminal** (depuis `Kurse`), il faut ajouter le **pilote** H2 au classpath. C'est un fichier `.jar` que Maven a téléchargé dans ton dossier personnel. Sous Windows, les chemins d'un classpath se séparent par `;` :
+
+```
+javac -d build/ch15-p01 -sourcepath src/main/java src/main/java/ch15_jdbc/projects/p01_library/LibraryApp.java
+java -cp "build/ch15-p01;$env:USERPROFILE\.m2\repository\com\h2database\h2\2.3.232\h2-2.3.232.jar" ch15_jdbc.projects.p01_library.LibraryApp
+```
+
+`$env:USERPROFILE` est ton dossier personnel, dans PowerShell. Sans le pilote, Java ne sait pas parler à H2 : `No suitable driver found for jdbc:h2:mem:…`.
+
 ---
 
 ## Tableau de bord
@@ -37,6 +56,25 @@ Côté algorithmes : le découpage d'une URL, une pagination (`LIMIT ? OFFSET ?`
 connexion : jdbc | h2 | mem:p01_library ; autoCommit true ; valide true
 schema : execute false, executeUpdate 0
 ```
+
+**📖 La leçon : se connecter, exécuter un ordre.**
+
+```java
+try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:placard", "sa", "")) {   // URL, utilisateur, mot de passe
+    try (Statement st = conn.createStatement()) {
+        st.executeUpdate("CREATE TABLE bocaux (id INT AUTO_INCREMENT PRIMARY KEY, nom VARCHAR(20) NOT NULL, grammes INT)");
+    }
+}
+```
+
+- L'**URL** dit quelle base ouvrir : `jdbc:` + le nom du pilote (`h2`) + la base (`mem:placard`, en mémoire) ;
+- `Connection`, `Statement` et `ResultSet` sont des **ressources** : on les ferme, avec un try-with-resources (chapitre 11) ;
+- `executeUpdate` pour un ordre qui modifie (rend le nombre de lignes touchées), `executeQuery` pour un `SELECT` (rend un `ResultSet`), `execute` pour n'importe quel ordre.
+
+Toutes ces méthodes lancent des `SQLException` (vérifiées). `e.getSQLState()` donne un **code** de 5 caractères qui décrit l'erreur.
+
+**👉 À toi :**
+
 - **`static String urlParts(String url)`** dans `LibraryApp` : découpe l'URL avec `split(":", 3)` (au plus 3 morceaux), puis les joint avec `" | "`.
 - **La connexion :** `DriverManager.getConnection(Data.URL, Data.USER, Data.PASSWORD)` dans un try-with-resources, qui englobe **tout** le reste du `main`. Affiche `urlParts(Data.URL)`, `getAutoCommit()` et `isValid(1)`.
 - **Le schéma**, avec un `Statement kept = conn.createStatement()` (garde la variable `kept` : elle **sert après** le try, à l'étape 5) :
@@ -52,6 +90,29 @@ Camus : [L'Etranger (1942), La Peste (1947), Le Premier Homme (1994)]
 find 978-05 : Book[isbn=978-05, title=La Peste, author=Camus, pubYear=1947, pages=336]
 ...
 ```
+
+**📖 La leçon : `PreparedStatement`, une requête avec des trous.** Les valeurs ne sont **jamais** collées dans le texte SQL : on met des `?`, numérotés à partir de **1**, puis on les remplit :
+
+```java
+try (PreparedStatement ps = conn.prepareStatement("INSERT INTO bocaux (nom, grammes) VALUES (?, ?)")) {
+    ps.setString(1, "riz");
+    ps.setInt(2, 500);
+    ps.executeUpdate();                       // 1 : une ligne insérée
+}
+try (PreparedStatement ps = conn.prepareStatement("SELECT nom, grammes FROM bocaux WHERE grammes > ? ORDER BY nom")) {
+    ps.setInt(1, 100);
+    try (ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {                   // passe à la ligne suivante ; false quand il n'y en a plus
+            System.out.println(rs.getString("nom") + " " + rs.getInt(2));   // par nom de colonne, ou par numéro (à partir de 1)
+        }
+    }
+}
+```
+
+Un `ResultSet` commence **avant** la 1re ligne : il faut appeler `next()` avant de lire. Pour un `NULL`, `getInt` rend 0 : `wasNull()`, juste après, dit si la valeur était `NULL`. `setNull(i, Types.INTEGER)` écrit un `NULL`.
+
+**👉 À toi :**
+
 - **`record Book(String isbn, String title, String author, int pubYear, Integer pages)`** :
   - `pages` est un `Integer` : `null` quand c'est inconnu ;
   - `static Book parse(String line)` : `split("\\|", -1)` (le `-1` garde le dernier champ, même vide) ; un champ `pages` vide donne `null` ;
@@ -81,6 +142,11 @@ recherche "le" : arret a la page 3 (vide)
 par siecle : {1800=4, 1900=6}
 Hugo +10 pages : 3 lignes ; supprimes avant 1830 : 1 ; inconnu : 0 ; restent 9
 ```
+
+**📖 Rappel :** `LIMIT ? OFFSET ?` sont des paramètres comme les autres. Un `TreeMap` pour un affichage trié (chapitre 9).
+
+**👉 À toi :**
+
 - **`List<String> search(String word, int page, int size)`** :
   - la requête : `SELECT title FROM books WHERE LOWER(title) LIKE ? ORDER BY title LIMIT ? OFFSET ?` ;
   - les paramètres : `"%" + word.toLowerCase() + "%"`, `size`, puis `(page - 1) * size`.
@@ -103,6 +169,11 @@ pieges :
   colonne 0 : 90008
   ...
 ```
+
+**📖 Rappel :** chaque piège dans son propre `try`/`catch (SQLException e)` (chapitre 11), et `e.getSQLState()` pour le code.
+
+**👉 À toi :**
+
 - Un seul `Statement st` (try-with-resources) pour toute la méthode. Chaque erreur est attrapée **séparément** (`catch (SQLException e)`), et tu affiches `e.getSQLState()`, avec deux espaces devant :
   1. `rs = st.executeQuery("SELECT title FROM books ORDER BY isbn")`, puis `rs.getString(1)` **avant** `next()` ;
   2. après `rs.next()`, `rs.getString(0)` ;
@@ -125,6 +196,11 @@ injection :
   PreparedStatement avec L'Etranger : 1 livre
 apres le try : Statement inutilisable, SQLState 90007
 ```
+
+**📖 Rappel :** la différence entre coller une valeur dans le SQL (`Statement`) et la passer en paramètre (`PreparedStatement`, étape 2). Fermer une ressource ferme aussi celles qu'elle a créées.
+
+**👉 À toi :**
+
 - Dans `Catalog` :
   - `int countByTitleUnsafe(String title)` **colle** le titre dans le SQL : `"SELECT COUNT(*) FROM books WHERE title = '" + title + "'"`, avec un `Statement` ;
   - `int countByTitle(String title)` fait la même chose avec `WHERE title = ?`.

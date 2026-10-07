@@ -1,6 +1,8 @@
 # Projet 6 — Le générateur de rapports et la copie de base (métadonnées)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch15_jdbc/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 15) :**
 - **`ResultSetMetaData`** (`rs.getMetaData()`) : la description d'un résultat **inconnu à l'avance** :
@@ -23,6 +25,15 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 15.
 
+**Tes outils pour ce projet :** la flèche verte, ou le terminal avec le pilote H2 (projet 1, en-tête) :
+
+```
+javac -d build/ch15-p06 -sourcepath src/main/java src/main/java/ch15_jdbc/projects/p06_report/ReportApp.java
+java -cp "build/ch15-p06;$env:USERPROFILE\.m2\repository\com\h2database\h2\2.3.232\h2-2.3.232.jar" ch15_jdbc.projects.p06_report.ReportApp
+```
+
+**À quoi sert ce projet ?** Écrire du code qui marche avec **n'importe quelle** table, sans connaître ses colonnes à l'avance : la base les **décrit** elle-même (les *métadonnées*).
+
 ---
 
 ## Tableau de bord
@@ -32,6 +43,17 @@ Côté algorithmes :
 ```
 base H2, pilote H2 JDBC Driver, utilisateur SA, lots true, points de sauvegarde true
 ```
+
+**📖 La leçon : ce que la base dit d'elle-même.**
+
+```java
+DatabaseMetaData meta = conn.getMetaData();
+meta.getDatabaseProductName()      // "H2"
+meta.supportsBatchUpdates()        // true
+```
+
+**👉 À toi :**
+
 - **Deux connexions**, dans le même try-with-resources :
   - `conn = DriverManager.getConnection(Data.URL, Data.USER, Data.PASSWORD)` ;
   - `copy = DriverManager.getConnection(Data.COPY_URL)` (vide pour l'instant).
@@ -50,6 +72,23 @@ Le Proces      | Kafka  |  7.20 | -
 ...
 (4 lignes)
 ```
+
+**📖 La leçon : ce qu'un résultat dit de ses colonnes.**
+
+```java
+try (ResultSet rs = st.executeQuery("SELECT nom AS article, grammes FROM bocaux")) {
+    ResultSetMetaData md = rs.getMetaData();
+    md.getColumnCount()            // 2
+    md.getColumnLabel(1)           // ARTICLE : le nom affiché (l'alias)
+    md.getColumnTypeName(1)        // CHARACTER VARYING
+    md.getColumnType(2)            // un code de java.sql.Types, ici Types.INTEGER
+}
+```
+
+`rs.getObject(i)` lit une valeur de **n'importe quel** type.
+
+**👉 À toi :**
+
 - **`final class TablePrinter`**, avec `static List<String> render(ResultSet rs)` :
   1. Avec `ResultSetMetaData`, pour chaque colonne `i` (de 1 à `getColumnCount()`) :
      - l'en-tête : `getColumnLabel(i).toLowerCase()` ;
@@ -78,6 +117,13 @@ BOOKS : cle ID, [...], references {AUTHOR_ID=AUTHORS, PUBLISHER_ID=PUBLISHERS}
 ordre de creation : [AUTHORS, PUBLISHERS, BOOKS, REVIEWS, TAGS]
 ordre de suppression : [TAGS, REVIEWS, BOOKS, PUBLISHERS, AUTHORS]
 ```
+
+**📖 La leçon : explorer les tables.** `meta.getTables(…)`, `getColumns(…)`, `getPrimaryKeys(…)` et `getImportedKeys(…)` rendent des `ResultSet`, qu'on lit comme ceux d'une requête, avec des noms de colonnes fixés par la norme (`TABLE_NAME`, `COLUMN_NAME`…).
+
+**📖 Rappel :** le tri topologique de Kahn (chapitre 9, projet 3).
+
+**👉 À toi :**
+
 - **`final class Schema`**, construit avec la `Connection` (il garde aussi son `DatabaseMetaData`). Toutes les recherches utilisent le catalogue `null` et le schéma `"PUBLIC"` :
   - `List<String> tables()` : `getTables(null, "PUBLIC", "%", new String[]{"TABLE"})`, colonne `TABLE_NAME`, triée ;
   - `List<String> columns(String table)` : `getColumns(null, "PUBLIC", table, "%")`. Chaque colonne s'écrit `COLUMN_NAME TYPE_NAME`, plus :
@@ -105,6 +151,11 @@ copie : 5/5 tables identiques
 vider AUTHORS en premier : 23503
 vider dans l'ordre de suppression : 16 lignes supprimees, il en reste 0
 ```
+
+**📖 Rappel :** dans un texte SQL, une apostrophe s'écrit `''` (comme dans un motif `MessageFormat`, chapitre 11). Une clé étrangère empêche de supprimer une ligne encore référencée.
+
+**👉 À toi :**
+
 - **Dans `Schema`** :
   - `private static String literal(Object value, int sqlType)` : `NULL` pour `null` ; `DATE '<valeur>'` si le type vaut `Types.DATE` ; tel quel pour un `Number` ; sinon, entre apostrophes, chaque `'` intérieure **doublée** ;
   - `List<String> dump()`, pour chaque table dans l'ordre de création :

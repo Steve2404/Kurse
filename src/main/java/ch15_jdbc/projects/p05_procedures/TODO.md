@@ -1,6 +1,8 @@
 # Projet 5 — Le programme de fidélité (procédures stockées, `CallableStatement`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch15_jdbc/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 15) :**
 - **`CallableStatement`**, créé par `conn.prepareCall(…)`, avec la syntaxe d'échappement JDBC :
@@ -29,6 +31,15 @@ Ces fonctions servent à la fois **depuis Java** et **dans le SQL**.
 
 **Règle du crescendo :** chapitres 1 à 15.
 
+**Tes outils pour ce projet :** la flèche verte, ou le terminal avec le pilote H2 (projet 1, en-tête) :
+
+```
+javac -d build/ch15-p05 -sourcepath src/main/java src/main/java/ch15_jdbc/projects/p05_procedures/LoyaltyApp.java
+java -cp "build/ch15-p05;$env:USERPROFILE\.m2\repository\com\h2database\h2\2.3.232\h2-2.3.232.jar" ch15_jdbc.projects.p05_procedures.LoyaltyApp
+```
+
+**À quoi sert ce projet ?** Une **procédure stockée** est un programme rangé **dans** la base, qu'on appelle depuis Java ou depuis le SQL. Avec H2, une procédure est simplement une méthode Java `public static`, que la base enregistre sous un nom.
+
 ---
 
 ## Tableau de bord
@@ -39,6 +50,21 @@ Ces fonctions servent à la fois **depuis Java** et **dans le SQL**.
 alias : 6 procedures enregistrees
 cartes refusees par LUHN en SQL : [4539 1488 0343 6468, 1234 5678 9012 3456]
 ```
+
+**📖 La leçon : enregistrer une méthode Java dans H2.**
+
+```java
+public class Atelier {
+    public static int triple(int n) { return 3 * n; }
+}
+st.execute("CREATE ALIAS TRIPLE FOR \"" + Atelier.class.getName() + ".triple\"");
+// ensuite, en SQL : SELECT TRIPLE(grammes) FROM bocaux
+```
+
+La classe et la méthode doivent être **`public`** : c'est H2 qui l'appelle, depuis un autre paquet.
+
+**👉 À toi :**
+
 - **Dans `public final class StoredProcs`** (H2 la charge par son nom : elle **doit** être `public`), un constructeur privé et ces méthodes `public static` :
   - `boolean luhn(String card)` :
     - enlève les espaces ;
@@ -76,6 +102,22 @@ OUT : POINTS(120, GOLD) = 41, POINTS(120, BRONZE) = 17
 OUT : LUHN(7992 7398 713) = true
 IN OUT : BRONZE -> SILVER -> GOLD -> GOLD
 ```
+
+**📖 La leçon : `CallableStatement`, appeler une procédure.** La syntaxe standard est entre accolades. Le `?` de gauche reçoit le **résultat** :
+
+```java
+try (CallableStatement cs = conn.prepareCall("{? = call TRIPLE(?)}")) {
+    cs.registerOutParameter(1, Types.INTEGER);    // le paramètre 1 est une SORTIE (OUT), de type entier
+    cs.setInt(2, 14);                             // le paramètre 2 est une ENTRÉE (IN)
+    cs.execute();
+    cs.getInt(1)                                  // 42
+}
+```
+
+Un paramètre **IN OUT** est à la fois une entrée (`set…`) et une sortie (`registerOutParameter`, puis `get…`).
+
+**👉 À toi :**
+
 - **`{? = call POINTS(?, ?)}`** : le `?` de gauche est le paramètre **1**. Déclare-le avec `registerOutParameter(1, Types.INTEGER)`, puis `setInt(2, 120)`, `setString(3, "GOLD")`, `execute()` et `getInt(1)`. **Réutilise** le même `CallableStatement` : change seulement le paramètre 3 (`"BRONZE"`), puis `execute()` de nouveau.
 - **`{? = call LUHN(?)}`** : `Types.BOOLEAN`, la carte `"7992 7398 713"`, puis `getBoolean(1)`.
 - **`{call NEXT_TIER(?)}`** en IN OUT : une liste qui commence par `"BRONZE"`. Trois fois de suite :
@@ -94,6 +136,11 @@ CREDIT_PURCHASES : 6 achats credites ; {Ana=GOLD/53, Ben=SILVER/45, Cleo=BRONZE/
 TOP_CUSTOMERS(3) : [Ana=53, Ben=45, Cleo=36]
 PROMOTE(30) : 2 promus ; {Ana=GOLD/53, Ben=GOLD/45, Cleo=SILVER/36, Dan=BRONZE/6}
 ```
+
+**📖 Rappel :** un lot (`addBatch`, `executeBatch`, projet 4) peut être utilisé **dans** une procédure. Une procédure peut aussi rendre un `ResultSet`.
+
+**👉 À toi :**
+
 - **Dans `StoredProcs`**, chacune reçoit la `Connection` en **1er** paramètre :
   - `int creditPurchases(Connection conn)` :
     - lis `SELECT p.customer_id, p.amount, p.card, c.tier FROM purchases p JOIN customers c ON c.id = p.customer_id ORDER BY p.id` ;
@@ -116,6 +163,11 @@ PROMOTE(30) : 2 promus ; {Ana=GOLD/53, Ben=GOLD/45, Cleo=SILVER/36, Dan=BRONZE/6
 procedure inconnue : 90022
 parametre oublie : 90012
 ```
+
+**📖 Rappel :** chaque appel fautif dans son `try`, et `getSQLState()` (projet 1, étape 4).
+
+**👉 À toi :**
+
 - `conn.prepareCall("{call BONUS(?)}")`, attrapée.
 - `{? = call POINTS(?, ?)}`, avec seulement `registerOutParameter(1, …)` et `setInt(2, 50)`, puis `execute()`, attrapée.
 

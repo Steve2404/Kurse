@@ -1,6 +1,13 @@
 # Chapitre 15 (JDBC) — Mode d'emploi
 
 Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est le même qu'aux chapitres précédents :
+
+> **Comment sont faits les énoncés.** Chaque étape d'un projet suit le même schéma :
+> - **📖 La leçon** : la notion expliquée simplement, avec un exemple sur **un autre sujet** que le projet ;
+> - **👉 À toi** : ce que tu construis ;
+> - **🧪 Expériences** et **❓ Questions** : tu essaies, tu observes, tu réponds en commentaire.
+>
+> Les gestes de base sont expliqués une fois pour toutes dans le **projet 0 du chapitre 1** (`ch1_buildingblocks/projects/p00_bonjour`) : créer une classe, lancer, `Check`, arguments, terminal, lire une erreur. Relis-le si l'un d'eux te manque. Chaque projet rappelle aussi ses commandes exactes.
 - des **projets** à construire de A à Z, pour **comprendre** ;
 - des **drills** chronométrés, répétés à intervalles espacés, pour **retenir**.
 
@@ -82,9 +89,11 @@ ch15_jdbc/
 │   ├── README.md            ← la liste des 7 projets, à cocher
 │   └── p01_library/
 │       ├── TODO.md          ← L'ÉNONCÉ
+│       ├── INDICES.md       ← 2 indices repliés par étape, sans code (si tu bloques)
 │       ├── Data.java        ← les données (URL, schéma, lignes) : tu les lis, tu ne les modifies pas
 │       ├── Check.java       ← le correcteur : tu le LANCES
 │       ├── solution/        ← la correction : à la fin seulement
+│       │   └── CORRIGE.md   ← étape par étape : code, réponses aux questions, résultats des expériences
 │       └── (tes types)      ← Book, Catalog, LibraryApp... : c'est TOI qui les crées
 └── drills/ …
 
@@ -109,6 +118,8 @@ ch15_jdbc-lab/               ← (racine du dépôt) Docker : PostgreSQL et MySQ
 1. **Écris le SQL d'abord dans ta tête** : quelles lignes doit-il rendre ? Puis seulement le code Java.
 2. **Fais une étape à la fois.** Lance `Check`, corrige, puis coche ☐ → ☑.
 3. **Fais les expériences** : provoque chaque `SQLException` au moins une fois, et lis son SQLState.
+4. **Réponds aux questions par écrit**, en commentaire dans ton code.
+5. **Vérifie l'étape** : ouvre la section de cette étape (et **seulement** elle) dans `solution/CORRIGE.md`. Compare tes réponses et le résultat de tes expériences. Une réponse fausse : corrige ton commentaire avec tes propres mots.
 
 ### 6.3 Lire la réponse de `Check`
 
@@ -126,8 +137,8 @@ ch15_jdbc-lab/               ← (racine du dépôt) Docker : PostgreSQL et MySQ
 | Palier | Temps | Ce que tu fais |
 |---|---|---|
 | 1 | jusqu'à 20 min | exécute ta requête **seule** et affiche toutes ses lignes ; relis le SQLState |
-| 2 | 20 min de plus | relis la carte mémoire du drill du même thème, ou demande-moi un **indice** |
-| 3 | en dernier recours | lis **uniquement** la partie concernée de `solution/`, ferme, réécris |
+| 2 | 20 min de plus | ouvre l'**indice 1** de l'étape dans `INDICES.md`, puis l'**indice 2** s'il ne suffit pas ; relis la carte mémoire du drill du même thème, ou demande-moi un **indice** |
+| 3 | en dernier recours | lis **uniquement** la section de l'étape dans `solution/CORRIGE.md` (ou la partie concernée de `solution/`), ferme, réécris |
 
 ---
 
