@@ -17,6 +17,15 @@
 
 **Règle du crescendo :** chapitres 1 à 4. Pas de collection : l'historique est un **tableau**.
 
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch4-p02 -sourcepath src/main/java src/main/java/ch4_coreapis/projects/p02_editor/Editor.java
+java "-Duser.language=fr" -cp build/ch4-p02 ch4_coreapis.projects.p02_editor.Editor
+```
+
+(`-sourcepath` : voir le projet 1.)
+
 ---
 
 ## Le problème
@@ -49,6 +58,10 @@ Un mini-éditeur de ligne garde son texte dans **un seul** `StringBuilder` et ex
 
 ### ☐ Étape 1 — Analyser une commande
 
+**📖 La leçon : `split` avec une limite.** `split(" ", 2)` coupe **au plus en 2 morceaux** : seulement au 1er séparateur. Le reste du texte est gardé tel quel, espaces compris, dans le 2e morceau.
+
+**👉 À toi :**
+
 - **Le découpage :** `"INSERT 8 le grand "` se coupe en `INSERT` et `"8 le grand "` avec `split(" ", 2)`.
   - **Question :** quel est le rôle du 2e argument de `split` ? Que perdrait-on sans lui, à cause des espaces du texte ?
 - **Le choix :** un `switch` sur le nom de la commande.
@@ -60,6 +73,24 @@ APPEND -> [Bonjour monde] (13)
 INSERT -> [Bonjour le grand monde] (22)
 REPLACE -> [Bonjour le GRAND monde] (22)
 ```
+
+**📖 La leçon : `StringBuilder`, un texte qu'on peut modifier.** Un `String` ne change jamais (projet 1). Un `StringBuilder` est un texte **modifiable** : ses méthodes changent **le même** objet, sans en créer un nouveau.
+
+```java
+StringBuilder sb = new StringBuilder("chat");
+sb.append(" noir");           // ajoute à la fin        : "chat noir"
+sb.insert(0, "Le ");          // insère en position 0   : "Le chat noir"
+sb.delete(0, 3);              // supprime [0, 3)        : "chat noir"
+sb.replace(0, 4, "chien");    // remplace [0, 4)        : "chien noir"
+sb.reverse();                 // retourne               : "rion neihc"
+sb.length()                   // le nombre de caractères
+sb.toString()                 // le texte, en String
+```
+
+Comme pour `substring`, dans `delete` et `replace`, la fin est **exclue**.
+
+**👉 À toi :**
+
 - **Les intervalles :** dans `replace`, `delete` et `substring`, l'intervalle est `[début, fin)`. La fin est **exclue**.
   - **À la main :** compte les positions de `"Bonjour le grand monde"`. Pourquoi `REPLACE 11 16` ?
 - **`append` modifie le `StringBuilder` ET le rend.**
@@ -71,6 +102,11 @@ REPLACE -> [Bonjour le GRAND monde] (22)
 CUT -> [e GRAND monde] (13), presse-papiers [Bonjourl]
 PASTE -> refuse : position 99 hors limites (longueur 13)
 ```
+
+**📖 Rappel :** `substring` (projet 1, étape 4) existe aussi sur un `StringBuilder`. Il **rend** un `String` sans modifier le `StringBuilder`.
+
+**👉 À toi :**
+
 - **Couper :** `substring` (qui rend un `String` **sans** modifier le buffer), puis `delete`.
 - **Coller :** vérifie la position **avant** `insert`.
   - **Expérience :** retire la vérification. Quelle exception lève `insert(99, …)` ?
@@ -81,6 +117,19 @@ PASTE -> refuse : position 99 hors limites (longueur 13)
 UNDO -> annule [Bonjour le GRAND monde] (historique 3)
 UNDO -> rien a annuler [Bonjour le GRAND monde] (historique 0)
 ```
+
+**📖 La leçon : décaler les cases d'un tableau.** `System.arraycopy(source, départSource, destination, départDestination, combien)` copie un bloc de cases :
+
+```java
+int[] a = {1, 2, 3, 4, 5};
+System.arraycopy(a, 1, a, 0, 4);     // copie les cases 1 à 4 vers les cases 0 à 3
+// a vaut maintenant [2, 3, 4, 5, 5] : tout a glissé d'une case vers la gauche
+```
+
+**📖 La leçon : vider un `StringBuilder`.** `sb.setLength(0)` le vide, sans créer de nouvel objet. Les autres variables qui désignent ce même `StringBuilder` voient donc aussi le changement.
+
+**👉 À toi :**
+
 - **La structure :** un tableau de `String` et une taille. Le sommet est la case `taille - 1`.
 - **Sauvegarder :** si le tableau est plein, **décale** tout d'une case vers la gauche (avec `System.arraycopy`) pour oublier la plus ancienne copie.
 - **Restaurer :** vide le buffer **sans en créer un nouveau** (`setLength(0)`), puis recharge la copie.
@@ -94,6 +143,11 @@ constante true, variable false, variable.intern() true
 sb.equals false, contenus true, s1 == s3 true, s1 xy, capacite vide 0
 immuable : abc, ABC, concat "abcd" et abc
 ```
+
+**📖 La leçon : le pool des textes.** Java range les **littéraux** texte (`"java"` écrit dans le code) dans une réserve, le **pool**. Deux littéraux identiques désignent donc **le même** objet. `new String(…)`, lui, fabrique toujours un objet **neuf**. C'est pourquoi `==` (qui compare les étiquettes) donne des résultats surprenants, alors qu'`equals` compare toujours le contenu. Chaque ligne de l'étape te fait vérifier un cas : prédis, puis exécute.
+
+**👉 À toi :**
+
 **Reproduis chaque comparaison**, et explique-la en commentaire :
 - **les littéraux :** deux littéraux `"java"` désignent **le même** objet du pool ;
 - **`new String("java")`** crée un **nouvel** objet. `intern()` rend celui du pool ;

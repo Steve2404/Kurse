@@ -24,6 +24,15 @@
 
 **Règle du crescendo :** chapitres 1 à 4. Pas de `Map` pour compter (un `int[26]`), pas de `chars()`, pas de `BigInteger` (c'est justement ce que tu réécris), pas de lambda.
 
+**Ce projet est le 2e laboratoire d'algorithmes**, cette fois sur des **textes**. La méthode est celle du projet 7 : dessiner, prendre un petit exemple, faire un tableau de suivi des variables, puis coder.
+
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch4-p08 -sourcepath src/main/java src/main/java/ch4_coreapis/projects/p08_textlab/TextLab.java
+java "-Duser.language=fr" -cp build/ch4-p08 ch4_coreapis.projects.p08_textlab.TextLab
+```
+
 ---
 
 ## Tableau de bord
@@ -33,6 +42,16 @@
 ```
 anagrammes : Listen=oui triangle=oui Dormitory=oui apple=oui abc=non
 ```
+
+**📖 La leçon : compter des lettres dans un tableau.** Une lettre minuscule `c` a un rang dans l'alphabet : `c - 'a'` (de 0 pour `a` à 25 pour `z`, chapitre 2, projet 3). Ce rang sert d'**indice** dans un tableau de 26 compteurs :
+
+```java
+int[] compte = new int[26];
+compte['c' - 'a']++;      // une lettre c de plus : la case 2 passe à 1
+```
+
+**👉 À toi :**
+
 - Découpe chaque paire de `Data.ANAGRAMS` avec `split("/")`. Mets en minuscules et retire les espaces.
 - **Méthode 1 :** un `new int[26]`. Chaque lettre de la 1re chaîne ajoute 1 à la case `c - 'a'`, chaque lettre de la 2e retire 1. Anagrammes si tout revient à 0.
 - **Méthode 2 :** `toCharArray()`, `Arrays.sort` sur les deux, puis `Arrays.equals`.
@@ -44,6 +63,11 @@ anagrammes : Listen=oui triangle=oui Dormitory=oui apple=oui abc=non
 ```
 rle : aaabccddddde -> 3a1b2c5d1e -> aaabccddddde aller-retour true gain 2
 ```
+
+**📖 La leçon : d'un chiffre écrit vers un nombre.** `'7' - '0'` vaut `7` : les codes des chiffres se suivent. Pour lire `"12"` chiffre par chiffre : on part de 0, puis `nombre = nombre * 10 + chiffre` à chaque chiffre (0 × 10 + 1 = 1, puis 1 × 10 + 2 = 12).
+
+**👉 À toi :**
+
 - **Compresser** `Data.RLE` : pour chaque série de lettres identiques, écris sa longueur puis la lettre.
 - **Décompresser** : lis le nombre chiffre par chiffre (`nombre = nombre * 10 + (c - '0')`), puis répète la lettre (`String.valueOf(c).repeat(n)`).
   - Ton décodeur doit accepter un nombre à **plusieurs chiffres** (`12a`).
@@ -56,6 +80,13 @@ rle : aaabccddddde -> 3a1b2c5d1e -> aaabccddddde aller-retour true gain 2
 cesar : Khoor, Zruog! | Hello, World! | rot13 deux fois Hello, World!
 vigenere : LXFOPVEFRNHR | ATTACKATDAWN
 ```
+
+**📖 La leçon : modifier un caractère.** Un `String` ne change pas. On copie donc le texte dans un `StringBuilder`, puis `sb.setCharAt(i, nouveau)` remplace le caractère en position `i`. Avec un `char[]` (`texte.toCharArray()`), on écrit directement `lettres[i] = nouveau;`, puis `new String(lettres)` refait un texte.
+
+**Rappels :** `Character.isUpperCase(c)` et `Character.isLowerCase(c)` disent si `c` est une majuscule ou une minuscule. Le modulo avec des négatifs : chapitre 2, projet 3, étape 1.
+
+**👉 À toi :**
+
 - **César :** une méthode `caesar(String, int)` qui copie le texte dans un `StringBuilder` puis remplace chaque lettre avec `setCharAt`.
   - Majuscules et minuscules gardent leur casse ; la ponctuation ne change pas.
   - La formule : `(char) ('a' + (c - 'a' + shift) % 26)`.
@@ -71,6 +102,11 @@ vigenere : LXFOPVEFRNHR | ATTACKATDAWN
 addition : 111111111011111111100 (21 chiffres, long max 9223372036854775807)
 factorielle 25 : 15511210043330985984000000 (6 zeros a la fin)
 ```
+
+**📖 Conseil :** pose l'addition `987 + 145` sur papier, comme à l'école, de droite à gauche, et note la retenue à chaque colonne. Ton programme fait exactement les mêmes gestes.
+
+**👉 À toi :**
+
 - **L'addition** de `Data.BIG_A` et `Data.BIG_B`, comme à l'école :
   - de droite à gauche, avec une retenue ;
   - la boucle continue tant qu'il reste un chiffre **ou** une retenue ;
@@ -90,6 +126,11 @@ prefixe commun : inter
 rotations : erbottlewat=true(3) cdab=true(2) acbd=false a=false
 occurrences de ana : 4 avec chevauchement, 2 sans
 ```
+
+**📖 Rappel :** `startsWith`, `concat` (colle deux textes, comme `+`), `contains` et `indexOf(texte, départ)` (projet 1, étapes 3 et 4).
+
+**👉 À toi :**
+
 - **Le préfixe commun** de `Data.PREFIX_WORDS` : pars du premier mot et raccourcis-le (`substring`) tant qu'un mot ne commence pas par lui (`startsWith`).
 - **Les rotations :** b est une rotation de a si les longueurs sont égales **et** si `a.concat(a)` contient b.
   - Le nombre entre parenthèses est l'indice de b dans `a + a`.
@@ -104,6 +145,11 @@ occurrences de ana : 4 avec chevauchement, 2 sans
 ```
 plus long palindrome : geeksskeeg (10) verifie true
 ```
+
+**📖 Conseil :** sur `"abba"`, essaie chaque centre possible à la main (sur une lettre, puis entre deux lettres), et écarte deux doigts tant que les lettres sous tes doigts sont égales.
+
+**👉 À toi :**
+
 - **L'expansion autour d'un centre** sur `Data.PALINDROME_SOURCE` : il y a 2n − 1 centres, sur une lettre (palindrome impair) ou entre deux lettres (palindrome pair).
   - Pour le centre k : `left = k / 2` et `right = left + k % 2`.
   - Écarte `left` et `right` tant que les lettres sont égales.
@@ -119,6 +165,11 @@ plus long palindrome : geeksskeeg (10) verifie true
 |object  while  a builder|
 |changes itself          |
 ```
+
+**📖 Conseil :** découpe à la main les premiers mots sur une largeur de 20, avec un crayon : combien de mots tiennent ? Combien d'espaces restent à répartir ?
+
+**👉 À toi :**
+
 - **Le remplissage glouton :** prends autant de mots que possible, en comptant au minimum un espace entre deux mots, sans dépasser `Data.WIDTH`.
 - **La répartition :** les espaces en trop sont répartis entre les trous. Les **premiers** trous reçoivent un espace de plus quand la division ne tombe pas juste (`espaces / trous` et `espaces % trous`).
 - **La dernière ligne** (ou une ligne d'un seul mot) est alignée à gauche : `String.join(" ", Arrays.copyOfRange(…))`, puis des espaces à droite.
@@ -129,6 +180,11 @@ plus long palindrome : geeksskeeg (10) verifie true
 ```
 sans casse : Apple apple banana Banana cherry date | naturel : Apple Banana apple banana cherry date
 ```
+
+**📖 La leçon : comparer deux textes pour les trier.** `a.compareTo(b)` rend un nombre **négatif** si `a` vient avant `b`, **0** s'ils sont égaux, **positif** si `a` vient après. `compareToIgnoreCase` fait de même en ignorant majuscules et minuscules. Le tri par insertion se déroule comme au projet 7, étape 1.
+
+**👉 À toi :**
+
 - Un **tri par insertion** sur une copie de `Data.UNSORTED`, avec `compareToIgnoreCase`.
 - À égalité (`Apple` et `apple`), l'ordre d'origine est conservé : c'est un tri **stable**.
 - Compare avec l'ordre « naturel » d'`Arrays.sort` : les majuscules d'abord.
@@ -139,6 +195,11 @@ sans casse : Apple apple banana Banana cherry date | naturel : Apple Banana appl
 romains : 4=IV 9=IX 14=XIV 1994=MCMXCIV 2026=MMXXVI 3999=MMMCMXCIX
 relus : XLII=42 MCMXC=1990 CDXLIV=444
 ```
+
+**📖 Rappel :** des tableaux parallèles (projet 6, étape 1) et un `switch` qui rend une valeur (chapitre 3, projet 1, étape 3).
+
+**👉 À toi :**
+
 - **Vers les romains** (glouton) : deux tableaux **parallèles**, `{1000, 900, 500, 400, …, 1}` et `{"M", "CM", "D", "CD", …, "I"}`. Prends toujours la plus grande valeur possible.
 - **Depuis les romains** : une méthode `value(char)` avec un `switch` expression. Une valeur plus petite **avant** une plus grande se soustrait.
 
@@ -147,6 +208,11 @@ relus : XLII=42 MCMXC=1990 CDXLIV=444
 ```
 bases : 10=1010b/Ah 255=11111111b/FFh 2026=11111101010b/7EAh relu 2026 255
 ```
+
+**📖 La leçon : écrire devant.** `sb.insert(0, x)` ajoute `x` **au début** du `StringBuilder`. Pour convertir 10 en binaire : 10 % 2 = 0 (écrit devant), puis 5 % 2 = 1, puis 2 % 2 = 0, puis 1 % 2 = 1 → `1010`.
+
+**👉 À toi :**
+
 - **La conversion :** pour 10, 255 et 2026, divise par 2 (puis par 16) et écris chaque reste **devant** : `insert(0, …)`.
   - Le chiffre hexadécimal vient de `"0123456789ABCDEF".charAt(reste)`.
 - **La vérification** avec `Integer.toBinaryString` et `Integer.toHexString` (en minuscules : utilise `equalsIgnoreCase`). Un `!` apparaîtrait en cas d'écart.

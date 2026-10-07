@@ -9,6 +9,21 @@
 - Crée la classe **`Recall07`** dans le paquet `ch4_coreapis.drills.r07_math`.
 - Tu dois déclarer `long fromDouble = Math.round(3.5);` et `int fromFloat = Math.round(3.5f);`. Le type du résultat **est** la question.
 
+**Les notions de ce drill ont été apprises dans :** projet 4 (étape 2). Si un défi te semble totalement inconnu, ce drill arrive trop tôt : refais d'abord la leçon de ce projet.
+
+<details><summary><b>Comment faire ce drill, concrètement</b> (à lire la 1re fois)</summary>
+
+1. **Note l'heure** de départ (montre ou téléphone).
+2. **Crée la classe** : clic droit sur le dossier `r07_math` → **New** → **Java Class** → `Recall07`. S'il faut d'autres classes, écris-les dans le même fichier, sous `Recall07` (sans `public`).
+3. **Écris `main`**, puis **une ligne par défi**. La ligne qui suit la flèche `→` est **exactement** ce que ton programme doit afficher : `System.out.println("D01 : " + …);`, où les `…` sont des valeurs que **Java** calcule, jamais recopiées.
+4. **Lance `Recall07`** avec la flèche verte, pour voir tes lignes.
+5. **Bloqué plus de 3 minutes sur un défi ?** Écris un commentaire `// D03 : ✗` à sa place, et passe au suivant.
+6. **Lance `Check.java`** (flèche verte). Une ligne `[FAIL]` te montre `attendu` et `obtenu`.
+7. **Ensuite seulement**, ouvre la **carte mémoire** tout en bas (en aperçu Markdown, clique sur le triangle « Ouvrir la carte »), relis tes ✗, et fais les **expériences** (écris la ligne, compile, lis le message, efface la ligne).
+8. **Note** la date, ton temps et tes ✗ dans le tableau de [`drills/README.md`](../README.md).
+
+</details>
+
 ## Défis
 
 - ☐ **D01.** Quatre appels :

@@ -22,6 +22,15 @@
 
 **Indication :** peu d'indices. Recalcule les factures, les conflits et le planning **à la main**.
 
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch4-p06 -sourcepath src/main/java src/main/java/ch4_coreapis/projects/p06_hotel/Hotel.java
+java "-Duser.language=fr" -cp build/ch4-p06 ch4_coreapis.projects.p06_hotel.Hotel
+```
+
+**Ce projet réutilise tout le chapitre :** `split` et `parseInt` (projet 1), `String.format` (projet 1, étape 6), les dates (projet 5), les tableaux 2D (projet 3), `StringBuilder` (projet 2), `Arrays.sort` et `String.join` (projet 4).
+
 ---
 
 ## Le problème
@@ -47,6 +56,19 @@ Un petit hôtel de 3 chambres veut :
 
 ### ☐ Étape 1 — Lire les données
 
+**📖 La leçon : des tableaux parallèles.** Sans classe ni collection, on peut ranger des fiches dans **plusieurs tableaux de même taille** : la case `i` de chaque tableau décrit la **même** fiche.
+
+```java
+String[] noms = new String[3];
+int[] ages = new int[3];
+noms[0] = "Lea";  ages[0] = 8;     // la fiche n° 0
+noms[1] = "Tom";  ages[1] = 10;    // la fiche n° 1
+```
+
+**Indice pour les centimes :** `"120.50"` contient un point. Coupe le texte en deux autour du point, puis convertis chaque morceau. Attention : dans une expression régulière, `.` veut dire « n'importe quel caractère ». Pour un vrai point, écris `"\\."`.
+
+**👉 À toi :**
+
 - **Les chambres et les réservations** : un `split(";")` par ligne. Range les champs dans des **tableaux parallèles** : l'indice i décrit la même réservation dans chaque tableau.
 - **Les prix :** `"120.50"` se convertit en centimes **sans `double`**. Comment ?
 
@@ -56,6 +78,11 @@ Un petit hôtel de 3 chambres veut :
 B1  Lea Martin    SIMPLE 2026-12-18 -> 2026-12-21  3 nuit(s)    272.00  ref LEA-352-101
 CHIFFRE D'AFFAIRES : 2292.60
 ```
+
+**📖 Rappel :** `String.format` avec des largeurs (projet 1, étape 6). Un nombre de centimes inférieur à 10 a besoin d'un zéro devant : `%02d` affiche un entier sur 2 chiffres, complété par des zéros.
+
+**👉 À toi :**
+
 - **Vérifie B1 à la main :** le 18 décembre 2026 est un vendredi. Calcule les trois nuits.
 - **Les colonnes :** `String.format` avec des largeurs (`%-13s`, `%2d`, `%9s`).
 - **Les centimes :** affiche-les avec **deux** chiffres après le point. Que donnerait un affichage naïf pour 8 centimes ?
@@ -66,6 +93,11 @@ CHIFFRE D'AFFAIRES : 2292.60
 B2 et B4 : chambre 102, 1 nuit(s) en commun a partir du 2026-12-23
 B3 et B6 : chambre 101, 1 nuit(s) en commun a partir du 2026-12-22
 ```
+
+**📖 Conseil :** dessine chaque séjour comme un segment sur une frise de dates, arrivée incluse et départ **exclu**. Deux segments se chevauchent quand chacun **commence avant que l'autre finisse**.
+
+**👉 À toi :**
+
 - **La règle :** deux séjours `[a1, d1)` et `[a2, d2)` se chevauchent si `a1 < d2` **et** `a2 < d1`.
   - **Question :** pourquoi B1 (départ le 21) et B3 (arrivée le 21) ne sont-ils **pas** en conflit ?
 - **Les nuits communes :** du plus tardif des deux débuts au plus précoce des deux départs.
@@ -77,6 +109,11 @@ B3 et B6 : chambre 101, 1 nuit(s) en commun a partir du 2026-12-22
       18 19 20 21 22 23 24 25 26 27
 101    #  #  #  #  !  #  .  .  .  .
 ```
+
+**📖 Rappel :** la grille de comptage est un `int[][]` (projet 3). Une ligne de texte se construit avec un `StringBuilder` et `append` (projet 2).
+
+**👉 À toi :**
+
 - Un `int[chambres][nuits]` qui compte les réservations de chaque nuit, puis un `StringBuilder` par ligne.
 - **Question :** une nuit `n` appartient au séjour si `arrivée ≤ n < départ`. Comment l'écrire avec `isBefore` seulement ?
 
@@ -85,6 +122,11 @@ B3 et B6 : chambre 101, 1 nuit(s) en commun a partir du 2026-12-22
 ```
 CLIENTS : Adam Leroy, Hugo Durand, Ines Petit, Lea Martin, Tom Robert, Zoe Bernard
 ```
+
+**📖 Rappel :** copier un tableau avant de le trier (projet 4, étape 1), puis `String.join(", ", copie)`.
+
+**👉 À toi :**
+
 - Trie une **copie** du tableau, puis assemble les noms avec `String.join`.
 
 ---

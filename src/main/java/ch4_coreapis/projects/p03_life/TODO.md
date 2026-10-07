@@ -17,6 +17,15 @@
 
 **Règle du crescendo :** chapitres 1 à 4. Pas de collection.
 
+**À quoi sert ce projet ?** Le **jeu de la vie** de Conway : une grille de cellules vivantes (`#`) ou mortes (`.`). À chaque génération, chaque cellule vit ou meurt selon le nombre de ses voisines vivantes. Les règles exactes sont dans « Le problème », plus bas.
+
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch4-p03 -sourcepath src/main/java src/main/java/ch4_coreapis/projects/p03_life/Life.java
+java "-Duser.language=fr" -cp build/ch4-p03 ch4_coreapis.projects.p03_life.Life
+```
+
 ---
 
 ## Le problème
@@ -35,6 +44,22 @@ Le programme fait évoluer la grille `Data.WORLD` (un **planeur**, qui se dépla
 
 ### ☐ Étape 1 — Du texte à la grille
 
+**📖 La leçon : le tableau à deux dimensions, une grille.** C'est un tableau **de tableaux** : un tableau de lignes, où chaque ligne est un tableau de cases.
+
+```java
+int[][] grille = new int[2][3];    // 2 lignes de 3 cases, toutes à 0
+grille[1][2] = 7;                  // ligne 1, case 2
+System.out.println(Arrays.deepToString(grille));   // [[0, 0, 0], [0, 0, 7]]
+grille.length                      // 2 : le nombre de lignes
+grille[0].length                   // 3 : le nombre de cases de la ligne 0
+```
+
+Pour parcourir toute la grille : une boucle sur les lignes, et dedans, une boucle sur les cases de la ligne (chapitre 3, projet 3).
+
+**📖 La leçon : d'un texte vers des caractères.** `"chat".toCharArray()` rend le tableau `['c', 'h', 'a', 't']`. Ou bien `ligne.charAt(c)`, comme au projet 1.
+
+**👉 À toi :**
+
 - Transforme les lignes de texte en `boolean[][]`. Il y a autant de lignes que de chaînes, et autant de colonnes que de caractères.
 - **Questions :**
   - que contient un `new boolean[3][4]` juste après sa création ?
@@ -42,6 +67,10 @@ Le programme fait évoluer la grille `Data.WORLD` (un **planeur**, qui se dépla
   - `grid.length` et `grid[0].length` désignent quoi ?
 
 ### ☐ Étape 2 — Compter les voisines
+
+**📖 La leçon : sortir du tableau.** Lire une case qui n'existe pas (`t[3]` dans un tableau de 3 cases, ou `t[-1]`) arrête le programme avec une exception. Le message donne l'indice demandé et la taille du tableau : `Index 3 out of bounds for length 3`.
+
+**👉 À toi :**
 
 - **Parcours des 8 voisines :** deux boucles de décalage, de −1 à +1.
 - **À ignorer :** la cellule elle-même et toutes les cases **hors de la grille**. Un `continue` suffit.
@@ -57,6 +86,21 @@ generation 4 (vivantes : 8)
 ....#.....
 ..###.....
 ```
+
+**📖 La leçon : parcourir une grille avec deux for-each.** Quand on n'a pas besoin des numéros de ligne et de colonne :
+
+```java
+int[][] irr = {{1}, {2, 3}, {4, 5, 6}};
+for (int[] ligne : irr) {          // chaque ligne est un int[]
+    for (int v : ligne) {          // chaque case de cette ligne
+        System.out.print(v + " ");
+    }
+    System.out.println();
+}
+```
+
+**👉 À toi :**
+
 - **Le piège classique :** si tu modifies la grille **pendant** que tu la parcours, les voisines des cellules suivantes sont faussées. Il faut calculer la génération suivante dans un **nouveau** tableau.
 - **Le nombre de vivantes :** for-each sur les lignes, puis for-each sur les cellules.
 - **À la main :** dessine la génération 1 du planeur avant d'exécuter.
@@ -67,6 +111,11 @@ generation 4 (vivantes : 8)
 clignotant : 1 etape identique false, 2 etapes identique true, Arrays.equals(lignes) false, equals false
 ligne 2 apres 1 etape : [false, true, true, true, false], dimensions 5x5
 ```
+
+**📖 La leçon : afficher et comparer des tableaux.** Un tableau n'a pas de « joli » affichage à lui : on passe par `Arrays.toString` (une dimension) ou `Arrays.deepToString` (une grille). Pour comparer, `Arrays` propose aussi `equals` et `deepEquals`. L'étape te fait découvrir pourquoi il en faut deux.
+
+**👉 À toi :**
+
 - **Trois comparaisons, trois réponses.** Explique en commentaire pourquoi :
   - `Arrays.deepEquals` voit l'égalité ;
   - `Arrays.equals` ne la voit **pas** : il compare des tableaux de tableaux, donc des **références** de lignes ;

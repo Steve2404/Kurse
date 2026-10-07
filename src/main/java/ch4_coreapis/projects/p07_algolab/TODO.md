@@ -24,6 +24,19 @@ C'est le projet qui te rend **à l'aise en algorithmique**. Pour chaque étape, 
 
 **Règle du crescendo :** chapitres 1 à 4. Pas de collection (la file du BFS est un tableau), pas de lambda, pas de récursion obligatoire (le chapitre 5 en parlera). Des méthodes `static` simples sont les bienvenues : une par étape.
 
+**Ce projet est un laboratoire d'algorithmes.** Il n'y a presque pas d'API nouvelle : la difficulté est de **comprendre et dérouler** un algorithme. Voici la méthode, à appliquer à **chaque** étape :
+1. **Dessine** le tableau en cases sur papier, avec les indices en dessous.
+2. **Prends un petit exemple** : 4 ou 5 valeurs.
+3. **Fais un tableau de suivi** : une colonne par variable (`i`, `j`, `min`…), une ligne par tour de boucle. Remplis-le à la main.
+4. **Seulement ensuite**, code, et compare ce que ton programme affiche avec ton tableau de suivi. Pour voir tes variables, ajoute temporairement des `System.out.println("i=" + i + " j=" + j);`, puis efface-les.
+
+**Tes outils pour ce projet** (pas d'arguments) :
+
+```
+javac -d build/ch4-p07 -sourcepath src/main/java src/main/java/ch4_coreapis/projects/p07_algolab/AlgoLab.java
+java "-Duser.language=fr" -cp build/ch4-p07 ch4_coreapis.projects.p07_algolab.AlgoLab
+```
+
 ---
 
 ## Tableau de bord
@@ -35,6 +48,19 @@ insertion : [1, 3, 3, 8, 8, 15, 17, 23, 29, 42] decalages=24
 selection : echanges=6 identique a Arrays.sort true true original intact true
 uniques : [1, 3, 8, 15, 17, 23, 29, 42] (8 sur 10)
 ```
+
+**📖 La leçon : échanger deux cases.** Pour échanger `t[i]` et `t[j]`, il faut une **variable de côté**, comme pour échanger le contenu de deux verres :
+
+```java
+int tmp = t[i];
+t[i] = t[j];
+t[j] = tmp;
+```
+
+**Rappels :** `Arrays.copyOf` et `clone()` font des copies (projet 4). `Arrays.equals` compare deux tableaux, et `Arrays.mismatch(a, b)` rend `-1` quand ils sont identiques.
+
+**👉 À toi :**
+
 - **Tri par insertion :** chaque nouvel élément glisse vers la gauche tant que son voisin est **strictement** plus grand. Compte chaque décalage.
 - **Tri par sélection :** à chaque tour, cherche le minimum du reste et échange-le avec la case courante. Ne compte que les échanges **réels** (`min != i`).
 - Trie toujours une **copie** de `Data.NUMBERS` (`Arrays.copyOf` pour l'une, `clone()` pour l'autre). Le dernier `true` le prouve.
@@ -50,6 +76,11 @@ uniques : [1, 3, 8, 15, 17, 23, 29, 42] (8 sur 10)
 paires de somme 32 : 3+29 15+17 en 7 etapes
 borne inferieure : 8->3 9->5 0->0 50->10
 ```
+
+**📖 Conseil :** pour les deux pointeurs, dessine deux flèches sous le tableau trié, une à chaque bout, et fais-les avancer l'une vers l'autre à la main. `>>> 1` décale d'un cran à droite, c'est-à-dire divise par 2 (chapitre 2, projet 2).
+
+**👉 À toi :**
+
 - **Deux pointeurs** sur la copie triée : `left` part du début, `right` de la fin.
   - Somme trop petite → `left++` ; trop grande → `right--`.
   - Somme trouvée → note la paire, puis **saute les doublons** des deux côtés.
@@ -66,6 +97,11 @@ sommes d'intervalle : [0,4]=60 [2,2]=17 [5,9]=89 [0,9]=149
 fenetre de 3 : max=65 a partir de l'indice 5 [42, 15, 8]
 kadane : max=6 jours 3 a 6 [4, -1, 2, 1]
 ```
+
+**📖 Conseil :** calcule le tableau `prefix` à la main sur 4 nombres, par exemple `{3, 1, 4, 1}` → `{0, 3, 4, 8, 9}`. La somme des cases 1 à 2 vaut alors `prefix[3] - prefix[1]` = 8 − 3 = 5 = 1 + 4.
+
+**👉 À toi :**
+
 - **Les sommes préfixes** sur `Data.NUMBERS` **non trié** : un tableau `prefix` de taille n + 1, avec `prefix[i + 1] = prefix[i] + n[i]`.
   - Chaque requête de `Data.RANGES` (fin **incluse**) se calcule en une soustraction : `prefix[fin + 1] - prefix[debut]`.
 - **La fenêtre glissante** de taille `Data.WINDOW` : ajoute l'élément qui entre, retire celui qui sort. Ne re-somme jamais toute la fenêtre.
@@ -79,6 +115,11 @@ kadane : max=6 jours 3 a 6 [4, -1, 2, 1]
 premiers <= 60 (17) : 2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59
 jumeaux : 6 paires
 ```
+
+**📖 Conseil :** fais le crible à la main jusqu'à 30, sur une grille de nombres : barre les multiples de 2, puis de 3, puis de 5. Observe à partir de quel nombre tu commences à barrer à chaque fois.
+
+**👉 À toi :**
+
 - Un `boolean[]` de taille `Data.SIEVE_LIMIT + 1` : `true` veut dire « barré ». Un tableau neuf vaut `false` partout.
 - Pour chaque i non barré avec `i * i <= limite`, barre ses multiples **à partir de `i * i`**.
 - **Les jumeaux** : les paires (p, p + 2) toutes deux premières, avec p + 2 ≤ limite.
@@ -92,6 +133,11 @@ rotation : [[9, 5, 1], [10, 6, 2], [11, 7, 3], [12, 8, 4]]
 spirale : 1 2 3 4 8 12 11 10 9 5 6 7
 diagonale : 18 transposee de la transposee identique true
 ```
+
+**📖 Conseil :** dessine la matrice 3 × 4 avec ses indices `[ligne][colonne]`, puis la transposée 4 × 3. Pour chaque case de départ, écris où elle arrive : la formule apparaît.
+
+**👉 À toi :**
+
 - `Data.MATRIX` a 3 lignes et 4 colonnes : la transposée et la rotation ont **4 lignes et 3 colonnes**.
 - **La rotation horaire** : la case `[r][c]` part en `[c][lignes - 1 - r]`.
 - **La spirale** : quatre bornes (`top`, `bottom`, `left`, `right`) qui se resserrent. Les deux derniers côtés ne se parcourent que si les bornes ne se sont pas croisées.
@@ -112,6 +158,11 @@ diagonale : 18 transposee de la transposee identique true
 [1, 6, 15, 20, 15, 6, 1]
 somme de la derniere ligne : 64 = 2^6 true
 ```
+
+**📖 Rappel :** un tableau irrégulier (projet 4, étape 5) se crée avec `new int[n][]`, puis chaque ligne reçoit son propre `new int[taille]`.
+
+**👉 À toi :**
+
 - Un tableau **irrégulier** de `Data.PASCAL_ROWS` lignes : `new int[n][]`, puis la ligne r reçoit `new int[r + 1]`.
 - Chaque case intérieure est la somme des deux cases au-dessus.
 - **Le centrage :** la largeur de référence est la longueur du `Arrays.toString` de la dernière ligne. Chaque ligne reçoit `(largeur - longueur) / 2` espaces devant (`repeat`).
@@ -129,6 +180,16 @@ labyrinthe : plus court chemin = 23 pas, 45 cases explorees
   .####.#*#*
   ......#***
 ```
+
+**📖 La leçon : une file d'attente dans un tableau.** Un parcours **en largeur** traite les cases dans l'ordre où on les a découvertes, comme une file d'attente au guichet : on ajoute à la fin, on sert au début. Avec un tableau et deux indices :
+- `tail` : la prochaine case libre, où l'on **ajoute** (`file[tail++] = x;`) ;
+- `head` : la prochaine case à **servir** (`int x = file[head++];`) ;
+- la file est vide quand `head == tail`.
+
+Déroule le parcours à la main sur un petit labyrinthe 3 × 3 avant de coder : note le contenu de la file à chaque tour.
+
+**👉 À toi :**
+
 - **La grille :** un `char[][]` dont chaque ligne vient de `Data.MAZE[r].toCharArray()`. C'est une copie **modifiable** : un `String` ne l'est pas.
 - **Le codage d'une case** en un seul `int` : `r * colonnes + c`. Pour revenir : `cell / colonnes` et `cell % colonnes`.
 - **La file** est un `int[]` de taille `lignes * colonnes`, avec deux indices `head` (lecture) et `tail` (écriture).
