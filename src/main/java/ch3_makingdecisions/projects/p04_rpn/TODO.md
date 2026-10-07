@@ -18,6 +18,22 @@
 
 **Règle du crescendo :** chapitres 1 à 3. Pas de méthode de `String` (ni `equals`, ni `contains`), pas de tableau ni de collection, et pas de pattern **dans** un `case` (`case Integer i ->` n'est qu'en *preview* en Java 17).
 
+**À quoi sert ce projet ?** Une calculatrice **RPN** (notation polonaise inverse), comme les calculatrices HP : on tape d'abord les nombres, puis l'opération. `3 4 +` donne 7. Les nombres s'empilent dans une **pile** de 4 cases, X (en bas), Y, Z et T (en haut). Une opération prend Y et X, et range le résultat dans X.
+
+**Tes outils pour ce projet :**
+- **Arguments dans IntelliJ :** Run → Edit Configurations… → **Rpn** → Program arguments :
+
+```
+3 4 + 2 x DUP x 7 / 2.5 + CHS 0 / DROP SWAP 9 - CLR 10 4 /
+```
+
+- **Terminal** (depuis `Kurse`) :
+
+```
+javac -d build/ch3-p04 src/main/java/ch3_makingdecisions/projects/p04_rpn/Rpn.java
+java "-Duser.language=fr" -cp build/ch3-p04 ch3_makingdecisions.projects.p04_rpn.Rpn 3 4 + 2 x
+```
+
 ---
 
 ## Le problème
@@ -49,6 +65,15 @@ Elles n'ont **pas de pile infinie**, mais 4 registres :
 
 ### ☐ Étape 1 — Les registres et la pile
 
+**📖 La leçon : `Number`, la famille des nombres.** `Number` est un type qui regroupe toutes les boîtes de nombres : `Integer`, `Double`, `Long`… Une variable de type `Number` peut contenir **n'importe laquelle**. Pour récupérer la valeur dans le type voulu, on utilise les méthodes du chapitre 1 : `intValue()`, `doubleValue()`.
+
+```java
+Number y = 2.5;                       // Java emballe 2.5 dans un Double
+System.out.println(y.intValue());     // 2
+```
+
+**👉 À toi :**
+
 - 4 champs de type `Number`, initialisés à 0.
   - **Question :** `Number x = 0;` compile. Quel est le type réel de l'objet rangé ?
 - Deux méthodes : une qui « monte » la pile et une qui « descend » après une opération.
@@ -58,6 +83,11 @@ Elles n'ont **pas de pile infinie**, mais 4 registres :
 ```
 10. 2.5 -> T=0 Z=0 Y=28 X=2.5 (X decimal)
 ```
+
+**📖 Rappel :** `Double.parseDouble("2.5")` lit un nombre à virgule (chapitre 1, projet 2). Un nombre « sans partie décimale », c'est un nombre égal à sa version coupée par `(int)` ou `(long)` (chapitre 2, projet 3).
+
+**👉 À toi :**
+
 - Lis le jeton avec `Double.parseDouble`. S'il n'a pas de partie décimale, range un `Integer`, sinon un `Double`.
 - **Le piège** (dernière ligne de la sortie) :
   ```
@@ -73,6 +103,22 @@ Elles n'ont **pas de pile infinie**, mais 4 registres :
 3. + -> T=0 Z=0 Y=0 X=7
 22. / -> T=0 Z=0 Y=0 X=2.5 (X decimal)
 ```
+
+**📖 La leçon : `instanceof` avec une variable.** Au chapitre 2, `o instanceof Integer` répondait seulement oui ou non. Depuis Java 16, on peut ajouter un **nom** : si la réponse est oui, Java crée une variable de ce type, prête à l'emploi, sans cast :
+
+```java
+Object o = "chat";
+if (o instanceof String s) {               // si o est un String, s le désigne, en tant que String
+    System.out.println(s + " est un texte");
+}
+Object n = 42;
+if (n instanceof Integer i && i > 40) {    // && : i existe déjà à droite, car la gauche est vraie
+    System.out.println(i + 1);             // 43
+}
+```
+
+**👉 À toi :**
+
 - **Contrainte :** le cas « deux entiers » se teste en **un seul** `if`, avec deux `instanceof` à variable reliés par `&&`. Les deux variables servent directement dans le calcul.
   - **Question :** pourquoi la variable du 2e pattern serait-elle inutilisable avec `||` ?
 - **Le choix de l'opération** est un `switch` expression. La branche de la division est un bloc avec `yield` : division exacte → `Integer`, sinon `Double`.
@@ -84,12 +130,42 @@ Elles n'ont **pas de pile infinie**, mais 4 registres :
 14. / -> T=0 Z=0 Y=-30.5 X=0 (ERREUR division par zero, pile inchangee)
 12. CHS -> T=0 Z=0 Y=0 X=-30.5 (X decimal)
 ```
+
+**📖 La leçon : la variable existe là où Java est **sûr** qu'elle est remplie.** Après un `if` qui **sort** de la méthode quand le test échoue, la suite n'est atteinte **que** si le test a réussi. La variable y est donc utilisable :
+
+```java
+static String decris(Object o) {
+    if (!(o instanceof String s)) {
+        return "pas un texte";        // on sort : la suite n'est atteinte que si o est un String
+    }
+    return "texte : " + s + "!";      // s est utilisable ici
+}
+```
+
+`decris("chien")` rend `texte : chien!`, et `decris(3)` rend `pas un texte`.
+
+**👉 À toi :**
+
 - **« X vaut-il zéro ? »**
   - **Contrainte :** commence par `if (!(n instanceof Double d)) return …;`. Après ce `if`, `d` est **utilisable**.
   - **Question :** explique en commentaire pourquoi le compilateur le sait.
 - **`CHS`** se fait avec `if` / `else if`, deux patterns, un pour chaque type.
 
 ### ☐ Étape 5 — La boucle et le `switch` des commandes
+
+**📖 La leçon : le for-each, parcourir sans indice.** Quand on veut juste **chaque** élément, dans l'ordre, sans avoir besoin de son numéro :
+
+```java
+// lancé avec : le petit chat
+for (String mot : args) {             // se lit : « pour chaque mot de args »
+    System.out.println("[" + mot + "]");
+}
+// [le]  puis  [petit]  puis  [chat]
+```
+
+Il ne permet ni de sauter un élément, ni de lire le suivant : c'était la question de l'étape 1 du projet 1.
+
+**👉 À toi :**
 
 - Parcours les jetons avec un **for-each**. Un compteur numérote les étapes.
 - **La commande** se choisit avec un `switch` en flèche. Un `case` à plusieurs valeurs regroupe `+`, `-` et `x`.

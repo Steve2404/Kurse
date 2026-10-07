@@ -21,6 +21,34 @@
 
 **Indication :** peu d'indices ici. Rejoue la simulation **à la main**, case par case, avant de coder.
 
+**C'est le projet-bilan du chapitre 3.** Il n'y a pas de leçon nouvelle. Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| un `switch` qui rend une valeur | projet 1, étape 3 |
+| parcourir `args` deux par deux | projet 1, étape 1 (la boucle `for`) |
+| sauter une commande avec `continue` | projet 3, étape 3 |
+| une boucle `while` | projet 1, étape 5 |
+| sortir de **plusieurs** boucles ou passer au tour suivant d'une boucle extérieure (étiquettes) | projet 2, étapes 1 et 5 |
+| dessiner une grille avec deux boucles | projet 3, étape 2 |
+| une chaîne `if` / `else if` | projet 1, étapes 1 et 4 |
+
+**Tes outils pour ce projet :**
+- **Arguments dans IntelliJ :** Run → Edit Configurations… → **Robot** → Program arguments :
+
+```
+10 8 25 E 3 N 2 X 1 E 4 S 6 O 2 N 9 E 1 N 7
+```
+
+- **Terminal** (depuis `Kurse`) :
+
+```
+javac -d build/ch3-p05 src/main/java/ch3_makingdecisions/projects/p05_robot/Robot.java
+java "-Duser.language=fr" -cp build/ch3-p05 ch3_makingdecisions.projects.p05_robot.Robot 10 8 25 E 3 N 2
+```
+
+**Conseil :** dessine la grille (10 × 8) sur papier quadrillé, place les obstacles, puis suis le robot à la main, commande par commande.
+
 ---
 
 ## Le problème

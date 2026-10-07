@@ -17,6 +17,17 @@
 
 **Règle du crescendo :** chapitres 1 à 3. Pas de tableau, pas de `Math`, pas de méthode de `String`.
 
+**Tes outils pour ce projet :**
+- **Argument dans IntelliJ :** Run → Edit Configurations… → **NumberLab** → Program arguments : `60`.
+- **Terminal** (depuis `Kurse`) :
+
+```
+javac -d build/ch3-p02 src/main/java/ch3_makingdecisions/projects/p02_numberlab/NumberLab.java
+java "-Duser.language=fr" -cp build/ch3-p02 ch3_makingdecisions.projects.p02_numberlab.NumberLab 60
+```
+
+**Conseil :** ce projet contient de vrais algorithmes. Pour chaque étape, **déroule d'abord l'algorithme à la main**, sur papier, avec un petit nombre. Puis code.
+
 ---
 
 ## Le problème
@@ -32,6 +43,26 @@ Un petit laboratoire de théorie des nombres. **Chaque ligne de la sortie est un
 ```
 PREMIERS <= 60 : 2 3 5 7 11 ... 59
 ```
+
+**📖 La leçon : des boucles dans des boucles.** Une boucle peut en contenir une autre. Pour **chaque** tour de la boucle extérieure, la boucle intérieure fait **tous** ses tours.
+
+**📖 La leçon : sauter à la suite d'une autre boucle, avec une étiquette.** `continue` passe au tour suivant de **sa** boucle. `break` sort de **sa** boucle. Pour viser la boucle **extérieure**, on lui donne un nom, une **étiquette**, suivie de `:` :
+
+```java
+ligne:                                   // l'étiquette de la boucle extérieure
+for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 3; j++) {
+        if (j > i) continue ligne;       // passe directement au i suivant
+        System.out.print(i + "" + j + " ");
+    }
+}
+// affiche : 11 21 22 31 32 33
+```
+
+`System.out.print` (sans `ln`) écrit **sans** aller à la ligne.
+
+**👉 À toi :**
+
 - Un nombre est premier s'il n'a **aucun** diviseur entre 2 et lui-même (exclu).
 - **Efficacité :** il suffit de tester les diviseurs `d` tant que `d * d <= n`. Pourquoi ?
 - **Contrainte :** la boucle intérieure (les diviseurs) doit, dès qu'elle trouve un diviseur, passer directement au **candidat suivant** de la boucle extérieure. Utilise un **`continue` étiqueté**, sans variable booléenne.
@@ -41,6 +72,11 @@ PREMIERS <= 60 : 2 3 5 7 11 ... 59
 ```
 PARFAITS <= 10000 : 6 28 496 8128
 ```
+
+**📖 Rappel :** `n % d == 0` veut dire « `d` divise `n` » (le reste est nul).
+
+**👉 À toi :**
+
 - Un nombre est parfait s'il est égal à la somme de ses diviseurs **propres** (lui-même exclu) : 6 = 1 + 2 + 3.
 - **Efficacité :** tester jusqu'à 10 000 avec tous les diviseurs fait 50 millions de tours. En ne montant que jusqu'à `d * d <= n`, chaque diviseur `d` en apporte **deux** : `d` et `n / d`. Attention au carré parfait, qu'il ne faut pas compter deux fois.
 
@@ -49,6 +85,11 @@ PARFAITS <= 10000 : 6 28 496 8128
 ```
 COLLATZ < 60 : depart 54, 112 etapes
 ```
+
+**📖 Rappel du chapitre 2 :** un `int` déborde au-delà de 2 147 483 647 et « fait le tour » sans prévenir. Un `long` va beaucoup plus loin.
+
+**👉 À toi :**
+
 - **La règle :** depuis n, si n est pair, on passe à n / 2 ; sinon à 3n + 1. On s'arrête à 1.
 - **Le calcul :** pour chaque départ de 1 à 59, compte les étapes, puis garde le départ le plus long. À égalité, garde le premier.
 - **Piège :** les valeurs intermédiaires dépassent largement 60. Quel type choisir ?
@@ -60,6 +101,22 @@ COLLATZ < 60 : depart 54, 112 etapes
 PALINDROMES 100..200 : 101 111 121 ... 191
 ARMSTRONG 3 chiffres : 153 370 371 407
 ```
+
+**📖 La leçon : `do/while`, au moins une fois.** C'est un `while` dont la condition est testée **à la fin** de chaque tour. Le corps s'exécute donc **au moins une fois** :
+
+```java
+int n = 0;
+do {
+    System.out.println("au moins une fois : " + n);   // s'affiche, même si n vaut 0
+} while (n > 0);                                     // attention au ; final
+
+while (n > 0) {
+    System.out.println("jamais");                    // ne s'affiche pas : testé AVANT
+}
+```
+
+**👉 À toi :**
+
 - **Retourner un nombre**, sans `String` : prends le dernier chiffre avec `% 10`, enlève-le avec `/= 10`, puis reconstruis.
   - **Contrainte :** écris-le avec un **`do/while`**.
   - **Question :** pour quel nombre le `do/while` se comporte-t-il mieux qu'un `while` ?
@@ -71,6 +128,23 @@ ARMSTRONG 3 chiffres : 153 370 371 407
 PGCD(1071, 462) = 21 en 3 divisions, PPCM = 23562
 FACTEURS de 391 : 17 x 23
 ```
+
+**📖 La leçon : sortir de deux boucles d'un coup.** Un `break` étiqueté sort de la boucle nommée, **et** de toutes celles qu'elle contient :
+
+```java
+recherche:
+for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= 5; j++) {
+        if (i * j == 6) {
+            System.out.println("trouve " + i + " x " + j);   // trouve 2 x 3
+            break recherche;                                  // fin des DEUX boucles
+        }
+    }
+}
+```
+
+**👉 À toi :**
+
 - **Le PGCD d'Euclide :** tant que `b ≠ 0`, on remplace (a, b) par (b, a mod b). Compte les divisions.
   - Le PPCM vaut `a × b / pgcd`. Dans quel ordre faire le calcul pour éviter un débordement ?
 - **Les facteurs de 391 :** cherche le premier couple x ≤ y tel que x × y = 391.
@@ -83,6 +157,11 @@ FACTEURS de 391 : 17 x 23
 ```
 FIZZBUZZ : 1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz
 ```
+
+**📖 Rappel :** le `switch` qui rend une valeur (projet 1, étape 3) peut transformer un petit code numérique en mot.
+
+**👉 À toi :**
+
 - **Contrainte :** pas de chaîne `if`. Calcule un **code** :
   - +1 si le nombre est divisible par 3 ;
   - +2 s'il est divisible par 5.
