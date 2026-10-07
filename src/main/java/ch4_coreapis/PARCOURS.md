@@ -89,9 +89,11 @@ ch4_coreapis/
 │   ├── README.md            ← la liste des 8 projets, à cocher
 │   └── p01_textstats/
 │       ├── TODO.md          ← L'ÉNONCÉ : tu le lis
+│       ├── INDICES.md       ← 2 indices repliés par étape, sans code (si tu bloques)
 │       ├── Data.java        ← les données d'entrée (texte, tableaux) : tu les LIS, tu ne les modifies pas
 │       ├── Check.java       ← le correcteur : tu le LANCES, tu ne le modifies pas
 │       ├── solution/        ← la correction : tu ne l'ouvres qu'à la fin
+│       │   └── CORRIGE.md   ← étape par étape : code, réponses aux questions, résultats des expériences
 │       └── (tes fichiers)   ← TOUT le reste, c'est TOI qui le crées ici
 └── drills/
     ├── README.md            ← règles des drills + tableau de suivi des répétitions
@@ -142,6 +144,7 @@ ch4_coreapis/
    
    Puis retire la ligne.
 5. **Réponds aux questions par écrit**, en commentaire dans ton code.
+6. **Vérifie l'étape** : ouvre la section de cette étape (et **seulement** elle) dans `solution/CORRIGE.md`. Compare tes réponses et le résultat de tes expériences. Une réponse fausse : corrige ton commentaire avec tes propres mots.
 
 ### 5.3 Lire la réponse de `Check`
 
@@ -161,8 +164,8 @@ L'argument `solution` (Run → Edit Configurations → Program arguments) vérif
 | Palier | Temps | Ce que tu fais |
 |---|---|---|
 | 1 | jusqu'à 20 min | relis l'étape ; dessine le tableau ou la chaîne avec ses indices ; ajoute des `println` temporaires |
-| 2 | 20 min de plus | relis la **carte mémoire** du drill du même thème, ou demande-moi un **indice** sur ce point précis |
-| 3 | en dernier recours | lis **uniquement** la partie concernée de `solution/`, ferme, réécris de mémoire, et note `// AIDE : solution consultée` |
+| 2 | 20 min de plus | ouvre l'**indice 1** de l'étape dans `INDICES.md`, puis l'**indice 2** s'il ne suffit pas ; relis la **carte mémoire** du drill du même thème, ou demande-moi un **indice** sur ce point précis |
+| 3 | en dernier recours | lis **uniquement** la section de l'étape dans `solution/CORRIGE.md` (ou la partie concernée de `solution/`), ferme, réécris de mémoire, et note `// AIDE : solution consultée` |
 
 **Jamais :**
 - copier depuis `solution/` ;

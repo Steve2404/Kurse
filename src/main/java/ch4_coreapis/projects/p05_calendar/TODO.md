@@ -1,6 +1,8 @@
 # Projet 5 — Le planificateur de calendrier
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch4_coreapis/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 4) :**
 - `LocalDate`, `LocalTime` et `LocalDateTime` : création, `plus` / `minus` / `with`, **immutabilité** ;
@@ -39,7 +41,7 @@ age : P31Y2M18D = 31 ans 2 mois 18 jours, en jours 11403
 Period.of(1, 2, 3) P1Y2M3D, ofYears(1).ofWeeks(2) P14D, ofMonths(14) P14M, normalise P1Y2M, exam + P1M 2026-11-02
 ```
 - **L'âge :** `Period.between`, puis `ChronoUnit.DAYS.between` pour le total en jours.
-- **Le piège :** `Period.ofYears(1).ofWeeks(2)` vaut `P14D`. `ofWeeks` est une méthode **statique** : appelée « sur » un objet, elle l'ignore. (`javac` te prévient d'ailleurs avec un avertissement `[static]`.)
+- **Le piège :** `Period.ofYears(1).ofWeeks(2)` vaut `P14D`. `ofWeeks` est une méthode **statique** : appelée « sur » un objet, elle l'ignore. (IntelliJ le souligne, et `javac -Xlint:static` affiche un avertissement `[static]` ; sans cette option, `javac` ne dit rien.)
 - **Question :** pourquoi `Period.ofMonths(14)` n'est-il **pas** normalisé automatiquement en `P1Y2M` ?
 
 ### ☐ Étape 3 — `Duration` et heures

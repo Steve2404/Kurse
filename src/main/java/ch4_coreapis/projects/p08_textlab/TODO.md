@@ -1,6 +1,8 @@
 # Projet 8 — Le laboratoire d'algorithmes sur les chaînes
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch4_coreapis/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 4) :** les **algorithmes classiques sur le texte**, avec `String`, `StringBuilder`, `char` et les tableaux :
 - l'arithmétique des `char` (`c - 'a'`, `c - '0'`, `(char) (…)`) ;
