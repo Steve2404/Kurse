@@ -16,6 +16,23 @@
 
 **Ce que TU crées :** tout le programme, dans le paquet `ch10_streams.projects.p05_music`. La classe du `main` s'appelle **`MusicStats`**.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p05 -sourcepath src/main/java src/main/java/ch10_streams/projects/p05_music/MusicStats.java
+java "-Duser.language=fr" -cp build/ch10-p05 ch10_streams.projects.p05_music.MusicStats
+```
+
+**Ce projet t'apprend les `Collectors`** : des collectes toutes faites, à passer à `collect(…)`. Les exemples utilisent un menu :
+
+```java
+record Plat(String nom, String type, int prix) { }
+List<Plat> menu = List.of(new Plat("soupe", "entree", 6), new Plat("salade", "entree", 8),
+        new Plat("steak", "plat", 18), new Plat("tarte", "dessert", 7), new Plat("glace", "dessert", 5));
+```
+
+**Conseil :** range chaque résultat dans une **variable typée** avant de l'afficher. Le type écrit à gauche aide Java (et toi) à comprendre ce que la collecte fabrique.
+
 ---
 
 ## Le problème
@@ -45,6 +62,36 @@ ECOUTES PAR GENRE : {Electro=5, Jazz=6, Pop=6, Rock=7}
 VALIDEES : 19, ZAPPEES : 5
 ONT ZAPPE : [hugo, lea, tom, zoe]
 ```
+
+**📖 La leçon : regrouper.** `groupingBy(clé)` range les éléments dans une `Map` : clé → liste des éléments qui ont cette clé. Avec 3 arguments, on choisit aussi la sorte de `Map`, et ce qu'on fait de chaque groupe (un collecteur **en aval**) :
+
+```java
+Map<String, List<Plat>> parType = menu.stream().collect(Collectors.groupingBy(Plat::type));
+Map<String, Long> compte = menu.stream()
+        .collect(Collectors.groupingBy(Plat::type, TreeMap::new, Collectors.counting()));
+// {dessert=2, entree=2, plat=1}
+```
+
+**📖 La leçon : partitionner.** `partitioningBy(test)` coupe en **deux** groupes, `true` et `false` :
+
+```java
+Map<Boolean, Long> petits = menu.stream()
+        .collect(Collectors.partitioningBy(p -> p.prix() < 7, Collectors.counting()));
+// {false=3, true=2}
+```
+
+**📖 La leçon : transformer dans un groupe, choisir la collection.**
+
+```java
+Map<String, List<String>> noms = menu.stream()
+        .collect(Collectors.groupingBy(Plat::type, TreeMap::new,
+                Collectors.mapping(Plat::nom, Collectors.toList())));
+// {dessert=[tarte, glace], entree=[soupe, salade], plat=[steak]}
+TreeSet<String> types = menu.stream().map(Plat::type).collect(Collectors.toCollection(TreeSet::new));
+```
+
+**👉 À toi :**
+
 - **ECOUTES PAR GENRE :** `groupingBy` à 3 arguments. Quel est le rôle de chacun ?
 - **VALIDEES / ZAPPEES :** une **partition** avec un collecteur en aval.
   - **Question :** que contient la `Map` de `partitioningBy` si **aucune** écoute n'est zappée ? Et celle de `groupingBy(Play::valid)` ?
@@ -55,6 +102,19 @@ ONT ZAPPE : [hugo, lea, tom, zoe]
 ```
 TOP ARTISTE PAR GENRE : {Electro=Daft (3), Jazz=Miles (3), Pop=Adele (2), Rock=Queen (4)}
 ```
+
+**📖 La leçon : retoucher le résultat d'un collecteur.** `collectingAndThen(collecteur, fonction)` applique une fonction **au résultat** :
+
+```java
+String phrase = menu.stream().collect(Collectors.collectingAndThen(Collectors.counting(), n -> n + " plats"));
+// "5 plats"
+Optional<Plat> cher = menu.stream().collect(Collectors.maxBy(Comparator.comparingInt(Plat::prix)));
+```
+
+Un `groupingBy` peut en contenir un autre : on obtient une `Map` de `Map`.
+
+**👉 À toi :**
+
 - Ne compte que les écoutes **validées**.
 - C'est un groupement **à deux niveaux** : genre → (artiste → nombre). Chaque sous-table est ensuite **réduite** à son meilleur artiste, dans le **même** `collect`.
   - Quel collecteur applique une fonction finale au résultat d'un autre collecteur ?
@@ -67,6 +127,18 @@ TOP ARTISTE PAR GENRE : {Electro=Daft (3), Jazz=Miles (3), Pop=Adele (2), Rock=Q
 ```
 TEMPS VALIDE PAR UTILISATEUR : {hugo=1360, ines=1567, lea=2009, tom=950, zoe=0}
 ```
+
+**📖 La leçon : filtrer dans chaque groupe.** `filtering(test, collecteurEnAval)` ne garde, **dans chaque groupe**, que les éléments qui passent le test :
+
+```java
+Map<String, Long> chers = menu.stream()
+        .collect(Collectors.groupingBy(Plat::type, TreeMap::new,
+                Collectors.filtering(p -> p.prix() > 6, Collectors.counting())));
+// {dessert=1, entree=1, plat=1}
+```
+
+**👉 À toi :**
+
 - C'est la somme des secondes des écoutes validées, par utilisateur.
 - **Le piège central de cette étape :** zoe n'a **que** des écoutes zappées, et elle doit apparaître avec `0`.
   - Avec `filter(...)` **avant** `groupingBy`, zoe disparaît.
@@ -78,6 +150,17 @@ TEMPS VALIDE PAR UTILISATEUR : {hugo=1360, ines=1567, lea=2009, tom=950, zoe=0}
 ```
 AMBIANCES PAR GENRE : {Electro=[energie, fete, nuit], Jazz=[calme, nuit, voix], ...}
 ```
+
+**📖 La leçon : aplatir dans un groupe.** `flatMapping(f, collecteurEnAval)` : `f` transforme chaque élément en un **stream**, et tous ces streams sont mis bout à bout dans le groupe :
+
+```java
+Set<String> lettres = Stream.of(List.of("a", "b"), List.of("b", "c"))
+        .collect(Collectors.flatMapping(List::stream, Collectors.toCollection(TreeSet::new)));
+// [a, b, c]
+```
+
+**👉 À toi :**
+
 - Chaque écoute apporte **plusieurs** ambiances. Le groupe genre doit contenir l'ensemble trié de **toutes** ses ambiances.
 - `mapping` donnerait un ensemble de listes. Quel collecteur (Java 9) aplatit ?
 
@@ -87,6 +170,15 @@ AMBIANCES PAR GENRE : {Electro=[energie, fete, nuit], Jazz=[calme, nuit, voix], 
 ECOUTE LA PLUS LONGUE : {hugo=Around, ines=So What, lea=So What, tom=One More Time, zoe=Uprising}
 SECONDES PAR GENRE : {Electro=1537, Jazz=1816, Pop=1006, Rock=1591}
 ```
+
+**📖 La leçon : réduire dans un collecteur.** `reducing(identite, transformation, operateur)` fait un `reduce` (projet 4) à l'intérieur d'un collecteur :
+
+```java
+int total = menu.stream().collect(Collectors.reducing(0, Plat::prix, Integer::sum));   // 44
+```
+
+**👉 À toi :**
+
 - **ECOUTE LA PLUS LONGUE :**
   - `maxBy` en aval rend un `Optional<Play>`. Or on veut le **titre**, sans `Optional` dans la `Map`. Transforme le résultat dans le même collecteur.
   - **Question :** un groupe de `groupingBy` peut-il être vide ? Alors pourquoi le type reste-t-il un `Optional` ?
@@ -98,6 +190,19 @@ SECONDES PAR GENRE : {Electro=1537, Jazz=1816, Pop=1006, Rock=1591}
 ```
 TOP 3 TITRES : [So What (1124 s), Bohemian (908 s), One More Time (640 s)]
 ```
+
+**📖 La leçon : `toMap` et `joining`.**
+
+```java
+Map<String, Integer> prixParNom = menu.stream()
+        .collect(Collectors.toMap(Plat::nom, Plat::prix, Integer::sum, TreeMap::new));
+//                            clé       valeur      si deux fois la même clé   sorte de Map
+String noms = menu.stream().map(Plat::nom).collect(Collectors.joining(", "));             // soupe, salade, …
+String liste = menu.stream().map(Plat::nom).collect(Collectors.joining(", ", "[", "]"));  // [soupe, salade, …]
+```
+
+**👉 À toi :**
+
 - Commence par une table titre → secondes **cumulées**, construite avec `toMap`.
   - « Hello » est écouté 3 fois. Que se passe-t-il **sans** fonction de fusion ? Essaie et lis l'exception.
   - Utilise la version à 4 arguments pour obtenir une `TreeMap`.
@@ -110,6 +215,21 @@ STATS : 24 ecoutes, min 8 s, max 562 s, moyenne 247.9 s
 EXTREMES : Hello par tom / So What par lea
 MOYENNE VALIDEE : 309.8 s sur 19 ecoutes
 ```
+
+**📖 La leçon : deux collecteurs en un passage.** `teeing(c1, c2, fusion)` envoie chaque élément aux **deux** collecteurs, puis fusionne leurs résultats :
+
+```java
+String ratio = menu.stream().collect(Collectors.teeing(
+        Collectors.counting(),                   // 5
+        Collectors.summingInt(Plat::prix),       // 44
+        (n, s) -> s + "/" + n));                 // "44/5"
+double moyenne = menu.stream().collect(Collectors.averagingInt(Plat::prix));   // 8.8
+```
+
+`summarizingInt` donne les statistiques complètes, comme `summaryStatistics` (projet 3, étape 3).
+
+**👉 À toi :**
+
 - **STATS :** un seul collecteur donne les quatre nombres.
 - **EXTREMES :** `teeing(minBy, maxBy, fusion)`, en un seul passage.
   - lea et ines ont toutes deux 562 s sur « So What ». Pourquoi est-ce lea qui sort ? Vérifie dans la Javadoc ce que `maxBy` garde à égalité.
@@ -123,6 +243,11 @@ MOYENNE VALIDEE : 309.8 s sur 19 ecoutes
 ```
 EXPLORATEURS (tous les genres) : [lea]
 ```
+
+**📖 Rappel :** `groupingBy` avec `mapping` et `toSet` (étape 2).
+
+**👉 À toi :**
+
 - Ce sont les utilisateurs dont les écoutes **validées** couvrent **tous** les genres existants.
 - Il faut un groupement utilisateur → ensemble de genres (`toSet`), puis une comparaison au nombre total de genres.
 
@@ -135,6 +260,11 @@ RECO lea : voisin ines (67%) -> rien de nouveau
 RECO tom : voisin hugo (50%) -> Queen
 RECO zoe : aucune ecoute validee
 ```
+
+**📖 Rappel :** intersection et union d'ensembles avec `retainAll` et `addAll` sur des **copies** (chapitre 9, projet 2, étape 2).
+
+**👉 À toi :**
+
 1. **Les goûts.** Pour chaque utilisateur, prends l'ensemble trié des artistes de ses écoutes **validées**. C'est un `groupingBy` + `mapping` + `toCollection`.
 2. **La similarité de Jaccard** entre deux ensembles A et B : |A ∩ B| / |A ∪ B|.
    - Calcule à la main lea / ines : {Adele, Miles, Nina, Queen} sur 6 artistes, soit 0.666…, affiché `67%` (`Math.round`, chapitre 4).

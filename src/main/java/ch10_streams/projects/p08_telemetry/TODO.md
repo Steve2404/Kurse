@@ -18,6 +18,26 @@
 
 **Règle du projet :** chaque fonction primitive est déclarée **avec son type écrit en toutes lettres**, par exemple `IntUnaryOperator penalty = n -> n * 15;`, et non pas en lambda anonyme glissée dans un appel. `Check` cherche ces types dans ton code. Le but : savoir **reconnaître et nommer** le type exact qu'attend chaque méthode, ce que l'examen demande sans cesse.
 
+**C'est le projet-bilan du chapitre 10**, centré sur les streams de nombres et les interfaces fonctionnelles pour primitifs. Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| les interfaces pour primitifs (`ToLongFunction`, `IntBinaryOperator`, `LongPredicate`…) | chapitre 8, projet 4, étape 1 |
+| passer d'un stream de nombres à un autre | projet 3, étapes 1, 4 et 7 |
+| `summaryStatistics`, `OptionalLong`, `OptionalDouble` | projet 3, étape 3 |
+| `averagingDouble`, `summingDouble`, `collectingAndThen` | projet 5, étapes 3 et 8 |
+| `Stream.empty()` | projet 2, étape 1 |
+| `partitioningBy` | projet 5, étape 2 |
+| composer des `IntUnaryOperator` avec `andThen` | chapitre 8, projet 1, étape 3 |
+| `toArray` avec un `IntFunction<String[]>` | chapitre 8, projet 5, étape 3 (`String[]::new`) |
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p08 -sourcepath src/main/java src/main/java/ch10_streams/projects/p08_telemetry/Telemetry.java
+java "-Duser.language=fr" -cp build/ch10-p08 ch10_streams.projects.p08_telemetry.Telemetry
+```
+
 ---
 
 ## Le problème
@@ -125,6 +145,17 @@ SANTE : cache1=100, db1=40, web1=40, web2=100
 PROFILS CPU (deciles) : web1=349964 web2=333433 db1=778897 cache1=1111
 RELANCES SONDE cache1 : 1 2 4 8 16 s
 ```
+
+**📖 La leçon : `collect` à 3 arguments sur un `IntStream`.** Comme au projet 4, étape 2, mais l'accumulateur reçoit un **`int`**. Son type est donc un `ObjIntConsumer` :
+
+```java
+ObjIntConsumer<StringBuilder> ajoute = (b, i) -> b.append(i).append('-');
+StringBuilder sb = IntStream.of(4, 2).collect(StringBuilder::new, ajoute, StringBuilder::append);
+// "4-2-"
+```
+
+**👉 À toi :**
+
 - **PROFILS.**
   - Chaque CPU devient son décile (35.5 → 3). C'est un `DoubleStream` → `IntStream` via un `DoubleToIntFunction`.
   - Les chiffres sont ensuite collés avec `IntStream.collect(fournisseur, accumulateur, combiner)`.
@@ -139,6 +170,19 @@ RELANCES SONDE cache1 : 1 2 4 8 16 s
 ```
 SUPPLIER : 22 puis 3
 ```
+
+**📖 La leçon : un `Supplier` de streams.** Un stream ne s'utilise qu'une fois (projet 2, étape 5). Pour en avoir un **neuf** à chaque fois, on range sa **recette** dans un `Supplier` :
+
+```java
+Supplier<Stream<String>> source = () -> Stream.of("a", "bb", "ccc");
+source.get().count()                                 // 3
+source.get().filter(s -> s.length() > 1).count()     // 2 : un nouveau stream
+```
+
+**Pour les expériences :** le programme s'arrêtera avec une exception. Lis son **nom** (le mot qui finit par `Exception`) et sa phrase, puis retire la ligne. Le chapitre 11 t'apprendra à les rattraper.
+
+**👉 À toi :**
+
 - **SUPPLIER.** Un stream ne se consomme qu'une fois. Le remède est un `Supplier<Stream<…>>` qui fabrique un flux **neuf** à chaque appel.
   - Compte tous les échantillons avec un premier flux.
   - Compte ensuite ceux à plus de 90 % de CPU, avec un **second** flux obtenu du même `Supplier`.

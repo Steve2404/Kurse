@@ -19,6 +19,28 @@ On y ajoute un **algorithme d'allocation** à état, où il faut décider lucide
 
 **Indication :** ici, pas d'étape « à la main » détaillée. C'est à toi de vérifier chaque ligne de la sortie attendue sur papier avant de coder l'algorithme.
 
+**Ce projet réutilise tout le chapitre.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| un email facultatif en `Optional` | projet 1, étapes 1 et 6 |
+| éliminer les absents avec `flatMap(Optional::stream)` | projet 1, étape 9 |
+| `orElseGet` | projet 1, étape 6 |
+| trier avec plusieurs critères | chapitre 9, projet 1, étape 2 |
+| des numéros qui viennent d'un `IntStream` | projet 3, étape 3 |
+| `groupingBy` avec une fabrique de `Map` | projet 5, étape 2 |
+| `collectingAndThen`, `partitioningBy` | projet 5, étapes 2 et 3 |
+| `flatMap` d'une commande vers ses lignes | projet 2, étape 2 |
+| `summaryStatistics` sur un `LongStream`, `teeing` | projet 3, étape 3, et projet 5, étape 8 |
+| `reduce` | projet 4, étape 1 |
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p07 -sourcepath src/main/java src/main/java/ch10_streams/projects/p07_warehouse/Warehouse.java
+java "-Duser.language=fr" -cp build/ch10-p07 ch10_streams.projects.p07_warehouse.Warehouse
+```
+
 ---
 
 ## Le problème
@@ -94,6 +116,11 @@ CA PAR REGION : {Est=458.70, Nord=557.20, Sud=199.20}
 CA GOLD : 797.00, STANDARD : 418.10
 UNITES PAR CATEGORIE : {Info=9, Maison=4, Sport=9}
 ```
+
+**📖 La leçon : une `EnumMap`.** Une `Map` dont les clés sont les constantes d'un `enum`, rangées dans l'ordre de leur déclaration. Elle se crée avec la classe de l'`enum` : `new EnumMap<>(Statut.class)`. Comme `groupingBy` attend une fabrique **sans** argument, il faut l'envelopper dans une lambda : `() -> new EnumMap<>(Statut.class)`.
+
+**👉 À toi :**
+
 - **STATUTS :**
   - les clés suivent l'ordre de l'`enum`, et les ids sont triés ;
   - la `Map` est une `EnumMap`. `groupingBy` prend une fabrique : `EnumMap` n'a pas de constructeur sans argument, alors quelle lambda écrire ?

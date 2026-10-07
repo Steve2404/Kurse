@@ -12,6 +12,15 @@
 
 **Pour vérifier :** lance `Check.java`. Il te montre la première ligne fausse et les méthodes de l'API pas encore utilisées.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p02 -sourcepath src/main/java src/main/java/ch10_streams/projects/p02_busnetwork/BusNetwork.java
+java "-Duser.language=fr" -cp build/ch10-p02 ch10_streams.projects.p02_busnetwork.BusNetwork
+```
+
+**Ce projet t'apprend les streams en détail.** Relis d'abord la leçon « ton premier stream » (projet 1, étape 9).
+
 ---
 
 ## Le problème
@@ -29,6 +38,19 @@ Utilise `java.time.LocalTime` pour les heures. `LocalTime.parse("07:52")`, `plus
 ## Tableau de bord
 
 ### ☐ Étape 1 — Modéliser une ligne
+
+**📖 La leçon : fabriquer un stream sans collection.**
+
+```java
+Stream.of("a", "b")                            // à partir de quelques valeurs
+Stream.iterate(1, n -> n * 2)                  // 1, 2, 4, 8… sans fin : il faudra le borner
+Stream.iterate(1, n -> n < 20, n -> n * 3)     // 1, 3, 9 : départ, condition pour continuer, suivant
+Stream.generate(() -> "x")                     // x, x, x… sans fin
+```
+
+Un stream **infini** se borne avec `limit(n)` : `Stream.iterate(1, n -> n * 2).limit(5).toList()` donne `[1, 2, 4, 8, 16]`.
+
+**👉 À toi :**
 
 Ligne de donnée : `L1;06:00;21:00;20;Gare:0,Centre:4,Musee:6,Port:5`
 
@@ -48,6 +70,26 @@ ARRETS : Centre, Gare, Hopital, Musee, Phare, Plage, Port, Stade, Universite
 PAGE 2 : Musee, Phare, Plage
 PAGE 4 : vide
 ```
+
+**📖 La leçon : les étapes intermédiaires courantes.**
+
+```java
+.filter(test)          // garde ceux qui passent
+.map(f)                // transforme chacun en UNE valeur
+.flatMap(f)            // transforme chacun en un STREAM, puis met tout bout à bout
+.distinct()            // retire les doublons
+.sorted()              // trie (ou sorted(comparateur))
+.skip(n)               // saute les n premiers
+.limit(n)              // garde les n premiers
+```
+
+```java
+Stream.of(List.of(1, 2), List.of(3)).flatMap(List::stream).toList()   // [1, 2, 3]
+List.of("farine", "oeuf", "lait").stream().skip(1).limit(1).toList()     // [oeuf]
+```
+
+**👉 À toi :**
+
 - Pour `ARRETS`, une seule chaîne de stream va des lignes à une liste d'arrêts sans doublon et triée. Quelle opération transforme « une ligne » en « plusieurs arrêts » ?
 - `PAGE` réutilise **la même** chaîne. Est-ce que `skip(...).limit(...)` équivaut à `limit(...).skip(...)` ? Calcule à la main sur la page 2.
 - Une page au-delà de la fin affiche `vide`, sans `if` sur la taille de la liste des arrêts.
@@ -57,6 +99,11 @@ PAGE 4 : vide
 ```
 LIGNES : L1 (4 arrets, 15 min), L2 (4 arrets, 20 min), L4 (3 arrets, 16 min), L3 (3 arrets, 21 min)
 ```
+
+**📖 Rappel :** les comparateurs `comparing`, `thenComparing`, `reversed` et `Comparator.reverseOrder()` (chapitre 9, projet 1, étape 2). Lis attentivement **à quoi** s'applique `reversed()`.
+
+**👉 À toi :**
+
 L'ordre de tri :
 1. le plus d'arrêts d'abord ;
 2. à égalité, la plus courte ;
@@ -69,6 +116,11 @@ L'ordre de tri :
 ```
 CIRCUIT L1 + L3 : Gare -> Centre -> Musee -> Port -> Plage -> Phare
 ```
+
+**📖 La leçon : mettre deux streams bout à bout.** `Stream.concat(s1, s2)` donne les éléments de `s1`, puis ceux de `s2`. `Stream.ofNullable(x)` donne un stream d'**un** élément, ou **vide** si `x` vaut `null`.
+
+**👉 À toi :**
+
 - Ce sont les arrêts de la première ligne puis ceux de la deuxième, sans répéter `Port`. L'ordre est conservé.
 - Utilise `Stream.concat`.
 - **Contrainte :** si un id de ligne est inconnu, cette ligne est simplement ignorée, sans exception ni `if`. Quelle fabrique de `Stream` (Java 9) transforme une valeur peut-être `null` en un stream de 0 ou 1 élément ?
@@ -82,6 +134,24 @@ PROCHAIN L3 a Phare : plus de bus (17 horaires calcules)
 REFUS : L2 ne dessert pas Plage
 REFUS : ligne inconnue L9
 ```
+
+**📖 La leçon : un stream est paresseux.** Les étapes intermédiaires ne font **rien** tant qu'une étape terminale ne réclame pas d'éléments. Et l'étape terminale s'arrête dès qu'elle a sa réponse. `peek` permet d'**observer** les éléments qui passent :
+
+```java
+List<Integer> vus = new ArrayList<>();
+Optional<Integer> premier = Stream.iterate(1, n -> n + 1)     // infini !
+        .peek(vus::add)                                       // note chaque élément produit
+        .filter(n -> n % 7 == 0)
+        .findFirst();                                         // s'arrête au premier trouvé
+// premier = Optional[7], vus = [1, 2, 3, 4, 5, 6, 7] : rien de plus n'a été produit
+```
+
+`findFirst()` rend un `Optional`, vide si aucun élément ne convient.
+
+**Un stream ne s'utilise qu'une fois :** après son étape terminale, il est fermé. Pour recommencer, il faut en fabriquer un nouveau.
+
+**👉 À toi :**
+
 - C'est le premier passage au **premier arrêt** dont le passage à l'arrêt demandé est ≥ l'heure demandée.
 - **Le nombre entre parenthèses** est le nombre de départs que ton stream a **réellement générés**. Compte-les avec `peek` placé juste après la source.
 - **Calcule à la main** avant de coder : L1 part à 06:00, 06:20… et Musee est à +10. Pourquoi exactement 7 ? Pourquoi 17 et pas 16 quand il n'y a plus de bus ?
@@ -95,6 +165,16 @@ REFUS : ligne inconnue L9
 ```
 HORAIRES L4 a Gare : 22:01 22:16 22:31 22:46
 ```
+
+**📖 La leçon : couper au début ou à la fin d'un flux trié.**
+
+```java
+Stream.of(1, 3, 5, 7, 9).takeWhile(n -> n < 6).toList()   // [1, 3, 5] : prend TANT QUE le test passe, puis s'arrête
+Stream.of(1, 3, 5, 7, 9).dropWhile(n -> n < 6).toList()   // [7, 9]    : saute TANT QUE le test passe, puis prend tout
+```
+
+**👉 À toi :**
+
 - Ce sont les passages à l'arrêt dans l'intervalle [de, à].
 - **Contrainte :** ni `filter` ni `toList`. Les passages sont **triés** : « avant de » est un **préfixe** et « après à » est un **suffixe**. Quelles deux opérations (Java 9) l'exploitent ?
 - **Question :** sur un stream **non trié**, qu'est-ce que `takeWhile` rendrait de faux ?
@@ -106,6 +186,15 @@ DIRECT Gare -> Port : L1 depart 07:00 arrivee 07:15
 DIRECT Centre -> Stade : L2 depart 08:17 arrivee 08:30
 DIRECT Stade -> Centre : aucun
 ```
+
+**📖 La leçon : le plus petit, le plus grand.** `min(comparateur)` et `max(comparateur)` rendent un `Optional` (vide si le stream est vide).
+
+```java
+ingredients.stream().max(Comparator.comparing(String::length))    // Optional[farine]
+```
+
+**👉 À toi :**
+
 - On cherche, parmi toutes les lignes qui vont **de** départ **à** arrivée (dans ce sens !), le premier bus de chaque ligne qui passe au départ à partir de l'heure demandée. On garde celui qui **arrive le plus tôt**.
 - **Contrainte :** une seule chaîne. Chaque ligne candidate donne un `Optional<trajet>`. Comment l'aplatir dans le stream ? (Tu l'as vu au projet 1.)
 - Prends le meilleur avec `min` et un comparateur.
@@ -138,6 +227,17 @@ On cherche **exactement un changement**, par recherche exhaustive :
 ACCESSIBLE L1 : non (Musee)
 ACCESSIBLE L2 : oui
 ```
+
+**📖 La leçon : tester les éléments.** Trois étapes terminales rendent un `boolean`, et s'arrêtent dès qu'elles connaissent la réponse :
+
+```java
+ingredients.stream().anyMatch(i -> i.startsWith("s"))   // au moins un ?
+ingredients.stream().allMatch(i -> i.length() > 3)      // tous ?
+ingredients.stream().noneMatch(String::isEmpty)         // aucun ?
+```
+
+**👉 À toi :**
+
 - La réponse vient de **un seul** appel terminal court-circuitant, sur les arrêts et `Data.NOT_ACCESSIBLE`. Choisis entre `anyMatch`, `allMatch` et `noneMatch` celui qui se lit comme la phrase « aucun arrêt n'est inaccessible ».
 - Les coupables ne sont listés que si la réponse est `non`.
 
@@ -147,6 +247,11 @@ ACCESSIBLE L2 : oui
 TICKETS : T001, T002, T003
 TICKETS : T004, T005
 ```
+
+**📖 Rappel :** `Stream.generate` (étape 1) produit un flux infini : il faut le borner avec `limit`. Une lambda ne peut modifier qu'un état rangé **hors** d'une variable locale : un champ, ou les cases d'un tableau (chapitre 8, projet 1, étape 4).
+
+**👉 À toi :**
+
 - Les numéros viennent d'un `Stream.generate`, une source **infinie** que tu bornes.
 - La numérotation **continue** d'un appel à l'autre. Où doit vivre le compteur ? Pourquoi une variable locale ne compilerait pas dans la lambda ?
 - **Question :** que se passe-t-il si tu oublies `limit` ?

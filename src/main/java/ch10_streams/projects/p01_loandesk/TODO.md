@@ -11,6 +11,21 @@
 **Pour vérifier :** lance `Check.java`. Il exécute ton `main`, compare ta sortie à la sortie attendue (en bas de ce fichier) et te montre la première ligne fausse. Il lit aussi tes sources : il liste les méthodes d'`Optional` que tu n'as pas encore utilisées et refuse tout appel à `Optional.get()`.  
 Ne regarde `solution/` qu'à la fin.
 
+**Ce que le chapitre 10 t'apprend :**
+- **`Optional`** : une boîte qui contient une valeur, ou rien, pour remplacer les `null` ;
+- les **streams** : des chaînes de traitements sur une suite d'éléments, écrites avec des lambdas.
+
+Chaque étape qui introduit une notion commence par une **📖 leçon**, avec un exemple sur un autre sujet : la cuisine.
+
+**Les imports :** `java.util.*` (pour `Optional`), `java.util.stream.*` (pour `Stream`, `IntStream`, `Collectors`) et `java.util.function.*`.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p01 -sourcepath src/main/java src/main/java/ch10_streams/projects/p01_loandesk/LoanDesk.java
+java "-Duser.language=fr" -cp build/ch10-p01 ch10_streams.projects.p01_loandesk.LoanDesk
+```
+
 ---
 
 ## Le problème
@@ -32,6 +47,30 @@ Coche au fur et à mesure. Chaque étape contient sa règle, les lignes qu'elle 
 
 ### ☐ Étape 1 — Concevoir le modèle (sans écrire de logique)
 
+**📖 La leçon : `Optional`, une boîte peut-être vide.** Au lieu de rendre `null` quand une valeur manque (et de risquer un plantage plus loin), une méthode rend un `Optional` : une boîte qui contient **une** valeur, ou **rien**.
+
+```java
+Optional<String> plein = Optional.of("sel");          // une boîte avec "sel"
+Optional<String> vide = Optional.empty();             // une boîte vide
+Optional<String> peutEtre = Optional.ofNullable(x);   // vide si x vaut null, pleine sinon
+plein.isPresent()        // true
+vide.isEmpty()           // true
+```
+
+On ne sort **presque jamais** la valeur directement. On décrit plutôt ce qu'il faut faire **si** elle est là :
+
+```java
+plein.map(String::toUpperCase).orElse("rien")         // "SEL"  : transforme la valeur, si elle existe
+vide.map(String::toUpperCase).orElse("rien")          // "rien" : la boîte vide reste vide, orElse donne le repli
+plein.filter(s -> s.length() > 5).orElse("trop court")   // "trop court" : filter vide la boîte si le test échoue
+```
+
+**⚠️ `get()` est interdit dans ce projet.** C'est l'ancienne façon de sortir la valeur : elle plante sur une boîte vide. Utilise les méthodes ci-dessus, ou `orElseThrow()` quand tu es **sûr** que la boîte est pleine (étape 6).
+
+**📖 Rappel :** `strip()` et `isBlank()` (chapitre 4, projet 1). Un `String.format("%d.%02d", …)` affiche deux chiffres avec un zéro devant si besoin (chapitre 4, projet 6).
+
+**👉 À toi :**
+
 Sur papier d'abord : quels types ? record, classe, interface ? quels champs ? dans quels fichiers ?
 
 - Un **livre** vient d'une ligne de `Data.BOOKS`. Son nombre d'exemplaires change à chaque emprunt et à chaque retour. Si tu fais du livre un record (immuable), où ranges-tu ce nombre ?
@@ -44,6 +83,14 @@ Sur papier d'abord : quels types ? record, classe, interface ? quels champs ? da
   - **Question :** pourquoi ne pas utiliser un `double` (0.50, 10.00) ? Pense à l'arrondi et à l'affichage.
 
 ### ☐ Étape 2 — Une interface de recherche de livres
+
+**📖 La leçon : un plan B qui reste un `Optional`.** `opt.or(() -> autreOptional)` rend `opt` s'il est plein, **sinon** le résultat du plan B. Le plan B est une lambda : il n'est calculé que si on en a besoin.
+
+```java
+vide.or(() -> Optional.of("secours"))     // Optional[secours]
+```
+
+**👉 À toi :**
 
 - Crée une **interface** avec deux recherches abstraites. Chacune rend un `Optional` :
   - par isbn (exact) ;
@@ -70,6 +117,12 @@ Sur papier d'abord : quels types ? record, classe, interface ? quels champs ? da
 
 ### ☐ Étape 4 — `EMPRUNT <membre> <isbn>`
 
+**📖 La leçon : enchaîner des recherches.** Chaque `map` ne s'exécute que si la boîte est pleine. Une chaîne `recherche → map(…) → map(…) → orElse(…)` remplace donc une cascade de `if (x != null)`. Si une étape vide la boîte, toutes les suivantes sont sautées, et `orElse` donne le repli.
+
+`isPresent()` sert seulement quand on veut savoir **si** la valeur existe, sans l'utiliser.
+
+**👉 À toi :**
+
 Les refus, dans cet ordre :
 ```
 REFUS : membre inconnu M9
@@ -92,6 +145,10 @@ OK : Lea emprunte Dune (reste 2)
 
 ### ☐ Étape 5 — La pénalité de retard
 
+**📖 La leçon : fabriquer ton propre `Optional`.** `Optional.of(valeur)` pour une boîte pleine (la valeur ne doit pas être `null`), `Optional.empty()` pour une boîte vide.
+
+**👉 À toi :**
+
 - Jusqu'à 3 jours de retard : rien.
 - Au-delà : 0,50 par jour **au-delà des 3**, plafonné à 10,00.
 - La méthode rend un `Optional<Integer>` (centimes), **vide** quand il n'y a pas de pénalité. Ici tu construis l'`Optional` toi-même, avec `Optional.empty()` et `Optional.of(...)`.
@@ -100,6 +157,28 @@ OK : Lea emprunte Dune (reste 2)
 > Pourquoi un `Optional` vide plutôt que `0` ?
 
 ### ☐ Étape 6 — `RETOUR <membre> <isbn> <jours de retard>`
+
+**📖 La leçon : `flatMap`, quand la transformation rend déjà un `Optional`.** Si la fonction passée à `map` rend elle-même un `Optional`, on obtient une boîte dans une boîte. `flatMap` évite cela :
+
+```java
+static Optional<Integer> enNombre(String s) { … }     // rend vide si s n'est pas un nombre
+Optional<String> texte = Optional.of("42");
+texte.map(Atelier::enNombre)        // Optional[Optional[42]] : deux boîtes
+texte.flatMap(Atelier::enNombre)    // Optional[42]           : une seule
+```
+
+**📖 La leçon : les autres façons de finir une chaîne.**
+
+```java
+plein.ifPresent(s -> System.out.println("trouve " + s));   // fait quelque chose, seulement si plein
+vide.orElseGet(() -> "calcule")                            // le repli est une lambda, calculée seulement si vide
+plein.orElseThrow()                                        // la valeur ; plante si la boîte est vide
+opt.orElseThrow(() -> new IllegalStateException("…"))      // plante avec TON message si vide
+```
+
+`orElse(x)` calcule toujours `x`, même quand on ne s'en sert pas. `orElseGet(lambda)` ne le calcule que si besoin.
+
+**👉 À toi :**
 
 S'il n'y a pas d'emprunt :
 ```
@@ -131,6 +210,17 @@ CONTACT Lea : lea@mail.fr
 CONTACT Hugo : par courrier
 REFUS : membre inconnu M7
 ```
+
+**📖 La leçon : traiter les deux cas d'un coup.**
+
+```java
+vide.ifPresentOrElse(
+        s -> System.out.println("trouve " + s),       // si plein
+        () -> System.out.println("absent"));          // si vide
+```
+
+**👉 À toi :**
+
 - Ici, pas d'exception. Tu traites le cas présent **et** le cas absent en **un seul appel** sur l'`Optional` du membre.
 
 ### ☐ Étape 8 — `INFO <isbn ou titre>`
@@ -145,6 +235,40 @@ REFUS : aucun livre pour Silmarillion
 - **Le nombre en attente :** la file d'un livre que personne n'a jamais attendu peut ne pas exister du tout. Écris-le avec une chaîne `Optional`, sans `if` ni `getOrDefault`.
 
 ### ☐ Étape 9 — `BILAN` (4 lignes)
+
+**📖 La leçon : ton premier stream.** Un **stream** fait passer les éléments d'une collection dans une chaîne de traitements, comme sur un tapis roulant :
+1. une **source** : `liste.stream()` ;
+2. des étapes **intermédiaires**, qui transforment le flux : `filter`, `map`… ;
+3. une étape **terminale**, qui produit le résultat : `toList()`, `count()`…
+
+```java
+List<String> ingredients = List.of("farine", "oeuf", "lait", "sucre", "beurre", "oeuf");
+List<String> r = ingredients.stream()
+        .filter(i -> i.length() > 4)      // garde ceux qui passent le test
+        .map(String::toUpperCase)         // transforme chacun
+        .sorted()                         // trie
+        .toList();                        // [BEURRE, FARINE, SUCRE]
+```
+
+**Pour des nombres**, il existe des streams spéciaux, sans emballage : `IntStream`, `LongStream`, `DoubleStream`. On y passe avec `mapToInt`, et ils savent calculer directement :
+
+```java
+IntStream.of(3, 9, 6).max()          // OptionalInt[9]  : vide si le stream est vide
+IntStream.of(3, 9, 6).average()      // OptionalDouble[6.0]
+ingredients.stream().mapToInt(String::length).sum()
+```
+
+`OptionalInt` se lit avec `getAsInt()`, `OptionalDouble` avec `getAsDouble()`.
+
+**Un stream d'`Optional`, vers un stream de valeurs :** `flatMap(Optional::stream)` garde les valeurs présentes et jette les boîtes vides :
+
+```java
+List.of(Optional.of("a"), Optional.empty(), Optional.of("b")).stream()
+        .flatMap(Optional::stream)
+        .toList()                           // [a, b]
+```
+
+**👉 À toi :**
 
 **Ligne 1 :**
 ```
@@ -174,6 +298,10 @@ BILAN : 0 emprunt(s) en cours
 ```
 
 ### ☐ Étape 10 — Le `main` de `LoanDesk`
+
+**📖 Rappel :** un `switch` sur le premier mot de la commande (chapitre 3, projet 1).
+
+**👉 À toi :**
 
 - Il charge les données, puis exécute chaque commande de `Data.COMMANDS`.
 - Toute autre commande produit `REFUS : commande inconnue RENOUVELER`.

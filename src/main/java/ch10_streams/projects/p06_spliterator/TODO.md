@@ -13,6 +13,19 @@
 
 **Ce que TU crées :** tout le programme, dans le paquet `ch10_streams.projects.p06_spliterator`. Cela inclut **une classe qui implémente `Spliterator<…>`**. La classe du `main` s'appelle **`CashJournal`**.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p06 -sourcepath src/main/java src/main/java/ch10_streams/projects/p06_spliterator/CashJournal.java
+java "-Duser.language=fr" -cp build/ch10-p06 ch10_streams.projects.p06_spliterator.CashJournal
+```
+
+**À quoi sert un `Spliterator` ?** C'est le « moteur » caché sous chaque stream. Il sait faire deux choses :
+- **avancer** élément par élément ;
+- **se couper en deux**, pour qu'on puisse partager le travail.
+
+Ici, tu en écris un toi-même, pour lire un journal de caisse.
+
 ---
 
 ## Le problème
@@ -36,6 +49,16 @@ De plus, le journal réel fait des millions de lignes. Ton spliterator doit donc
   - Comment transformer `"12.50"` en `1250` sans `double` ?
 
 ### ☐ Étape 2 — `tryAdvance` : lire UNE transaction
+
+**📖 La leçon : `tryAdvance`, un élément à la fois.** `tryAdvance(action)` donne **au plus un** élément à `action`, puis rend `true`. Quand il n'y a plus rien, il rend `false` sans appeler `action`. `forEachRemaining(action)` donne tous les éléments restants.
+
+```java
+Spliterator<String> s = List.of("d", "e", "f").spliterator();
+s.tryAdvance(x -> System.out.print("premier " + x + " "));    // premier d
+s.forEachRemaining(x -> System.out.print(x));                 // ef
+```
+
+**👉 À toi :**
 
 Ton spliterator travaille sur une **plage** `[début, fin)` d'indices de la liste de lignes.
 
@@ -61,6 +84,10 @@ ANOMALIE TX 1005 : ligne illisible "  + 2 x"
 
 ### ☐ Étape 3 — `estimateSize` et `characteristics`
 
+**📖 La leçon : ce qu'un spliterator dit de lui-même.** `estimateSize()` donne une **estimation** du nombre d'éléments restants. `characteristics()` rend des **drapeaux** combinés avec `|` (chapitre 2, projet 2) : `ORDERED` (l'ordre compte), `SIZED` (la taille est exacte), `NONNULL`, `IMMUTABLE`… `hasCharacteristics(Spliterator.ORDERED)` teste un drapeau.
+
+**👉 À toi :**
+
 - `estimateSize()` : tu ne sais pas combien de **transactions** il reste, seulement combien de **lignes**. Ce majorant est autorisé. Relis la Javadoc pour savoir à quoi il sert.
 - `characteristics()` : choisis les bonnes constantes, avec l'opérateur `|`.
   - `ORDERED` : oui. L'ordre du journal compte.
@@ -72,6 +99,11 @@ ANOMALIE TX 1005 : ligne illisible "  + 2 x"
 ```
 MEILLEUR CLIENT : hugo (58.90)
 ```
+
+**📖 La leçon : d'un spliterator vers un stream.** `StreamSupport.stream(spliterator, false)` fabrique un `Stream` ordinaire à partir de ton spliterator. Toutes les étapes des projets précédents marchent dessus.
+
+**👉 À toi :**
+
 - `StreamSupport.stream(tonSpliterator, false)` donne un `Stream<Transaction>` ordinaire. Tous les opérateurs des projets précédents marchent dessus. Le second argument (`true`, le parallèle) attendra le chapitre 13.
 - **MEILLEUR CLIENT :** le client qui a dépensé le plus.
 
@@ -80,6 +112,19 @@ MEILLEUR CLIENT : hugo (58.90)
 ```
 DECOUPAGE : [1001] [1002] [1003 1004] [1005] [1006] [1007] [1008]
 ```
+
+**📖 La leçon : `trySplit`, se couper en deux.** `trySplit()` rend un **nouveau** spliterator avec la **première** partie des éléments, et garde la suite pour lui. Il rend `null` s'il refuse de se couper :
+
+```java
+List<String> l = List.of("a", "b", "c", "d", "e", "f");
+Spliterator<String> s = l.spliterator();
+Spliterator<String> moitie = s.trySplit();
+moitie.forEachRemaining(System.out::print);    // abc
+s.forEachRemaining(System.out::print);         // def
+```
+
+**👉 À toi :**
+
 - `trySplit()` coupe **ta** plage en deux. Il **rend** la première moitié (le préfixe) dans un **nouveau** spliterator, et **garde** la seconde.
   - **Question :** pourquoi le préfixe et pas le suffixe, puisque tu es `ORDERED` ?
 - **Les règles :**
@@ -115,6 +160,11 @@ PREMIERE (tryAdvance) : 1001, RESTE (forEachRemaining) : 7, ENCORE : false
 ```
 LOTS : [J01, J02] [J03, J04, J05] [J06, J07] [J08, J09, J10]
 ```
+
+**📖 Rappel :** le `spliterator()` d'une `List` sait se couper tout seul (étape 5). `estimateSize()` (étape 3) dit combien d'éléments restent dans un morceau.
+
+**👉 À toi :**
+
 - Répartis `Data.JOBS` en lots d'au plus `Data.MAX_BATCH` commandes. Coupe **récursivement** le spliterator de la liste avec `trySplit`, tant que `estimateSize()` dépasse la limite.
 - Ne calcule **aucun** indice toi-même : c'est la liste qui décide où elle coupe.
 - **À la main :** pourquoi 10 éléments donnent-ils `2-3-2-3` et pas `3-3-3-1` ?

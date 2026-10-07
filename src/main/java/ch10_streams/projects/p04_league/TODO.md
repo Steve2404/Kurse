@@ -16,6 +16,15 @@
 
 **Ce que TU crées :** tout le programme, dans le paquet `ch10_streams.projects.p04_league`. La classe du `main` s'appelle **`League`**.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p04 -sourcepath src/main/java src/main/java/ch10_streams/projects/p04_league/League.java
+java "-Duser.language=fr" -cp build/ch10-p04 ch10_streams.projects.p04_league.League
+```
+
+**Ce projet t'apprend les réductions** : comment un stream « résume » tous ses éléments en un seul résultat.
+
 ---
 
 ## Le problème
@@ -30,6 +39,16 @@ Il **prouve** ensuite que chaque réduction reste juste quand on **coupe la sais
 
 ### ☐ Étape 1 — Le modèle
 
+**📖 La leçon : réduire, c'est combiner deux par deux.** `reduce` combine les éléments **deux par deux** jusqu'à n'en garder qu'un, comme on additionne une colonne de chiffres :
+
+```java
+List.of(3, 5, 2).stream().reduce(0, Integer::sum)     // 0 + 3 + 5 + 2 = 10
+```
+
+Le `0` est l'**identité** : la valeur de départ, qui ne change rien quand on la combine (0 pour l'addition, 1 pour la multiplication).
+
+**👉 À toi :**
+
 - **Un match :** journée, deux équipes, deux scores. Il sait donner son nombre de buts, son écart et s'il concerne une équipe.
 - **Le match vu par une équipe.** Pour le classement, un match doit pouvoir se transformer en « bilan d'une équipe pour ce match » : joué, gagné, nul, perdu, buts pour, buts contre.
 - **Le bilan d'une équipe** est un record qui sait **s'additionner** à un autre bilan. Il a un bilan **zéro**.
@@ -41,6 +60,19 @@ Il **prouve** ensuite que chaque réduction reste juste quand on **coupe la sais
 ```
 RESULTATS : Lions 3-1 Tigres | Ours 0-0 Aigles | ...
 ```
+
+**📖 La leçon : `collect` à 3 arguments, remplir un conteneur.** Au lieu de fabriquer un nouvel objet à chaque étape (comme `reduce`), `collect` **remplit** un conteneur modifiable :
+1. le **fournisseur** crée un conteneur vide ;
+2. l'**accumulateur** ajoute un élément au conteneur ;
+3. le **combiner** fusionne deux conteneurs (utile quand le travail est découpé en morceaux).
+
+```java
+StringBuilder sb = Stream.of("a", "b", "c")
+        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append);   // abc
+```
+
+**👉 À toi :**
+
 - Construis la ligne avec `stream.collect(StringBuilder::new, accumulateur, combiner)`. Le séparateur ` | ` n'apparaît qu'**entre** deux matchs.
 - **Piège du combiner :** si ton combiner est `StringBuilder::append`, que devient la ligne à la jonction de deux morceaux ? Écris le combiner correct.
   - **Conception :** donne un **nom** à l'accumulateur et au combiner (des constantes typées `BiConsumer<…>`, chapitre 8). Tu en auras besoin à l'étape 9 pour fusionner deux morceaux à la main.
@@ -51,6 +83,15 @@ RESULTATS : Lions 3-1 Tigres | Ours 0-0 Aigles | ...
 ```
 BUTS : 35 en 12 matchs, moyenne 2.92
 ```
+
+**📖 La leçon : `reduce` à 3 arguments.** Quand les éléments et le résultat n'ont **pas le même type**, il faut 3 morceaux : l'identité, l'accumulateur (résultat + élément → résultat) et le combiner (résultat + résultat → résultat) :
+
+```java
+Stream.of("pain", "sel").reduce(0, (total, mot) -> total + mot.length(), Integer::sum)   // 7
+```
+
+**👉 À toi :**
+
 - Le total se calcule avec **un** `reduce`, directement sur le `Stream<Match>`, sans `map` ni `mapToInt` avant.
 - Les éléments sont des matchs et le résultat est un `int`. Pourquoi la forme à 2 arguments ne compile-t-elle pas ? À quoi sert le troisième argument, et quand est-il appelé ?
 - **Piège :** remplace l'identité `0` par `10`. Que donne le passage unique ? Et deux morceaux réduits séparément puis additionnés ? Explique pourquoi les deux résultats diffèrent.
@@ -61,6 +102,16 @@ BUTS : 35 en 12 matchs, moyenne 2.92
 ```
 PLUS LARGE VICTOIRE : J3 Lions 5-0 Ours (ecart 5)
 ```
+
+**📖 La leçon : `reduce` sans identité.** `reduce(operateur)` n'a pas de valeur de départ. Il rend donc un `Optional`, vide si le stream l'est :
+
+```java
+List.of(3, 5, 2).stream().reduce(Integer::max)     // Optional[5]
+Stream.<Integer>empty().reduce(Integer::max)       // Optional.empty
+```
+
+**👉 À toi :**
+
 - Les matchs nuls ne comptent pas.
 - **Contrainte :** un `reduce(accumulateur)`. Il rend un `Optional`. Pourquoi Java ne peut-il pas rendre directement un `Match` ?
 - À égalité d'écart, garde le match **le plus ancien**. Ton opérateur doit rester **associatif**, sinon le résultat dépendrait de la façon de découper la saison. Vérifie-le sur trois matchs à égalité.
@@ -75,6 +126,20 @@ CLASSEMENT
 3. Tigres 9 pts (G3 N0 P3) 10:8 +2
 4. Ours 2 pts (G0 N2 P4) 2:14 -12
 ```
+
+**📖 La leçon : écrire ton propre `Collector`.** `Collector.of` assemble les quatre morceaux d'une collecte : fournisseur, accumulateur, combiner, et un **finisher** qui transforme le conteneur en résultat final.
+
+```java
+Collector<String, StringBuilder, String> colle = Collector.of(
+        StringBuilder::new,          // fournisseur
+        StringBuilder::append,       // accumulateur
+        StringBuilder::append,       // combiner
+        StringBuilder::toString);    // finisher
+Stream.of("x", "y", "z").collect(colle)     // "xyz"
+```
+
+**👉 À toi :**
+
 Écris un `Collector<Match, ?, List<…>>` avec `Collector.of`, en quatre parties :
 - **le conteneur mutable** : une table équipe → bilan ;
 - **l'accumulateur** : un match met à jour **deux** équipes. Quelle méthode de `Map` ajoute ou cumule en un seul appel ?
@@ -96,6 +161,11 @@ Calcule à la main pourquoi Lions passe devant Aigles.
 ```
 BILAN Lions (reduce) : 6 matchs, 11 pts, identique au classement : oui
 ```
+
+**📖 Rappel :** `reduce(identite, operateur)` (étape 1), sur un stream qu'on a d'abord transformé avec `map`.
+
+**👉 À toi :**
+
 - Calcule le bilan des Lions sans ton `Collector`, avec `map` vers « bilan pour Lions » puis `reduce(zéro, plus)`.
 - **Vérification croisée :** ce bilan doit être **égal** (`equals`) à la ligne Lions du classement. Pourquoi un record rend-il cette comparaison gratuite ?
 

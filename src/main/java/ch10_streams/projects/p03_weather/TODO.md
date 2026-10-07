@@ -12,6 +12,15 @@
 
 **Pour vérifier :** lance `Check.java`.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch10-p03 -sourcepath src/main/java src/main/java/ch10_streams/projects/p03_weather/WeatherStation.java
+java "-Duser.language=fr" -cp build/ch10-p03 ch10_streams.projects.p03_weather.WeatherStation
+```
+
+**Ce projet t'apprend les streams de nombres** : `IntStream`, `LongStream` et `DoubleStream`.
+
 ---
 
 ## Le problème
@@ -33,6 +42,19 @@ On y trouve des statistiques par jour, une fenêtre glissante, une médiane, un 
 ```
 REJET 2026-07-19 : 23 releves au lieu de 24
 ```
+
+**📖 La leçon : passer aux streams de nombres.**
+
+```java
+Stream.of("1", "2").mapToInt(Integer::parseInt).sum()      // 3 : d'un Stream<String> à un IntStream
+Arrays.stream(new int[] {4, 5}).sum()                      // 9 : un IntStream depuis un tableau
+IntStream.of(4, 5).toArray()                               // un int[]
+```
+
+Un `IntStream` contient des `int`, pas des `Integer` : aucun emballage, donc plus rapide.
+
+**👉 À toi :**
+
 - Transforme `"18,17,16,…"` en `int[]` sans passer par une `List<Integer>`. Quelle méthode fait passer un `Stream<String>` à un `IntStream` ?
 - Une journée qui n'a pas exactement 24 relevés est rejetée. Elle apparaît dans le rapport et n'entre dans **aucun** calcul.
 - **Conception :** tu veux peut-être mettre un `int[]` dans un record. Que comparent alors `equals` et `hashCode` du record ? Est-ce un problème ici ? Écris ta réponse en commentaire.
@@ -43,6 +65,11 @@ REJET 2026-07-19 : 23 releves au lieu de 24
 ```
 STATION LYON-BRON-07 : code de controle 51
 ```
+
+**📖 La leçon : les caractères d'un texte en stream.** `texte.chars()` rend un `IntStream` des **codes** des caractères (chapitre 2, projet 3) : `"abc".chars().sum()` vaut 97 + 98 + 99 = 294. `Character.isLetterOrDigit(c)` dit si un code est une lettre ou un chiffre.
+
+**👉 À toi :**
+
 - Le code est la somme des codes des caractères **lettres ou chiffres** de `Data.STATION`, modulo 97. Les tirets ne comptent pas.
 - **Contrainte :** une seule chaîne, partie de la `String`, sans `char[]` ni boucle. Quelle méthode de `String` rend un `IntStream` ?
 - **Question :** pourquoi un `IntStream`, et pas un `Stream<Character>` ?
@@ -53,6 +80,35 @@ STATION LYON-BRON-07 : code de controle 51
 2026-07-14 : min 16 max 31 moy 22.8 | pic 10h-12h moy 30.7
 2026-07-14 : releves 0h/6h/12h/18h 18 22 31 21 | heures >= 30 [10, 11, 12, 13]
 ```
+
+**📖 La leçon : plusieurs résultats en un passage.**
+
+```java
+IntSummaryStatistics st = IntStream.of(3, 9, 6).summaryStatistics();
+st.getMin()        // 3
+st.getMax()        // 9
+st.getAverage()    // 6.0
+st.getSum()        // 18
+st.getCount()      // 3
+```
+
+**📖 La leçon : produire des nombres.**
+
+```java
+IntStream.range(0, 4)                     // 0 1 2 3   : la fin est EXCLUE
+IntStream.rangeClosed(1, 4)               // 1 2 3 4   : la fin est INCLUSE
+IntStream.iterate(0, i -> i < 10, i -> i + 3)   // 0 3 6 9
+```
+
+**📖 La leçon : revenir aux objets.** `boxed()` emballe chaque `int` en `Integer` (pour obtenir une `List<Integer>`). `mapToObj(i -> …)` transforme chaque `int` en objet :
+
+```java
+IntStream.of(5, 1).boxed().toList()                 // [5, 1]
+IntStream.range(1, 4).mapToObj(i -> "#" + i).toList()   // [#1, #2, #3]
+```
+
+**👉 À toi :**
+
 - **min, max, moy** viennent d'**un seul** parcours de la journée. Quel objet les calcule ensemble ?
 - **Le pic** est la fenêtre de 3 heures consécutives dont la somme est la plus grande. C'est une fenêtre glissante :
   - chaque heure de départ possible (de 0 à 21) devient la somme de ses 3 heures ;
@@ -69,6 +125,19 @@ STATION LYON-BRON-07 : code de controle 51
 MEDIANE : 22.0
 MOYENNE : 23.7 C / 74.6 F
 ```
+
+**📖 La leçon : aplatir en nombres, changer de type.**
+
+```java
+List<int[]> jours = List.of(new int[] {1, 2}, new int[] {3});
+jours.stream().flatMapToInt(Arrays::stream).sum()    // 6 : chaque tableau devient un IntStream, puis tout bout à bout
+IntStream.of(1, 2, 3).asDoubleStream()               // le même flux, en double
+```
+
+**📖 Rappel :** `sorted`, `skip`, `limit` (projet 2, étape 2) existent aussi sur `IntStream`. Un stream ne s'utilise qu'une fois (projet 2, étape 5).
+
+**👉 À toi :**
+
 - **Toutes les températures de toutes les journées valides** forment **un** `IntStream`. Quelle opération aplatit une liste de journées en un flux d'`int` sans boxing ?
 - **La médiane :**
   - avec un nombre pair de valeurs, c'est la moyenne des deux valeurs du milieu ;
@@ -85,6 +154,11 @@ HISTO [10-14] 4 ##
 HISTO [15-19] 33 ################
 ...
 ```
+
+**📖 Rappel :** `rangeClosed` et `mapToObj` (étape 3). `summaryStatistics` (étape 3).
+
+**👉 À toi :**
+
 - Les classes vont de 5 en 5, de la classe du minimum à celle du maximum (par exemple `[10-14]` puis `[15-19]`).
 - La barre fait `nombre / 2` dièses (division entière).
 - **Contrainte :** les bornes viennent de `summaryStatistics()`. Les classes sont produites par `IntStream.rangeClosed(...)`, et chaque classe devient une ligne avec `mapToObj`.
@@ -97,6 +171,11 @@ CANICULE : 2 jour(s) consecutifs (2026-07-15 -> 2026-07-16)
 MONTEE : 9 heure(s) de hausse continue le 2026-07-15 (3h -> 12h)
 ORAGE : chute de 7 degres le 2026-07-17 a 12h
 ```
+
+**📖 Rappel :** `mapToObj` (étape 3). Un `flatMap` peut contenir un stream entier, construit à partir de chaque élément (projet 2, étape 2).
+
+**👉 À toi :**
+
 - **CANICULE.** C'est la plus longue suite de journées consécutives dont le maximum atteint `Data.HEAT_WAVE_MAX`.
   - Le maximum d'une journée est un `OptionalInt`.
   - S'il n'y en a aucune, affiche `CANICULE : aucune`.
@@ -115,6 +194,17 @@ ORAGE : chute de 7 degres le 2026-07-17 a 12h
 CLIMATISATION : 102900 Wh (102.9 kWh)
 DEGRES-JOURS : 5.38
 ```
+
+**📖 La leçon : changer de type de stream de nombres.**
+
+```java
+IntStream.of(5, 9).mapToLong(i -> i).sum()                     // un LongStream
+LongStream.rangeClosed(1, 3).map(i -> i * 10)                  // 10 20 30
+stream.mapToDouble(objet -> unDouble)                          // d'un Stream<T> à un DoubleStream
+```
+
+**👉 À toi :**
+
 - **CLIMATISATION** : chaque heure au-dessus de `Data.AC_THRESHOLD` coûte `(t − seuil) × Data.WH_PER_DEGREE_HOUR` Wh.
   - Le calcul se fait en `long`. Quelle méthode passe d'un `IntStream` à un `LongStream` ?
   - **Question :** sur un an de relevés et 1000 stations, pourquoi `int` serait-il dangereux ?
