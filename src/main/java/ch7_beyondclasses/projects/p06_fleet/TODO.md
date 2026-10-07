@@ -28,11 +28,33 @@ Côté algorithmes : **Dijkstra** en O(n²), avec un temps qui dépend des capac
 
 **Règle du crescendo :** chapitres 1 à 7. Pas de `try/catch` : on ne provoque jamais de `ClassCastException`, on teste avant.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch7-p06 -sourcepath src/main/java src/main/java/ch7_beyondclasses/projects/p06_fleet/FleetApp.java
+java "-Duser.language=fr" -cp build/ch7-p06 ch7_beyondclasses.projects.p06_fleet.FleetApp
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les capacités
+
+**📖 La leçon : le cast d'objet, regarder un objet autrement.** Une variable `Object` peut contenir un texte, mais elle ne « voit » que les méthodes d'`Object`. Pour utiliser les méthodes de `String`, on **caste** : `(String) o`. Le cast ne change **pas** l'objet ; il change seulement le type par lequel on le regarde.
+
+```java
+Object o = "abc";
+String s = (String) o;     // o contient vraiment un String : le cast réussit
+s.length()                 // 3
+o instanceof Integer       // false : ce n'est pas un Integer
+```
+
+Que se passe-t-il si l'objet n'est **pas** du type demandé ? Les expériences de l'étape 3 te le font découvrir. Retiens déjà la règle : **teste avec `instanceof` avant de caster**, ou utilise directement `instanceof Type variable` (chapitre 3), qui fait les deux d'un coup.
+
+Pour caster puis appeler une méthode dans la même expression, il faut des parenthèses autour du cast : `((Drivable) this).roadSpeed()`.
+
+**👉 À toi :**
 
 - **`enum Mode { ROAD, SEA, AIR }`**.
 - **Les interfaces :**
@@ -66,6 +88,13 @@ amphibie Hippo [ROAD@60 SEA@15] : Ville > Village > Phare > Ile en 185.0 min
 avion Concorde [ROAD@30 AIR@600] : Ville > Ile en 7.0 min
 drone Bzz [AIR@80] : Ville > Ile en 52.5 min
 ```
+
+**📖 Conseil :** pour l'algorithme de Dijkstra, dessine les lieux et les liaisons sur papier, avec les temps. Garde une colonne « meilleur temps connu » pour chaque lieu, et à chaque tour, entoure le lieu non traité qui a le plus petit temps.
+
+**📖 Rappel :** `Mode.valueOf("ROAD")` donne la constante d'`enum` depuis son nom (projet 2, étape 1). `Double.MAX_VALUE` est le plus grand `double`, pratique pour « pas encore atteint ».
+
+**👉 À toi :**
+
 - La flotte : `{new Car("Clio"), new Boat("Nautilus"), new Amphibian("Hippo"), new Plane("Concorde"), new Drone("Bzz")}`, dans un **`Vehicle[]`**.
 - **`static String fastest(Vehicle v)`**, Dijkstra de `Data.FROM` à `Data.TO` :
   - `time[]` part à `Double.MAX_VALUE`, et `prev[]` à −1 ;
@@ -81,6 +110,11 @@ un seul objet : 60 amphibie pouet-tut true 15 Amphibian
 altitudes : 1000 120 ; klaxons : tut pouet-tut tut (3 roulants)
 casts surs : Clio=voiture Nautilus=non Hippo=voiture Concorde=non Bzz=non
 ```
+
+**📖 Rappel :** un même objet peut être désigné par des variables de types différents (`Amphibian`, `Car`, `Vehicle`, `Object`). Ce qu'on peut **appeler** dépend du type de la variable ; la version **exécutée** dépend de l'objet (chapitre 6, projet 1, étape 3).
+
+**👉 À toi :**
+
 - **Ligne 1 :** `Amphibian hippo = (Amphibian) fleet[2];` (downcast), `Car asCar = hippo;`, `Vehicle asVehicle = hippo;`, `Object asObject = hippo;`. Affiche :
   - `asCar.roadSpeed()` ;
   - `asVehicle.kind()` ;

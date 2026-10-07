@@ -29,6 +29,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 7. Pas de collection ni de lambda.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch7-p04 -sourcepath src/main/java src/main/java/ch7_beyondclasses/projects/p04_routes/RoutesApp.java
+java "-Duser.language=fr" -cp build/ch7-p04 ch7_beyondclasses.projects.p04_routes.RoutesApp
+```
+
 ---
 
 ## Tableau de bord
@@ -39,6 +46,11 @@ Côté algorithmes :
 villes : Paris Lyon Marseille Toulouse Bordeaux Nantes Lille Strasbourg Nice Rennes
 record : City[name=Paris, lat=48.8566, lon=2.3522] | egal true | hash egal true | City[name=Nowhere, lat=0.0, lon=0.0] | creees 13
 ```
+
+**📖 Rappel :** une interface avec une méthode `default` qui utilise les méthodes abstraites (projet 1, étape 1). Un `record` peut **réaliser une interface** : ses accesseurs `lat()` et `lon()` écrivent automatiquement les méthodes abstraites du même nom. Le constructeur compact et le constructeur qui délègue avec `this(…)` : projet 2, étape 2.
+
+**👉 À toi :**
+
 - **`interface Located`** :
   - `double EARTH_RADIUS_KM = 6371;` ;
   - `double lat();` et `double lon();` ;
@@ -62,6 +74,11 @@ record : City[name=Paris, lat=48.8566, lon=2.3522] | egal true | hash egal true 
 ```
 distances : PAR-MAR 660 km, LIL-MAR 834 km, BOR-STR 758 km
 ```
+
+**📖 Rappel :** `Math.round` (chapitre 4, projet 4). Une matrice `double[][]` (chapitre 4, projet 3).
+
+**👉 À toi :**
+
 - Construis la matrice `dist[i][j] = cities[i].distanceTo(cities[j])`.
 - Affiche les distances arrondies (`Math.round`) des paires (0, 2), (6, 2) et (4, 7).
 
@@ -73,6 +90,13 @@ apres 2-opt : PAR-LIL-STR-LYO-NIC-MAR-TOU-BOR-NAN-REN-PAR = 2666 km
 optimum (362880 tournees) : PAR-LIL-STR-LYO-NIC-MAR-TOU-BOR-NAN-REN-PAR = 2666 km
 ecart glouton 5 %, ecart 2-opt 0 % ; Stats[legs=10, longest=408.0, longestLeg=LIL-STR]
 ```
+
+**📖 La leçon : un `record` dans un `record`.** On peut déclarer un `record` **à l'intérieur** d'un autre type. On l'utilise de l'extérieur avec son nom complet : `Route.Stats`.
+
+**📖 Rappel :** les permutations par échanges récursifs (chapitre 5, projet 4, étape 3).
+
+**👉 À toi :**
+
 - **`record Route(int[] order, double km)`** :
   - un constructeur compact qui copie `order`, et l'accesseur `order()` redéfini pour rendre une copie ;
   - `static double length(int[] order, double[][] dist)` : la boucle revient au départ ;

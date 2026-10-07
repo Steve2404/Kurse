@@ -30,6 +30,28 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 7. Pas de collection ni de lambda.
 
+**C'est le projet-bilan du chapitre 7.** Quand tu bloques, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| un `record` avec une méthode `static parse` et un `toString` redéfini | projet 2, étape 2 |
+| un `enum` dont chaque valeur écrit sa propre méthode | projet 2, étape 2 |
+| une interface `sealed`, avec ou sans `permits` | projet 3, étape 1 |
+| des `record` imbriqués dans une interface | projet 4, étape 3 |
+| une classe imbriquée `static`, une classe interne, une classe locale, une classe anonyme | projet 5, étape 1 |
+| un analyseur avec une méthode par niveau de priorité | chapitre 6, projet 6, étape 2 |
+| une chaîne d'`instanceof` avec pattern | chapitre 3, projet 4 |
+| une file dans un tableau (Kahn) | chapitre 4, projet 7, étape 7 |
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch7-p07 -sourcepath src/main/java src/main/java/ch7_beyondclasses/projects/p07_sheet/SheetApp.java
+java "-Duser.language=fr" -cp build/ch7-p07 ch7_beyondclasses.projects.p07_sheet.SheetApp
+```
+
+**À quoi sert ce projet ?** Un petit tableur : des cases qui contiennent des nombres, des textes ou des **formules** qui dépendent d'autres cases. Quand une case change, il faut tout recalculer **dans le bon ordre**, et repérer les dépendances circulaires.
+
 ---
 
 ## Tableau de bord

@@ -33,11 +33,76 @@ Côté algorithmes :
 - Pas de `try/catch` (chapitre 11).
 - Les montants sont en centimes (`long`).
 
+**Ce que le chapitre 7 t'apprend :** d'autres sortes de types que les classes :
+- les **interfaces** (des contrats) ;
+- les **`enum`** (une liste fermée de valeurs) ;
+- les **`record`** (des classes de données écrites en une ligne) ;
+- les types **`sealed`** (une famille fermée) ;
+- les **classes imbriquées** ;
+- les **casts** d'objets.
+
+Chaque étape commence par une **📖 leçon**, avec un exemple sur un autre sujet.
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch7-p01 -sourcepath src/main/java src/main/java/ch7_beyondclasses/projects/p01_payments/PaymentsApp.java
+java "-Duser.language=fr" -cp build/ch7-p01 ch7_beyondclasses.projects.p01_payments.PaymentsApp
+```
+
+**Créer une interface dans IntelliJ :** clic droit sur le dossier → **New** → **Java Class**, puis choisis **Interface** dans la liste, sous le champ du nom. Même chose pour **Enum** et **Record**.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les interfaces
+
+**📖 La leçon : une interface, un contrat.** Une interface dit **ce qu'une classe sait faire**, sans forcément dire comment. Une classe qui la **réalise** écrit `implements`, et doit écrire toutes ses méthodes abstraites. Une interface peut contenir :
+
+| Élément | Ce que c'est | Mots ajoutés tout seuls par Java |
+|---|---|---|
+| `int NOTES = 7;` | une constante | `public static final` |
+| `String nom();` | une méthode abstraite, sans corps | `public abstract` |
+| `default String joue() { … }` | une méthode **avec** corps, héritée par les classes | `public` |
+| `static String gamme(int n) { … }` | un outil appelé par `Interface.gamme(…)` | `public` |
+| `private String fin() { … }` | un outil interne aux méthodes de l'interface | — |
+
+```java
+interface Instrument {
+    int NOTES = 7;
+    String nom();
+    default String joue() { return nom() + " joue" + fin(); }
+    private String fin() { return " !"; }
+    static String gamme(int n) { return n + " octaves"; }
+}
+
+class Piano implements Instrument {
+    @Override
+    public String nom() { return "piano"; }    // public obligatoire : c'est public dans l'interface
+}
+
+Instrument i = new Piano();
+i.joue()                  // "piano joue !"
+Instrument.NOTES          // 7
+Instrument.gamme(3)       // "3 octaves"
+```
+
+Une interface peut en **étendre** une autre : `interface B extends A`.
+
+**📖 La leçon : deux `default` du même nom, le losange.** Si une classe hérite de **deux** interfaces qui ont chacune un `default` du même nom, Java ne sait pas lequel prendre : la classe **doit** redéfinir la méthode. Pour appeler l'une des versions, on écrit `NomInterface.super.methode()` :
+
+```java
+interface Poli    { default String salut() { return "bonjour"; } }
+interface Bruyant { default String salut() { return "HEY"; } }
+class Robot implements Poli, Bruyant {
+    @Override
+    public String salut() { return Poli.super.salut() + " / " + Bruyant.super.salut(); }
+}
+new Robot().salut()       // "bonjour / HEY"
+```
+
+**👉 À toi :**
 
 - **`PaymentMethod`** :
   - `long MAX_CENTS = 500_000;` (implicitement `public static final`) ;
@@ -64,6 +129,10 @@ Côté algorithmes :
   - elle **redéfinit** `policy()` : `"3-D Secure, " + Refundable.super.policy()`.
 
 ### ☐ Étape 2 — Les classes
+
+**📖 Rappel :** `implements` et `extends` peuvent se combiner : `class Robot extends Machine implements Poli, Bruyant`. Une redéfinition peut compléter la version héritée avec `NomInterface.super.methode()` (étape 1).
+
+**👉 À toi :**
 
 - **`CreditCard implements SecurePayment, Traceable`** :
   - `label()` = `carte <titulaire> ****<4 derniers>` ;
@@ -98,6 +167,11 @@ paiements acceptes 3/7, frais totaux 12.00
 bon GIFT-2026-G : OK 12.00 + frais 0.00, reste 18.00 | bon GIFT-2026-G : REFUSE (solde 18.00)
 cle de Luhn de 453957876362148 : 6 ; cle de bon GIFT-2026- : G
 ```
+
+**📖 Rappel :** `instanceof Refundable r` avec une variable (chapitre 3, projet 4). Un tableau de type **interface** (`PaymentMethod[]`) peut contenir des objets de toutes les classes qui la réalisent, et chacun applique **sa** version (polymorphisme, chapitre 6).
+
+**👉 À toi :**
+
 - `static PaymentMethod create(String line)` utilise un `switch` sur `CARD`, `IBAN` et `VOUCHER`. Le tableau est un **`PaymentMethod[]`**.
 - **Pour chaque moyen**, avec le montant de même indice dans `Data.AMOUNTS` :
   1. affiche `pay(amount)` ;

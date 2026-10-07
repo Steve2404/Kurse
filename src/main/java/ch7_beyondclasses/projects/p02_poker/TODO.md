@@ -35,6 +35,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 7. Pas de collection, de lambda ni de `Comparable` (l'interface est générique : chapitre 9). `Hand` a sa propre méthode `compareTo(Hand)`.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch7-p02 -sourcepath src/main/java src/main/java/ch7_beyondclasses/projects/p02_poker/Poker.java
+java "-Duser.language=fr" -cp build/ch7-p02 ch7_beyondclasses.projects.p02_poker.Poker
+```
+
 ---
 
 ## Tableau de bord
@@ -45,6 +52,40 @@ Côté algorithmes :
 couleurs : C=CLUBS(noire) D=DIAMONDS(rouge) H=HEARTS(rouge) S=SPADES(noire)
 rangs : 13, 10 1 -12 TEN couleur true
 ```
+
+**📖 La leçon : `enum`, une liste fermée de valeurs.** Un `enum` est un type dont les valeurs possibles sont **toutes écrites** dans sa déclaration :
+
+```java
+enum Saison { HIVER, PRINTEMPS, ETE, AUTOMNE }
+
+Saison s = Saison.ETE;
+s.name()                    // "ETE"   (et toString() aussi)
+s.ordinal()                 // 2       : la position, à partir de 0
+Saison.values()             // un tableau des 4 valeurs, dans l'ordre
+Saison.valueOf("HIVER")     // HIVER   : depuis le nom exact
+s == Saison.ETE             // true    : chaque valeur existe en un seul exemplaire
+s.compareTo(Saison.HIVER)   // 2       : la différence des positions
+```
+
+Un `enum` marche dans un `switch` : on écrit `case HIVER`, sans `Saison.` devant.
+
+**📖 La leçon : un `enum` avec des champs.** Chaque valeur peut porter des données, passées à un **constructeur** (toujours privé) :
+
+```java
+enum Planete {
+    TERRE('T', 9.8), MARS('M', 3.7);           // chaque valeur appelle le constructeur
+    final char symbole;
+    private final double g;
+    Planete(char symbole, double g) { this.symbole = symbole; this.g = g; }
+    double gravite() { return g; }
+}
+Planete.MARS.gravite()      // 3.7
+```
+
+Un `enum` peut aussi réaliser une interface (`enum Planete implements Symbolique`).
+
+**👉 À toi :**
+
 - **`Symbolic`** :
   - `char symbol()` ;
   - `default String describe()`, qui rend `symbol() + "=" + this`. Le `toString()` d'un enum est son nom.
@@ -70,6 +111,48 @@ AS KS QS JS TS -> quinte flush
 AH JD 8C 5S 3D -> hauteur
 departage : roue < suite au 6 true, paire de rois kicker As > kicker 4 true, record egal true
 ```
+
+**📖 La leçon : une méthode différente pour chaque valeur.** Une méthode `abstract` dans l'`enum`, et **chaque** valeur l'écrit dans son propre corps `{ … }` :
+
+```java
+enum Feu {
+    ROUGE  { Feu suivant() { return VERT; } },
+    VERT   { Feu suivant() { return ORANGE; } },
+    ORANGE { Feu suivant() { return ROUGE; } };
+    abstract Feu suivant();
+}
+Feu.ROUGE.suivant()         // VERT
+```
+
+**📖 La leçon : `record`, une classe de données en une ligne.** `record Livre(String titre, int pages) { }` fabrique automatiquement :
+- des champs `private final` ;
+- un constructeur avec tous les composants ;
+- des accesseurs **sans `get`** : `titre()`, `pages()` ;
+- `toString`, `equals` et `hashCode` basés sur le contenu.
+
+Un **constructeur compact** (sans parenthèses) sert à vérifier ou corriger les valeurs **avant** qu'elles soient rangées :
+
+```java
+record Livre(String titre, int pages) {
+    Livre {                                  // constructeur compact
+        titre = titre.strip();               // on modifie le PARAMÈTRE, Java range ensuite
+        if (pages < 0) pages = 0;
+    }
+    Livre(String titre) { this(titre, 0); }  // un autre constructeur doit déléguer avec this(…)
+    boolean epais() { return pages > 300; }  // une méthode ordinaire
+}
+
+Livre a = new Livre("  dune ", 412);
+a                                  // Livre[titre=dune, pages=412]
+a.titre()                          // "dune"
+a.equals(new Livre("dune", 412))   // true : même contenu
+new Livre("Vide")                  // Livre[titre=Vide, pages=0]
+```
+
+**📖 Rappel :** un `record` qui contient un **tableau** garde une étiquette vers ce tableau. Pour qu'il reste vraiment immuable, il faut des copies défensives (chapitre 6, projet 4).
+
+**👉 À toi :**
+
 - **`enum Category`**, de la plus faible à la plus forte : `HIGH_CARD("hauteur")`, `PAIR("paire")`, `TWO_PAIR("double paire")`, `THREE_OF_A_KIND("brelan")`, `STRAIGHT("suite")`, `FLUSH("couleur")`, `FULL_HOUSE("full")`, `FOUR_OF_A_KIND("carre")`, `STRAIGHT_FLUSH("quinte flush")`.
   - `abstract boolean matches(int[] groups, boolean flush, boolean straight)` : **chaque constante** l'implémente dans son corps `{ … }`.
   - `groups` = les tailles des groupes de même rang, triées décroissantes (`{3, 2, …}` pour un full).
@@ -98,6 +181,11 @@ joueur 1 : 9H 3S 8H 6C 6S -> paire
 ...
 gagnant : joueur 1 avec paire
 ```
+
+**📖 Rappel :** `values()` parcourt un `enum` dans l'ordre de déclaration (étape 1). L'échange de deux cases d'un tableau : chapitre 4, projet 7. `&` et `>>>` : chapitre 2, projet 2.
+
+**👉 À toi :**
+
 - **Le générateur :** `seed = Data.SEED`, puis `nextInt(bound)` :
   - `seed = (seed * 6364136223846793005L + 1442695040888963407L) & Long.MAX_VALUE;` ;
   - `return (int) ((seed >>> 17) % bound);`.
@@ -111,6 +199,11 @@ gagnant : joueur 1 avec paire
 hold'em sur KH 9H 4C 9S 2H : [AH 3H: couleur] [9D KD: full] [KC KS: full] [QH JH: couleur]
 gagnant hold'em : joueur 3 (KH 9H 9S KC KS -> full)
 ```
+
+**📖 Conseil :** pour les 21 façons d'exclure 2 cartes parmi 7, utilise deux boucles `i` et `j > i` : ce sont les deux cartes **exclues**.
+
+**👉 À toi :**
+
 - `static Hand best(Card[] seven)` : les 21 façons d'**exclure** 2 cartes parmi 7. Garde la meilleure main (la première en cas d'égalité).
 - Chaque joueur = `Data.BOARD` + `Data.HOLES[p]`.
 - **Expériences :**

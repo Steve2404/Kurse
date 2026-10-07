@@ -32,11 +32,35 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 7. Pas de collection (tableaux qui grandissent avec `Arrays.copyOf`). Pas de lambda. Le `switch` avec pattern (`case Move m ->`) n'existe pas en Java 17 : on enchaîne les `instanceof`.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch7-p03 -sourcepath src/main/java src/main/java/ch7_beyondclasses/projects/p03_turtle/TurtleApp.java
+java "-Duser.language=fr" -cp build/ch7-p03 ch7_beyondclasses.projects.p03_turtle.TurtleApp
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les commandes
+
+**📖 La leçon : `sealed`, une famille fermée.** Une interface (ou une classe) `sealed` donne la **liste exacte** de ceux qui ont le droit de la réaliser, avec `permits`. Chaque membre de la liste doit dire comment il continue la famille :
+- `final` : personne ne peut l'étendre (un `record` l'est automatiquement) ;
+- `sealed` : il ferme lui aussi sa propre liste ;
+- `non-sealed` : il rouvre la famille, n'importe qui peut l'étendre.
+
+```java
+sealed interface Forme permits Rond, Carre { }
+final class Rond implements Forme { final int rayon; Rond(int r) { rayon = r; } }
+record Carre(int cote) implements Forme { }        // un record est déjà final
+```
+
+L'intérêt : celui qui lit le code sait que **toutes** les formes possibles sont listées.
+
+**📖 Rappel :** un `record` sans composant s'écrit `record PenUp() { }`. Une constante `public static final` dans un `record` est permise : `Turn.RIGHT`.
+
+**👉 À toi :**
 
 - **`sealed interface Command permits Move, Turn, Repeat, PenUp, PenDown, Macro`**, avec une seule méthode : `int size()`. C'est le nombre de commandes élémentaires une fois tout déplié.
 - **`record Move(int steps)`** :
@@ -69,6 +93,11 @@ programme : 14 commandes SQUARE PenUp Move PenDown Repeat PenUp Turn Move Turn M
 deplie : 57 commandes elementaires, imbrication 2
 records : Move[steps=3] Move[steps=0] Turn[quarters=1] PenUp[] egal true ; Repeat.equals compare les tableaux par reference : false
 ```
+
+**📖 Rappel :** l'analyseur récursif (chapitre 6, projet 6, étape 2). `getClass().getSimpleName()` (chapitre 6, projet 1). Le `toString` et l'`equals` générés d'un `record` (projet 2, étape 2).
+
+**👉 À toi :**
+
 - **L'analyseur, dans `TurtleApp` :**
   - des champs `private static String[] tokens` et `int pos` ;
   - `static Command[] parseBlock()` lit des commandes jusqu'à `]` ou la fin, avec un `switch` expression sur le mot.
@@ -90,6 +119,11 @@ records : Move[steps=3] Move[steps=0] Turn[quarters=1] PenUp[] egal true ; Repea
 ...
 position (12,7) cap EAST, distance 73, virages 26
 ```
+
+**📖 Rappel :** un `enum` avec des champs (projet 2, étape 1). Une chaîne d'`instanceof` avec pattern (chapitre 3, projet 4). `Math.floorMod(a, b)` rend un reste **toujours positif**, contrairement à `%` (chapitre 2, projet 3).
+
+**👉 À toi :**
+
 - **`enum Direction`** : `NORTH(-1, 0)`, `EAST(0, 1)`, `SOUTH(1, 0)`, `WEST(0, -1)`. `turn(int quarters)` rend `values()[Math.floorMod(ordinal() + quarters, 4)]`.
 - **`Turtle(int rows, int cols, int row, int col)`** :
   - une grille de `char` remplie d'espaces ;
