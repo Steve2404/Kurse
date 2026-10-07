@@ -1,6 +1,8 @@
 # Projet 1 — Le téléchargeur en morceaux (threads « à la main »)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 13) :**
 - **créer un thread**, des deux façons : un `Runnable` donné à `new Thread(…)`, ou une sous-classe de `Thread` ;
@@ -19,11 +21,30 @@ Côté algorithme : un calcul **découpé en morceaux**, chacun traité par un t
 
 **Règle du crescendo :** chapitres 1 à 13. Pas de fichiers, de JDBC, `System.exit` ni `printStackTrace`.
 
+**Ce que le chapitre 13 t'apprend :** la **concurrence**, c'est-à-dire faire travailler **plusieurs threads en même temps**. Un **thread** est un fil d'exécution : une suite d'instructions qui avance. Jusqu'ici, ton programme n'en avait qu'un, `main`. Avec plusieurs threads, des calculs avancent en parallèle, comme plusieurs cuisiniers dans une même cuisine.
+
+**La difficulté :** l'ordre dans lequel les threads avancent **change à chaque lancement**. Tes programmes ne doivent donc afficher que des résultats qui n'en dépendent pas (voir le `PARCOURS.md`). `Check` lance ton programme plusieurs fois.
+
+**Les imports :** `java.util.concurrent.*` (et ses sous-paquets `atomic` et `locks`).
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p01 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p01_downloader/Downloader.java
+java "-Duser.language=fr" -cp build/ch13-p01 ch13_concurrency.projects.p01_downloader.Downloader
+```
+
+**Un programme qui ne s'arrête pas ?** Dans IntelliJ, clique sur le carré rouge ■ du panneau Run. Dans le terminal, appuie sur **Ctrl + C**.
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Le résumé d'un morceau, et sa fusion
+
+**📖 Rappel :** résumer un morceau avec quelques nombres, puis fusionner deux résumés voisins sans relire les données (chapitre 10, projet 4, étape 7). Ici, ce découpage permet de confier chaque morceau à un thread différent.
+
+**👉 À toi :**
 
 - **`record ChunkStats(int from, int to, long sum, int first, int last, int prefix, int suffix, int best)`** :
   - `sum` : la somme des octets de `[from, to)` ;
@@ -46,6 +67,26 @@ morceau 0 [0,250000) somme 417545, serie max 18, tete 2, queue 1, par dl-0 (Runn
 morceau 1 [250000,500000) somme 416243, serie max 16, tete 1, queue 1, par dl-1 (Thread)
 total : somme 1666775, plus longue serie 18 ; identique au calcul sequentiel true
 ```
+
+**📖 La leçon : créer et lancer des threads.** Un thread exécute un `Runnable` (une interface fonctionnelle : `void run()`). Deux façons de l'écrire : passer un `Runnable` à `new Thread`, ou **étendre** la classe `Thread` et redéfinir `run()`.
+
+```java
+String[] fait = new String[2];
+Thread t1 = new Thread(() -> fait[0] = "croissants par " + Thread.currentThread().getName(), "four-1");
+Thread t2 = new Thread(() -> fait[1] = "pains par " + Thread.currentThread().getName(), "four-2");
+t1.start();          // lance le thread : il travaille EN MÊME TEMPS que main
+t2.start();
+t1.join();           // main attend que t1 ait fini
+t2.join();
+// fait = [croissants par four-1, pains par four-2]
+```
+
+- `start()` démarre le thread, puis rend **tout de suite** la main ;
+- `join()` attend la fin du thread ;
+- `Thread.currentThread().getName()` donne le nom du thread qui exécute la ligne.
+
+**👉 À toi :**
+
 - **`ChunkTask implements Runnable`** et **`ChunkThread extends Thread`** :
   - ils reçoivent l'indice, `from`, `to`, et deux tableaux partagés `ChunkStats[] results` et `String[] workers` ;
   - chacun écrit **sa** case : `results[i] = ChunkStats.of(...)` ;
@@ -63,6 +104,30 @@ total : somme 1666775, plus longue serie 18 ; identique au calcul sequentiel tru
 run() direct execute par main ; start() execute par dl-run
 etats : avant start NEW ; dormeur TIMED_WAITING, attente WAITING, bloque BLOCKED ; apres join TERMINATED
 ```
+
+**📖 La leçon : `run()` n'est pas `start()`.** Appeler `run()` directement est un appel de méthode **ordinaire** : il s'exécute dans le thread courant, sans en créer de nouveau.
+
+```java
+Runnable r = () -> System.out.println(Thread.currentThread().getName());
+r.run();                         // affiche main
+new Thread(r, "four-3").start(); // affiche four-3
+```
+
+**📖 La leçon : les états d'un thread.** `t.getState()` rend une valeur de l'`enum` `Thread.State` :
+
+| État | Le thread… |
+|---|---|
+| `NEW` | est créé, mais pas encore démarré |
+| `RUNNABLE` | travaille, ou est prêt à travailler |
+| `BLOCKED` | attend un verrou `synchronized` tenu par un autre |
+| `WAITING` | attend sans limite (`join()`) |
+| `TIMED_WAITING` | attend pendant une durée (`sleep(ms)`) |
+| `TERMINATED` | a fini |
+
+`synchronized (objet) { … }` : un seul thread à la fois peut entrer dans un bloc protégé par le même objet. Les autres sont `BLOCKED` à l'entrée. Le projet 3 te l'apprend en détail.
+
+**👉 À toi :**
+
 - **`run()` contre `start()`** : un `Runnable who` écrit `Thread.currentThread().getName()` dans une case.
   1. Appelle d'abord `who.run()` ;
   2. puis lance `new Thread(who, "dl-run")` avec `start()` et `join()`.
@@ -84,6 +149,15 @@ etats : avant start NEW ; dormeur TIMED_WAITING, attente WAITING, bloque BLOCKED
 journal : [bloque : verrou obtenu, dormeur : InterruptedException, drapeau apres catch false, boucle : arretee, drapeau true]
 daemon true, setDaemon apres start IllegalThreadStateException, start deux fois IllegalThreadStateException, priorite par defaut 5 (min 1, max 10)
 ```
+
+**📖 La leçon : interrompre, ce n'est pas tuer.** `t.interrupt()` lève un **drapeau** dans le thread `t`. C'est à `t` de le regarder et de s'arrêter proprement :
+- s'il dort (`sleep`, `join`), il est réveillé par une `InterruptedException` (une exception vérifiée) ;
+- sinon, il peut tester `Thread.currentThread().isInterrupted()`.
+
+**📖 La leçon : les threads daemon.** Un thread **daemon** est un thread « de service » : la JVM s'arrête quand il ne reste plus que des daemons. `t.setDaemon(true)` se fait **avant** `start()`.
+
+**👉 À toi :**
+
 - **Un thread qui calcule** : `while (!Thread.currentThread().isInterrupted()) n++;`, puis il ajoute `boucle : arretee, drapeau <isInterrupted()>`. `main` fait `start()`, `interrupt()`, puis `join()`, et affiche le journal.
 - **Un daemon qui dort 60 s** : `setDaemon(true)` **avant** `start()`. Ensuite :
   - `setDaemon(false)` lève une exception, à attraper ;

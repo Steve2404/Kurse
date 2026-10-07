@@ -1,6 +1,13 @@
 # Chapitre 13 (Concurrency) — Mode d'emploi
 
 Lis ce fichier **en entier une fois** avant de commencer. Le fonctionnement est le même qu'aux chapitres 1 à 11 :
+
+> **Comment sont faits les énoncés.** Chaque étape d'un projet suit le même schéma :
+> - **📖 La leçon** : la notion expliquée simplement, avec un exemple sur **un autre sujet** que le projet ;
+> - **👉 À toi** : ce que tu construis ;
+> - **🧪 Expériences** et **❓ Questions** : tu essaies, tu observes, tu réponds en commentaire.
+>
+> Les gestes de base sont expliqués une fois pour toutes dans le **projet 0 du chapitre 1** (`ch1_buildingblocks/projects/p00_bonjour`) : créer une classe, lancer, `Check`, arguments, terminal, lire une erreur. Relis-le si l'un d'eux te manque. Chaque projet rappelle aussi ses commandes exactes.
 - des **projets** à construire de A à Z, pour **comprendre** ;
 - des **drills** chronométrés, répétés à intervalles espacés, pour **retenir**.
 
@@ -82,9 +89,11 @@ ch13_concurrency/
 │   ├── README.md            ← la liste des 7 projets, à cocher
 │   └── p01_downloader/
 │       ├── TODO.md          ← L'ÉNONCÉ
+│       ├── INDICES.md       ← 2 indices repliés par étape, sans code (si tu bloques)
 │       ├── Data.java        ← les données : tu les lis, tu ne les modifies pas
 │       ├── Check.java       ← le correcteur : tu le LANCES
 │       ├── solution/        ← la correction : à la fin seulement
+│       │   └── CORRIGE.md   ← étape par étape : code, réponses aux questions, résultats des expériences
 │       └── (tes types)      ← ChunkStats.java, Downloader.java... : c'est TOI qui les crées
 └── drills/
     ├── README.md            ← règles des drills + tableau de suivi
@@ -110,6 +119,8 @@ ch13_concurrency/
 2. **Écris d'abord la version séquentielle** du calcul. La plupart des projets comparent le résultat parallèle au séquentiel.
 3. **Fais une étape à la fois.** Lance `Check`, corrige, puis coche ☐ → ☑. **Lance-le plusieurs fois.**
 4. **Fais les expériences.** Casser volontairement la synchronisation et voir les résultats changer, c'est **le** meilleur moyen de comprendre.
+5. **Réponds aux questions par écrit**, en commentaire dans ton code.
+6. **Vérifie l'étape** : ouvre la section de cette étape (et **seulement** elle) dans `solution/CORRIGE.md`. Compare tes réponses et le résultat de tes expériences. Une réponse fausse : corrige ton commentaire avec tes propres mots.
 
 ### 6.3 Lire la réponse de `Check`
 
@@ -127,8 +138,8 @@ ch13_concurrency/
 | Palier | Temps | Ce que tu fais |
 |---|---|---|
 | 1 | jusqu'à 20 min | remplace le pool par un seul thread : si le résultat devient juste, c'est un problème de partage |
-| 2 | 20 min de plus | relis la carte mémoire du drill du même thème, ou demande-moi un **indice** |
-| 3 | en dernier recours | lis **uniquement** la partie concernée de `solution/`, ferme, réécris |
+| 2 | 20 min de plus | ouvre l'**indice 1** de l'étape dans `INDICES.md`, puis l'**indice 2** s'il ne suffit pas ; relis la carte mémoire du drill du même thème, ou demande-moi un **indice** |
+| 3 | en dernier recours | lis **uniquement** la section de l'étape dans `solution/CORRIGE.md` (ou la partie concernée de `solution/`), ferme, réécris |
 
 ---
 

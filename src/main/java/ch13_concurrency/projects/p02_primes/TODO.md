@@ -1,6 +1,8 @@
 # Projet 2 — Le crible parallèle (`ExecutorService`, `Callable`, `Future`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 13) :**
 - **`Executors`** : `newFixedThreadPool`, `newSingleThreadExecutor` ;
@@ -28,11 +30,24 @@ Côté algorithme : le **crible d'Ératosthène segmenté**. On calcule d'abord 
 
 **Règle du crescendo :** chapitres 1 à 13.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p02 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p02_primes/PrimeLab.java
+java "-Duser.language=fr" -cp build/ch13-p02 ch13_concurrency.projects.p02_primes.PrimeLab
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Le crible segmenté
+
+**📖 La leçon : `Callable`, une tâche qui rend un résultat.** Un `Runnable` ne rend rien. Une `Callable<T>` a une méthode `T call()`, qui **rend** une valeur et peut lancer une exception vérifiée.
+
+**📖 Rappel :** le crible d'Ératosthène (chapitre 4, projet 7, étape 4).
+
+**👉 À toi :**
 
 - **`record Segment(int from, int to, int count, int first, int last, int maxGap)`**, avec `Segment merge(Segment next)`. L'écart `next.first - last` compte aussi.
 - **`SieveTask implements Callable<Segment>`**, construite avec `(from, to, int[] basePrimes)` :
@@ -49,6 +64,24 @@ total 138318, premier 1000003, dernier 2999999, plus grand ecart 148
 invokeAll : 138318 (identique true)
 invokeAny : miroir C
 ```
+
+**📖 La leçon : un pool de threads (`ExecutorService`).** Créer un thread par tâche coûte cher. Un **pool** garde quelques threads prêts, et leur distribue les tâches :
+
+```java
+ExecutorService pool = Executors.newFixedThreadPool(2);     // 2 threads, réutilisés
+try {
+    Future<Integer> f = pool.submit(() -> 6 * 7);           // envoie la tâche, rend tout de suite un Future
+    f.get()                                                 // 42 : attend le résultat
+    List<Future<String>> toutes = pool.invokeAll(List.of(() -> "pain", () -> "brioche"));  // attend tout
+} finally {
+    pool.shutdown();                                        // indispensable (voir l'étape 4)
+}
+```
+
+Un **`Future`** est un « ticket » : le résultat n'est peut-être pas encore prêt, `get()` attend qu'il le soit.
+
+**👉 À toi :**
+
 - **Les données :**
   - `basePrimes = primesUpTo((int) Math.sqrt(Data.HIGH) + 1)` ;
   - `Data.SEGMENTS` segments de même largeur dans `[Data.LOW, Data.HIGH)`, le dernier allant jusqu'à `HIGH` ;
@@ -66,6 +99,22 @@ get(50 ms) : TimeoutException, cancel true, isCancelled true, isDone true
 tache en echec : ExecutionException <- ArithmeticException: / by zero
 submit(Runnable).get() = null
 ```
+
+**📖 La leçon : une tâche qui échoue.** L'exception d'une tâche arrive dans un **autre** thread. `get()` la renvoie à celui qui attend, **enveloppée** dans une `ExecutionException` :
+
+```java
+Future<String> boom = pool.submit(() -> { if (true) throw new IllegalStateException("four froid"); return "x"; });
+try {
+    boom.get();
+} catch (ExecutionException e) {
+    e.getCause().getMessage()    // "four froid"
+}
+```
+
+`get(délai, unité)` attend au plus ce délai, puis lance une `TimeoutException`. `cancel(true)` annule une tâche, en l'interrompant si elle tourne.
+
+**👉 À toi :**
+
 - **Le délai :** une tâche qui dort 10 s et rend `"trop tard"`.
   - `get(50, TimeUnit.MILLISECONDS)` → `catch (TimeoutException e)` : note son nom simple ;
   - puis `cancel(true)`, `isCancelled()` et `isDone()`.
@@ -79,6 +128,16 @@ pool : isShutdown true, awaitTermination true, isTerminated true
 soumission apres shutdown : RejectedExecutionException
 shutdownNow : 3 taches jamais lancees, journal [bloquante, bloquante interrompue]
 ```
+
+**📖 La leçon : arrêter un pool.**
+- `shutdown()` : plus de nouvelles tâches, mais celles en cours finissent ;
+- `awaitTermination(délai, unité)` : attend la fin, au plus ce délai ; rend `true` si tout est fini ;
+- `shutdownNow()` : interrompt les tâches en cours, et rend celles qui n'avaient pas encore commencé.
+
+`CountDownLatch(n)` est un compte à rebours : `countDown()` le diminue, `await()` attend qu'il arrive à 0. Pratique pour attendre qu'une tâche ait **commencé**.
+
+**👉 À toi :**
+
 - **Après le `finally` :**
   - `isShutdown()`, `awaitTermination(5, TimeUnit.SECONDS)` et `isTerminated()` ;
   - puis une soumission, qui doit lever une exception.

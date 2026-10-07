@@ -1,6 +1,8 @@
 # Projet 4 — L'analyse de journaux (producteurs, consommateurs, collections concurrentes)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 13) :**
 - **`BlockingQueue`** (`LinkedBlockingQueue` bornée) :
@@ -22,11 +24,31 @@ Côté algorithme : un pipeline d'analyse. Les producteurs déposent les lignes 
 
 **Règle du crescendo :** chapitres 1 à 13.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p04 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p04_logs/LogPipeline.java
+java "-Duser.language=fr" -cp build/ch13-p04 ch13_concurrency.projects.p04_logs.LogPipeline
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les agrégats concurrents
+
+**📖 La leçon : les collections concurrentes.** Les collections du chapitre 9 ne sont **pas** faites pour être modifiées par plusieurs threads à la fois. Leurs cousines de `java.util.concurrent` le sont :
+
+| Au lieu de… | utilise… |
+|---|---|
+| `HashMap` | `ConcurrentHashMap` |
+| `TreeMap` / `TreeSet` | `ConcurrentSkipListMap` / `ConcurrentSkipListSet` |
+| `LinkedList` (comme file) | `ConcurrentLinkedQueue` |
+| `ArrayList` (souvent lue, rarement modifiée) | `CopyOnWriteArrayList` |
+
+Sur une `ConcurrentHashMap`, utilise les méthodes qui font tout **en une fois** : `merge`, `compute`, `putIfAbsent`, `computeIfAbsent` (chapitre 9, projet 2).
+
+**👉 À toi :**
 
 - **`Stats`**, avec 5 champs :
   - `Map<String, Integer> hits` et `Map<String, Long> totalMs`, deux `ConcurrentHashMap` ;
@@ -48,6 +70,25 @@ visites {/=1244, /compte=1207, ...} ; duree moyenne (ms) /=516 /compte=506 ...
 page la plus vue /=1244 ; statuts {200=5353, 404=632, 500=15} ; erreurs 500 pour [...]
 requetes lentes 369, les 3 plus lentes [1009 ms bob /, 1009 ms bob /produit, 1009 ms chloe /compte]
 ```
+
+**📖 La leçon : producteurs et consommateurs.** Une `BlockingQueue` est une file où `put` **attend** s'il n'y a plus de place, et `take` **attend** s'il n'y a rien. Des producteurs déposent, des consommateurs prennent. Pour arrêter un consommateur, on lui envoie une valeur spéciale, la **pilule empoisonnée** :
+
+```java
+BlockingQueue<String> tapis = new LinkedBlockingQueue<>(2);     // capacité 2
+Thread patissier = new Thread(() -> {
+    try {
+        for (String g : new String[] {"eclair", "tarte", "FIN"}) tapis.put(g);
+    } catch (InterruptedException e) { }
+});
+patissier.start();
+String g;
+while (!(g = tapis.take()).equals("FIN")) {
+    System.out.print(g + " ");                                   // eclair tarte
+}
+```
+
+**👉 À toi :**
+
 - **La file :** `BlockingQueue<String> queue = new LinkedBlockingQueue<>(Data.CAPACITY)`. Les compteurs : un `Stats`, et un `AtomicInteger consumed`.
 - **`Data.CONSUMERS` consommateurs**, sur leur propre pool. Chacun fait :
   - `take()` en boucle ;
@@ -72,6 +113,11 @@ file de 1 : offer true puis false, poll 1 puis null, remainingCapacity 1
 ArrayList modifiee en boucle : ConcurrentModificationException ; CopyOnWriteArrayList : 3 tours, taille finale 6 [a, b, c, a!, b!, c!]
 ConcurrentHashMap.put(null) NullPointerException, HashMap.put(null) 1 ; x=100 y=10 ; synchronizedList [1, 2, 3] ; newKeySet true
 ```
+
+**📖 Rappel :** les itérateurs et la modification pendant un parcours (chapitre 9, projet 1, étape 3). Une `Collections.synchronizedList` protège chaque méthode, mais un parcours ou un tri en fait **plusieurs** : il faut alors un `synchronized (liste) { … }` autour.
+
+**👉 À toi :**
+
 - **Une file de capacité 1 :** `offer(1, 10 ms)`, `offer(2, 10 ms)`, `poll(10 ms)` deux fois, puis `remainingCapacity()`.
 - **La modification pendant le parcours :**
   - un for-each sur `ArrayList` `[a, b, c]` qui ajoute `s + "!"` → attrape l'exception ;

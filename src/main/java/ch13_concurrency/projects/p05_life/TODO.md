@@ -1,6 +1,8 @@
 # Projet 5 — Le jeu de la vie en parallèle (`CyclicBarrier`)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 13) :**
 - **`CyclicBarrier`** :
@@ -20,11 +22,22 @@ Côté algorithme : **le jeu de la vie de Conway**, sur un tore (les bords se re
 
 **Règle du crescendo :** chapitres 1 à 13.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p05 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p05_life/ParallelLife.java
+java "-Duser.language=fr" -cp build/ch13-p05 ch13_concurrency.projects.p05_life.ParallelLife
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Les règles
+
+**📖 Rappel :** le jeu de la vie (chapitre 4, projet 3) : on calcule la génération suivante dans une **autre** grille, pour ne pas fausser le comptage des voisines.
+
+**👉 À toi :**
 
 - **`final class Life`** :
   - `static boolean nextState(boolean[][] g, int r, int c)` : compte les 8 voisines, avec l'indice `(r + dr + n) % n`. Une cellule vivante survit avec 2 ou 3 voisines ; une morte naît avec exactement 3 ;
@@ -39,6 +52,17 @@ populations (generation 0 a 40) : [576, 603, 214, 132, ...]
 finale 104, empreinte 2050180327243196825, identique au sequentiel true
 barriere : parties 4, en attente 0, cassee false
 ```
+
+**📖 La leçon : une barrière avec une action.** `new CyclicBarrier(n, action)` : quand le n-ième thread arrive à `await()`, l'**action** s'exécute **une fois**, puis tous les threads repartent. La barrière est « cyclique » : elle resert à chaque tour.
+
+```java
+AtomicInteger tours = new AtomicInteger();
+CyclicBarrier b = new CyclicBarrier(3, () -> tours.incrementAndGet());
+// 3 threads qui font chacun deux fois b.await() : tours vaut 2 à la fin
+```
+
+**👉 À toi :**
+
 - **Les grilles :** deux champs `static boolean[][] current` et `next`. La grille initiale vient de `Data.alive(r, c)`, sur `Data.SIZE` × `Data.SIZE`.
 - **Les populations :** une liste synchronisée, qui reçoit d'abord la population initiale.
 - **La barrière :** `new CyclicBarrier(Data.WORKERS, () -> { … })`. L'action échange `current` et `next`, puis ajoute la population de `current`.
@@ -56,6 +80,11 @@ barriere : parties 4, en attente 0, cassee false
 ```
 barriere cassee : l'autre thread [interrompu], main BrokenBarrierException, isBroken true puis apres reset false
 ```
+
+**📖 La leçon : une barrière cassée.** Si un thread qui attend à la barrière est interrompu, la barrière est **cassée** (`isBroken()`), et les autres reçoivent une `BrokenBarrierException`. `reset()` la remet à neuf.
+
+**👉 À toi :**
+
 1. Une `CyclicBarrier(2)` ;
 2. un thread qui fait `await()`. S'il reçoit `InterruptedException`, il note `interrompu` ; s'il reçoit `BrokenBarrierException`, il note `cassee` ;
 3. attends que `getNumberWaiting()` vaille 1 ;

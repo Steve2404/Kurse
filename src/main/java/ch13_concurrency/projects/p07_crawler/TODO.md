@@ -1,6 +1,8 @@
 # Projet 7 (CAPSTONE) — Le robot d'indexation et le planificateur
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées :** tout le chapitre 13, plus le **`ScheduledExecutorService`** :
 - `Executors.newScheduledThreadPool` ;
@@ -18,11 +20,22 @@ Côté algorithme : un **robot d'indexation** concurrent.
 
 **Règle du crescendo :** chapitres 1 à 13.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p07 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p07_crawler/CrawlerApp.java
+java "-Duser.language=fr" -cp build/ch13-p07 ch13_concurrency.projects.p07_crawler.CrawlerApp
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Le robot
+
+**📖 Rappel :** `invokeAll` (projet 2, étape 2), le parcours en largeur niveau par niveau (chapitre 9, projet 3), `ConcurrentHashMap.newKeySet()` pour un ensemble concurrent (projet 4, étape 1).
+
+**👉 À toi :**
 
 - **`Crawler(ExecutorService pool)`** :
   - `Set<String> visited = ConcurrentHashMap.newKeySet()` ;
@@ -67,6 +80,21 @@ rapport : 80 pages
 periodiques : au moins 5 battements true, au moins 3 sondages true, annulees true true
 planificateur arrete true
 ```
+
+**📖 La leçon : planifier des tâches.** Un `ScheduledExecutorService` lance des tâches **plus tard**, ou **régulièrement** :
+
+```java
+ScheduledExecutorService planif = Executors.newScheduledThreadPool(2);
+ScheduledFuture<String> plusTard = planif.schedule(() -> "pret", 20, TimeUnit.MILLISECONDS);  // une fois, dans 20 ms
+ScheduledFuture<?> regulier = planif.scheduleAtFixedRate(tache, 0, 5, TimeUnit.MILLISECONDS);   // toutes les 5 ms
+regulier.cancel(false);     // arrête les répétitions
+planif.shutdown();
+```
+
+`scheduleWithFixedDelay` ressemble à `scheduleAtFixedRate`, avec une différence que l'étape te fait expliquer.
+
+**👉 À toi :**
+
 - **`Executors.newScheduledThreadPool(2)`**, dans un `try` / `finally { shutdown(); }` :
   1. `schedule(() -> "rapport : " + crawler.visited() + " pages", 20, TimeUnit.MILLISECONDS)` → un `ScheduledFuture<String>` ;
   2. `scheduleAtFixedRate(…, 0, 5, MILLISECONDS)` : incrémente `beats` (un `AtomicInteger`), puis `countDown()` d'une `CountDownLatch(5)` ;

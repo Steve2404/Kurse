@@ -1,6 +1,8 @@
 # Projet 6 — Les streams parallèles (ce qui reste juste, ce qui ne l'est plus)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 13) :**
 - `parallel()`, `parallelStream()`, `sequential()`, `isParallel()` ;
@@ -24,6 +26,13 @@ Côté algorithmes :
 
 **Règle du crescendo :** chapitres 1 à 13.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p06 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p06_streams/ParallelLab.java
+java "-Duser.language=fr" -cp build/ch13-p06 ch13_concurrency.projects.p06_streams.ParallelLab
+```
+
 ---
 
 ## Tableau de bord
@@ -34,6 +43,18 @@ Côté algorithmes :
 points entiers du disque de rayon 20000 : 1256636857 (sequentiel identique true), pi ~ 3.141592
 Collatz : la plus longue suite part de 837799 (525 termes)
 ```
+
+**📖 La leçon : les streams parallèles.** `.parallel()` (ou `liste.parallelStream()`) découpe un stream en morceaux, traités par plusieurs threads, puis recombine les résultats. Le code ne change presque pas :
+
+```java
+IntStream.rangeClosed(1, 100).parallel().sum()        // 5050, comme en séquentiel
+List.of(3, 1, 2).parallelStream().sorted().toList()   // [1, 2, 3]
+```
+
+Pour que le résultat soit **le même** qu'en séquentiel, les opérations doivent être sans effet de bord, et les combinaisons **associatives** : `(a + b) + c == a + (b + c)`.
+
+**👉 À toi :**
+
 - **`static long isqrt(long n)`** : part de `(long) Math.sqrt(n)`, puis corrige d'une unité dans un sens ou dans l'autre.
 - **`static long latticePoints(LongStream xs, long r)`** : pour chaque x, `2 * isqrt(r² - x²) + 1`, puis la somme.
   - Appelle-la sur `LongStream.rangeClosed(-r, r)`, une fois séquentielle, une fois `.parallel()` ;
@@ -49,6 +70,11 @@ Collatz : la plus longue suite part de 837799 (525 termes)
 reduce : identite 0 -> 5050 / 5050 ; identite 10 -> sequentiel 5060, parallele different true
 lettres 178 ; collect parallele dans l'ordre true, debut [LE, PARALLELE, NE, GARANTIT]
 ```
+
+**📖 Rappel :** `reduce` et `collect` à 3 arguments (chapitre 10, projet 4). En parallèle, l'identité sert **une fois par morceau**, et le combiner recolle les morceaux.
+
+**👉 À toi :**
+
 - **Sur `List<Integer>` 1..100** :
   - `reduce(0, Integer::sum)`, en séquentiel puis en parallèle ;
   - puis `reduce(10, Integer::sum)`, en séquentiel, et en parallèle (affiche seulement si le résultat **diffère**).
@@ -63,6 +89,19 @@ lettres 178 ; collect parallele dans l'ordre true, debut [LE, PARALLELE, NE, GAR
 forEachOrdered [1, 2, ..., 12] ; forEach : memes elements true, taille 12
 findFirst 3, findAny present true, unordered().limit(10) donne 10 elements ; isParallel false puis true, sequential() false
 ```
+
+**📖 La leçon : l'ordre en parallèle.**
+- `forEachOrdered` respecte l'ordre de la source, même en parallèle ; `forEach` ne le respecte pas ;
+- `findFirst()` rend toujours le premier élément qui convient ; `findAny()` en rend un, n'importe lequel ;
+- `unordered()` dit au stream que l'ordre n'a pas d'importance, ce qui peut accélérer certaines opérations.
+
+```java
+List<Integer> l = Collections.synchronizedList(new ArrayList<>());
+IntStream.rangeClosed(1, 5).parallel().forEachOrdered(l::add);   // [1, 2, 3, 4, 5]
+```
+
+**👉 À toi :**
+
 - **`forEach` contre `forEachOrdered`** : sur `IntStream.rangeClosed(1, 12).parallel()`, l'un avec `forEach`, l'autre avec `forEachOrdered`, chacun dans une liste synchronisée. Compare la première, **triée**, avec la seconde.
 - **Sur `IntStream.range(0, 1_000).parallel()`** :
   - `filter(n -> n % 7 == 3)`, puis `findFirst()` et `findAny().isPresent()` ;
@@ -75,6 +114,11 @@ findFirst 3, findAny present true, unordered().limit(10) donne 10 elements ; isP
 groupingByConcurrent (longueur -> nombre) {1=2, 2=7, ...} ; toConcurrentMap, mots repetes {le=3, parallele=2}
 parallelSort [0, 1, ..., 11] ; parallelPrefix (sommes cumulees) [1, 3, 6, 10, 15, 21, 28, 36]
 ```
+
+**📖 La leçon : collecteurs concurrents et tableaux.** `Collectors.groupingByConcurrent` et `toConcurrentMap` remplissent **une seule** `ConcurrentMap` partagée, au lieu de fusionner des `Map` par morceaux. `Arrays.parallelSort` trie un tableau en parallèle, et `Arrays.parallelPrefix` cumule ses cases.
+
+**👉 À toi :**
+
 - **Les collecteurs concurrents :**
   - `Collectors.groupingByConcurrent(String::length)`, puis le nombre de mots par longueur, dans une `TreeMap` ;
   - `Collectors.toConcurrentMap(w -> w, w -> 1, Integer::sum)`, puis les mots vus plus d'une fois, dans une `TreeMap`.

@@ -1,6 +1,8 @@
 # Projet 3 — La banque concurrente (`synchronized`, atomiques, verrous)
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 13) :**
 - **la course (*race condition*)** : `x++` n'est pas atomique ;
@@ -24,11 +26,41 @@ Côté algorithme : 20 000 virements exécutés par 8 threads. Les soldes finaux
 
 **Règle du crescendo :** chapitres 1 à 13.
 
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p03 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p03_bank/BankLab.java
+java "-Duser.language=fr" -cp build/ch13-p03 ch13_concurrency.projects.p03_bank.BankLab
+```
+
 ---
 
 ## Tableau de bord
 
 ### ☐ Étape 1 — Comptes, compteur, banque
+
+**📖 La leçon : la « course » (race condition).** `x++` a l'air d'une seule opération, mais c'en est trois : lire `x`, ajouter 1, écrire `x`. Si deux threads le font **en même temps**, ils peuvent lire la même valeur, et une addition est perdue. Vérifié sur 4 threads qui font chacun 100 000 fois `x++` : dans notre essai, le résultat n'atteignait pas 400 000 (et il change d'un lancement à l'autre).
+
+**Trois remèdes :**
+
+```java
+static synchronized void plus() { compteur++; }      // 1. synchronized : un seul thread à la fois dans la méthode
+
+Lock verrou = new ReentrantLock();                    // 2. un verrou explicite
+verrou.lock();
+try {
+    compteur++;
+} finally {
+    verrou.unlock();                                  // TOUJOURS dans un finally
+}
+
+AtomicInteger atomique = new AtomicInteger();         // 3. un nombre atomique
+atomique.incrementAndGet();                           // lire + ajouter + écrire, en une opération indivisible
+```
+
+Avec ces trois remèdes, le résultat vaut bien 400 000.
+
+**👉 À toi :**
 
 - **`Account`** : `id`, un `ReentrantLock` (champ `lock`, et la méthode `Lock lock()`), et `long balance`.
   - `void add(long)` est appelée **verrou tenu** ;
@@ -53,6 +85,11 @@ Côté algorithme : 20 000 virements exécutés par 8 threads. Les soldes finaux
 soldes [102097, 355497, -169497, 349086, -177365, 80182] ; identiques au sequentiel true
 conservation : total 600000 = 600000 true ; 20000 virements, frais 60000, plus gros virement 999
 ```
+
+**📖 Rappel :** soumettre des tâches et attendre leurs `Future` (projet 2, étape 2). Lance le programme **plusieurs fois** : un bug de concurrence ne se montre pas forcément à chaque lancement.
+
+**👉 À toi :**
+
 - `Data.ACCOUNTS` comptes à `Data.INITIAL`, et un pool de `Data.THREADS` threads.
 - Soumets `Data.TRANSFERS` tâches, la i-ème faisant `bank.transfer` avec `Data.transfer(i)` (`{source, cible, montant}`) et `Data.FEE`. Attends tous les `Future`, puis `shutdown`.
 - **Le séquentiel :** recalcule les soldes attendus dans un `long[]`, sans thread. Compare avec `Arrays.stream(…).boxed().toList()`.
@@ -63,6 +100,13 @@ conservation : total 600000 = 600000 true ; 20000 virements, frais 60000, plus g
 ```
 interblocage evite : A abandonne, B reussit ; virement 2 -> 3 par tryTransfer true
 ```
+
+**📖 La leçon : l'interblocage (deadlock).** Deux threads qui ont chacun un verrou, et qui attendent **chacun** celui de l'autre, attendent pour toujours. `tryLock(délai, unité)` évite cela : il essaie de prendre le verrou pendant le délai, puis **abandonne** (il rend `false`).
+
+`CyclicBarrier(n)` est un point de rendez-vous : `await()` bloque jusqu'à ce que `n` threads y soient arrivés, puis les relâche tous ensemble.
+
+**👉 À toi :**
+
 - Une `CyclicBarrier(2)`, et un pool de 2 threads :
   - la tâche **A** verrouille le compte 0, attend la barrière, puis `tryLock(100 ms)` du compte 1 ;
   - la tâche **B** verrouille le compte 1, attend la barrière, puis `tryLock(5 s)` du compte 0.
@@ -76,6 +120,18 @@ interblocage evite : A abandonne, B reussit ; virement 2 -> 3 par tryTransfer tr
 reentrance : getHoldCount 2, isHeldByCurrentThread true, isLocked apres 2 unlock false, unlock de trop IllegalMonitorStateException, equitable true
 volatile : boucle arretee apres 1000 tours ; getAndIncrement 1000 puis 1001, compareAndSet(1001, 0) true -> 0, updateAndGet 10
 ```
+
+**📖 La leçon : `volatile` et les atomiques.** Un champ `volatile` est toujours relu en mémoire : quand un thread le modifie, les autres voient **la nouvelle valeur**. Les classes `AtomicInteger`, `AtomicLong`… offrent des opérations indivisibles :
+
+```java
+atomique.getAndIncrement()        // rend l'ANCIENNE valeur, puis ajoute 1
+atomique.incrementAndGet()        // ajoute 1, puis rend la NOUVELLE valeur
+atomique.compareAndSet(5, 0)      // remplace par 0 seulement si la valeur vaut 5 ; rend true si c'est fait
+atomique.updateAndGet(v -> v * 2) // applique la fonction, rend le résultat
+```
+
+**👉 À toi :**
+
 - **La réentrance :**
   1. un `ReentrantLock` verrouillé deux fois ;
   2. note `getHoldCount()` et `isHeldByCurrentThread()` ;

@@ -2,6 +2,8 @@
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch13_concurrency/PARCOURS.md`](../../PARCOURS.md).
 > **Bonus :** ces outils vont **au-delà** de l'examen OCP 17. Fais ce projet après p01 à p07, pour devenir à l'aise avec la concurrence « moderne » de Java.
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées :**
 - **`CompletableFuture`** (programmation asynchrone) :
@@ -32,6 +34,23 @@ Côté algorithmes :
 - `MaxSubarrayTask` (avec son record `Summary`) et `ClampAction` ;
 - **`AsyncLab`** (le `main`).
 
+**C'est le projet-bilan du chapitre 13.** Il ajoute quelques outils nouveaux, expliqués étape par étape. Pour le reste, relis la leçon d'origine :
+
+| Tu dois… | Leçon à relire |
+|---|---|
+| un pool, `shutdown` dans un `finally` | projet 2, étapes 2 et 4 |
+| les exceptions enveloppées | projet 2, étape 3 |
+| des atomiques (`addAndGet`, `accumulateAndGet`) | projet 3, étape 4 |
+| `CountDownLatch` | projet 2, étape 4 |
+| la fusion de résumés par morceaux | projet 1, étape 1 |
+
+**Tes outils pour ce projet** (pas d'arguments, `Data.java` donné) :
+
+```
+javac -d build/ch13-p08 -sourcepath src/main/java src/main/java/ch13_concurrency/projects/p08_async/AsyncLab.java
+java "-Duser.language=fr" -cp build/ch13-p08 ch13_concurrency.projects.p08_async.AsyncLab
+```
+
 ---
 
 ## Tableau de bord
@@ -42,6 +61,22 @@ Côté algorithmes :
 devis : Rome 465 EUR = 439 CHF
 devis : Atlantis indisponible (aucun vol pour Atlantis)
 ```
+
+**📖 La leçon : `CompletableFuture`, enchaîner des calculs asynchrones.** Une `CompletableFuture` est un `Future` qu'on peut **enchaîner**, comme un `Optional` ou un stream :
+
+```java
+CompletableFuture<Integer> pain = CompletableFuture.supplyAsync(() -> 3, pool);    // calculé sur le pool
+CompletableFuture<Integer> beurre = CompletableFuture.supplyAsync(() -> 2, pool);
+String r = pain.thenCombine(beurre, Integer::sum)       // attend les deux, puis les additionne
+        .thenApply(n -> n + " euros")                   // transforme le résultat
+        .join();                                        // "5 euros" : attend la fin
+String e = CompletableFuture.supplyAsync(() -> { if (true) throw new IllegalStateException("rupture"); return "x"; }, pool)
+        .exceptionally(ex -> "indisponible : " + ex.getCause().getMessage())   // rattrape l'erreur
+        .join();                                        // "indisponible : rupture"
+```
+
+**👉 À toi :**
+
 - **`TravelAgency(Executor executor)`**, avec une méthode `static void latency()` qui fait `Thread.sleep(5)`. En cas d'interruption, elle remet le drapeau (`Thread.currentThread().interrupt()`).
   - **`CompletableFuture<Integer> flight(String city)`** : `supplyAsync` sur l'executor. Il rend le prix de `Data.FLIGHTS`, ou lève `IllegalStateException("aucun vol pour " + city)` ;
   - **`hotel(city)`** : `Data.HOTELS.get(city) * Data.NIGHTS` ;
@@ -63,6 +98,11 @@ devis : Atlantis indisponible (aucun vol pour Atlantis)
 erreurs : handle erreur IllegalStateException ; join CompletionException <- IllegalStateException ; get ExecutionException
 delais : valeur par defaut, orTimeout TimeoutException ; anyOf cache ; chaine [recu 42, fini] ; complete a la main isDone true
 ```
+
+**📖 Rappel :** `join()` et `get()` attendent tous deux la fin. Les autres méthodes de l'étape (`handle`, `completeOnTimeout`, `orTimeout`, `anyOf`, `thenAccept`, `thenRun`, `complete`) sont décrites dans l'étape elle-même : essaie chacune sur un petit exemple avant de les assembler.
+
+**👉 À toi :**
+
 - **Les erreurs :**
   - `flight("Atlantis").handle((prix, e) -> …)` : `"prix " + prix`, ou `"erreur " + <nom simple de la cause>` ;
   - `join()` dans un `catch (CompletionException e)` ;
@@ -80,6 +120,19 @@ delais : valeur par defaut, orTimeout TimeoutException ; anyOf cache ; chaine [r
 ThreadLocal : total des increments 800, valeur de main 42 puis apres remove 0
 Semaphore(2) : au plus 2 a la fois true, permis disponibles 2 ; CountDownLatch 6 -> 0, tryAcquire(3) false
 ```
+
+**📖 La leçon : trois outils de coordination.**
+- `ThreadLocal<T>` : chaque thread a **sa propre** valeur. `ThreadLocal.withInitial(() -> 0)` donne la valeur de départ ;
+- `Semaphore(n)` : `n` permis. `acquire()` en prend un (et attend s'il n'y en a plus), `release()` le rend. Au plus `n` threads à la fois dans la zone protégée ;
+- `CountDownLatch(n)` : un compte à rebours (projet 2).
+
+```java
+static final ThreadLocal<Integer> PANIER = ThreadLocal.withInitial(() -> 0);
+// un thread fait PANIER.set(5) : dans ce thread, PANIER.get() vaut 5 ; dans main, il vaut toujours 0
+```
+
+**👉 À toi :**
+
 - **`static final ThreadLocal<Integer> PER_THREAD = ThreadLocal.withInitial(() -> 0)`** :
   - 8 tâches sur le pool font chacune 100 fois `PER_THREAD.set(PER_THREAD.get() + 1)`, puis `total.addAndGet(100)` ;
   - ensuite, dans `main`, `set(42)`, `get()`, `remove()`, puis de nouveau `get()`.
@@ -100,6 +153,34 @@ Semaphore(2) : au plus 2 a la fois true, permis disponibles 2 ; CountDownLatch 6
 Fork/Join : sous-tableau maximal 5604, total 1703 ; Kadane sequentiel 5604 identique true
 RecursiveAction : min -50, max 50 ; parallelisme du pool 4
 ```
+
+**📖 La leçon : Fork/Join, diviser pour régner en parallèle.** Une `RecursiveTask<T>` coupe son travail en deux, envoie une moitié à un autre thread (`fork()`), calcule l'autre elle-même (`compute()`), puis attend la première (`join()`) :
+
+```java
+class Somme extends RecursiveTask<Long> {
+    final int de, a;
+    Somme(int de, int a) { this.de = de; this.a = a; }
+    @Override
+    protected Long compute() {
+        if (a - de <= 1000) {                        // assez petit : on calcule directement
+            long s = 0;
+            for (int i = de; i < a; i++) s += i;
+            return s;
+        }
+        int milieu = (de + a) / 2;
+        Somme gauche = new Somme(de, milieu);
+        gauche.fork();                               // la gauche part sur un autre thread
+        long droite = new Somme(milieu, a).compute();
+        return gauche.join() + droite;
+    }
+}
+new ForkJoinPool(4).invoke(new Somme(0, 1_000_000))   // 499999500000
+```
+
+Une `RecursiveAction` fait la même chose sans rendre de résultat.
+
+**👉 À toi :**
+
 - **`MaxSubarrayTask extends RecursiveTask<Summary>`**, avec `record Summary(long total, long prefix, long suffix, long best)`, `static Summary of(int)` et `Summary merge(Summary right)` :
   - `total = total + right.total` ;
   - `prefix = max(prefix, total + right.prefix)` ;
