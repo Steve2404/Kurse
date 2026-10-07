@@ -1,6 +1,8 @@
 # Projet 7 (CAPSTONE) — La médiathèque
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch6_classdesign/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées :** tout le chapitre 6 :
 - une hiérarchie sur **3 niveaux** avec une abstraite intermédiaire : `Media` → `AudioMedia` → `Album` et `Podcast` ;

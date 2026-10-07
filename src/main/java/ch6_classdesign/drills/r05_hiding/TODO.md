@@ -19,7 +19,7 @@
 
 - ☐ **D01.** `asP.name`, `c.name`, `asP.readName()` et `c.both()`.
   → `D01 : P C P C/P/C`
-- ☐ **D02.** `asP.s()`, `c.s()`, `P.s()` et `C.s()`. Les avertissements de `javac` sont voulus.
+- ☐ **D02.** `asP.s()`, `c.s()`, `P.s()` et `C.s()`. Ces appels via une référence compilent : IntelliJ et `javac -Xlint:static` les signalent, `javac` seul ne dit rien.
   → `D02 : P.s C.s P.s C.s`
 - ☐ **D03.** `asP.i()` et `c.i()`.
   → `D03 : C.i C.i`

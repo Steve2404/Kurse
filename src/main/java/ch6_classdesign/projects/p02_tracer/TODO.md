@@ -1,6 +1,8 @@
 # Projet 2 — Le traceur d'initialisation
 
 > Première fois ? Lis d'abord le mode d'emploi [`ch6_classdesign/PARCOURS.md`](../../PARCOURS.md).
+>
+> **Bloqué sur une étape ?** [`INDICES.md`](INDICES.md) donne deux indices repliés par étape, sans code. **Étape finie ?** [`solution/CORRIGE.md`](solution/CORRIGE.md) donne, étape par étape, le code de l'étape, les **réponses aux questions** et le résultat exact des **expériences**. N'ouvre que la section de l'étape que tu viens de faire.
 
 **Notions visées (chapitre 6) :** l'**ordre exact** d'initialisation sur une hiérarchie de 3 classes :
 1. **la classe**, une seule fois, du parent vers l'enfant : champs `static` et blocs `static`, dans l'ordre du fichier ;
