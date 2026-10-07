@@ -1,7 +1,7 @@
 package ch1_buildingblocks.projects.p04_bookshop.solution.export;
 
 // Piege : cette classe s'appelle deja Book. On ne peut donc PAS importer model.Book
-// ("a type with the same simple name Book is already defined") : on utilise son nom pleinement qualifie.
+// ("Book is already defined in this compilation unit") : on utilise son nom pleinement qualifie.
 public class Book {
     ch1_buildingblocks.projects.p04_bookshop.solution.model.Book source;
 
