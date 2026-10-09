@@ -531,7 +531,8 @@ public final class TestKit {
                 if (name.equals("Check.java") || isData != dataOnly) {
                     continue;
                 }
-                String text = Files.readString(p, StandardCharsets.UTF_8)
+                // Les fins de ligne Windows (\r\n, apres un clone Git) deviennent \n : les mutants sur plusieurs lignes restent valables.
+                String text = Files.readString(p, StandardCharsets.UTF_8).replace("\r\n", "\n")
                         .replaceAll("(?m)^import\\s+" + Pattern.quote(projectPkg) + "(\\.solution)?\\.[\\w*]+\\s*;\\s*$", "");
                 result.put(name, text);
             }
