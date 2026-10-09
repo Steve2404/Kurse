@@ -75,11 +75,12 @@ public final class TestKit {
         }
     }
 
-    private record Run(String compileError, int found, int succeeded, List<Failure> failures,
+    private record Run(String compileError, int found, int succeeded, int brokenGroups, List<Failure> failures,
                        Map<String, int[]> perMethod, String crash) {
 
+        // Un groupe qui plante entier (une source de donnees invalide...) compte comme un echec.
         int failed() {
-            return found - succeeded;
+            return found - succeeded + brokenGroups;
         }
     }
 
@@ -249,7 +250,7 @@ public final class TestKit {
                         .map(d -> "       " + ((Source) d.getSource()).name + " ligne " + d.getLineNumber() + " : "
                                 + d.getMessage(java.util.Locale.FRENCH).lines().findFirst().orElse(""))
                         .collect(Collectors.joining("\n"));
-                return new Run(errors, 0, 0, List.of(), Map.of(), null);
+                return new Run(errors, 0, 0, 0, List.of(), Map.of(), null);
             }
         }
         List<String> testClasses = new ArrayList<>();
@@ -266,7 +267,7 @@ public final class TestKit {
         URLClassLoader loader = new URLClassLoader(new URL[]{classes.toUri().toURL()}, TestKit.class.getClassLoader());
         List<Failure> failures = new ArrayList<>();
         Map<String, int[]> perMethod = new TreeMap<>();
-        int[] totals = new int[2];
+        int[] totals = new int[3];
         ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "testkit");
             t.setDaemon(true);
@@ -297,6 +298,7 @@ public final class TestKit {
                         boolean failed = result.getStatus() != TestExecutionResult.Status.SUCCESSFUL;
                         if (!id.isTest()) {
                             if (failed) {
+                                totals[2]++;
                                 failures.add(new Failure(id.getDisplayName(), message(result)));
                             }
                             return;
@@ -329,7 +331,7 @@ public final class TestKit {
         if (crash == null && !failures.isEmpty() && totals[0] == 0) {
             crash = failures.get(0).toString();
         }
-        return new Run(null, totals[0], totals[1], failures, perMethod, crash);
+        return new Run(null, totals[0], totals[1], totals[2], failures, perMethod, crash);
     }
 
     // Pour un assertAll, la 1re ligne ("Multiple Failures (2 failures)") ne dit rien : on ajoute le 1er echec.
