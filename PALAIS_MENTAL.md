@@ -56,7 +56,7 @@ La maison est pleine au sol. Pour les chapitres d'après le livre, on refait **l
 | Plafond de… | Stations 1 à 12 |
 |---|---|
 | 🛋️ Salon | chapitre 16 — Tester et déboguer |
-| 🍳 Cuisine, 🛏️ Chambre 1 | chapitre 17 — Algorithmes et structures de données (à venir) |
+| 🍳 Cuisine, 🛏️ Chambre 1 | chapitre 17 — Algorithmes et structures de données |
 | 🛏️ Chambre 2, 🛏️ Chambre 3 | chapitre 18 — Conception (à venir) |
 | 🚿 Douches, 🌿 Terrasse | chapitre 19 — Le projet final (à venir) |
 
