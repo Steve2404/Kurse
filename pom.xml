@@ -32,5 +32,27 @@
       <artifactId>mysql-connector-j</artifactId>
       <version>9.1.0</version>
     </dependency>
+    <!-- Chapitre 16 (tests) : JUnit 5 et Mockito. Les tests vivent dans src/main/java,
+         a cote du code du projet : Check les compile et les lance lui-meme. -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.11.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.platform</groupId>
+      <artifactId>junit-platform-launcher</artifactId>
+      <version>1.11.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.14.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>5.14.2</version>
+    </dependency>
   </dependencies>
 </project>

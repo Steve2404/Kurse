@@ -163,7 +163,7 @@ public final class ProjectChecker {
         return lines;
     }
 
-    private static boolean compare(String what, List<String> expected, List<String> actual) {
+    static boolean compare(String what, List<String> expected, List<String> actual) {
         int same = 0;
         while (same < expected.size() && same < actual.size() && expected.get(same).equals(actual.get(same))) {
             same++;
@@ -233,7 +233,7 @@ public final class ProjectChecker {
         return scriptOk && apiOk;
     }
 
-    private static boolean evaluateApi(String code, List<String> requiredApi) {
+    static boolean evaluateApi(String code, List<String> requiredApi) {
         // Pour les elements INTERDITS, le contenu des chaines ne compte pas ("+====+" n'est pas un +=).
         String codeOnly = code.replaceAll("(?s)\"\"\".*?\"\"\"", "\"\"\"\"\"\"").replaceAll("\"(?:[^\"\\\\\\n]|\\\\.)*\"", "\"\"");
         List<String> missing = new ArrayList<>();
