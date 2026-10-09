@@ -364,6 +364,12 @@ public final class TestKit {
             System.setOut(originalOut);
             System.setErr(originalErr);
             executor.shutdownNow();
+            try {
+                // Un lancement normal se termine tout de suite ; seul un fil bloque (boucle infinie) reste en vie.
+                executor.awaitTermination(500, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             stopLeftovers(before);
         }
         if (crash == null && !failures.isEmpty() && totals[0] == 0) {
