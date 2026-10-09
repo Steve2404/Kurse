@@ -34,7 +34,7 @@ Le livre prépare l'examen ; ces chapitres préparent au métier. Même format (
 |---|---|---|---|---|
 | 16 | `ch16_testing` | Tester et déboguer : JUnit 5, TDD, doublures, Mockito, le débogueur | 8 | 6 (dont 2 katas) |
 | 17 | `ch17_algorithms` | Algorithmes et structures de données : complexité, tris, fenêtres, hachage, piles, retour arrière, arbres, tas, graphes, programmation dynamique | 11 | 7 (dont un entretien chronométré) |
-| 18 | à venir | Conception : SOLID, patrons, refactoring | | |
+| 18 | `ch18_design` | Conception : odeurs et refactoring de legacy, maître étalon, SOLID, patrons de création, de structure et de comportement | 9 | 6 |
 | 19 | à venir | Le projet final | | |
 
 À partir du chapitre 16, **tu écris aussi les tests**. `Check` les lance sur ton code, sur le code de référence, et sur des **mutants** (des copies du code avec un bug glissé exprès) : un bon jeu de tests les attrape tous. Au chapitre 17, les tests de référence vérifient aussi la **vitesse** : un algorithme juste mais trop lent échoue.

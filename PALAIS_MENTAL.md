@@ -57,7 +57,7 @@ La maison est pleine au sol. Pour les chapitres d'après le livre, on refait **l
 |---|---|
 | 🛋️ Salon | chapitre 16 — Tester et déboguer |
 | 🍳 Cuisine, 🛏️ Chambre 1 | chapitre 17 — Algorithmes et structures de données |
-| 🛏️ Chambre 2, 🛏️ Chambre 3 | chapitre 18 — Conception (à venir) |
+| 🛏️ Chambre 2, 🛏️ Chambre 3 | chapitre 18 — Conception (SOLID, patrons, refactoring) |
 | 🚿 Douches, 🌿 Terrasse | chapitre 19 — Le projet final (à venir) |
 
 Pour installer un plafond, fais la même étape 0 (section 3), mais au plafond, le jour où tu commences le chapitre.
