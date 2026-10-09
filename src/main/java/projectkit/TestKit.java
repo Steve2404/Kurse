@@ -441,7 +441,10 @@ public final class TestKit {
                         counts[0]++;
                         totals[0]++;
                         if (failed) {
-                            failures.add(new Failure(method + (id.getDisplayName().startsWith(method) ? "" : " [" + id.getDisplayName() + "]"),
+                            // Un parametre peut contenir un saut de ligne ou une tabulation : on les rend visibles.
+                            String shown = id.getDisplayName().replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+                                    .replaceAll("\\p{Cntrl}", "?");
+                            failures.add(new Failure(method + (shown.startsWith(method) ? "" : " [" + shown + "]"),
                                     message(result)));
                         } else {
                             counts[1]++;
