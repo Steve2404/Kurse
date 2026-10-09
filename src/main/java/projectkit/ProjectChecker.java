@@ -263,7 +263,7 @@ public final class ProjectChecker {
             }
         }
         if (!forbidden.isEmpty()) {
-            System.out.println("[FAIL] API : interdit ici (Optional.get() ou notion d'un chapitre suivant, voir TODO.md) : " + forbidden);
+            System.out.println("[FAIL] API : interdit ici (notion d'un chapitre suivant, ou interdit nomme dans le TODO.md) : " + forbidden);
         }
         if (missing.isEmpty()) {
             System.out.println("[PASS] API : tous les elements vises sont utilises");

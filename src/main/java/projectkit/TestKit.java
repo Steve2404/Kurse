@@ -335,12 +335,16 @@ public final class TestKit {
     }
 
     // Pour un assertAll, la 1re ligne ("Multiple Failures (2 failures)") ne dit rien : on ajoute le 1er echec.
+    // Les messages de Mockito commencent par une ligne vide et tiennent sur plusieurs lignes : on garde les 2 premieres non vides.
     private static String message(TestExecutionResult result) {
         return result.getThrowable().map(t -> {
-            List<String> lines = t.getMessage() == null ? List.of() : t.getMessage().lines().toList();
+            List<String> lines = t.getMessage() == null ? List.of()
+                    : t.getMessage().lines().map(String::strip).filter(l -> !l.isEmpty()).toList();
             String text = lines.isEmpty() ? "" : " : " + lines.get(0);
             if (lines.size() > 1 && lines.get(0).startsWith("Multiple Failures")) {
-                text += " ; 1er echec : " + lines.get(1).strip().replaceFirst("^[\\w.]+Error: ", "");
+                text += " ; 1er echec : " + lines.get(1).replaceFirst("^[\\w.]+Error: ", "");
+            } else if (lines.size() > 1 && t.getClass().getName().startsWith("org.mockito")) {
+                text += " " + lines.get(1);
             }
             return t.getClass().getSimpleName() + text;
         }).orElse(result.getStatus().toString());
