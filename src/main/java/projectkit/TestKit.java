@@ -164,9 +164,9 @@ public final class TestKit {
         }
 
         System.out.println("--- API de ton code ---");
-        ok &= ProjectChecker.evaluateApi(withoutComments(myCode), apiCode);
+        ok &= api(myCode, apiCode);
         System.out.println("--- API de tes tests ---");
-        ok &= ProjectChecker.evaluateApi(withoutComments(myTests), apiTests);
+        ok &= api(myTests, apiTests);
         System.out.println();
         System.out.println(ok ? "*** PROJET REUSSI : tes tests passent, attrapent tous les mutants, et ton code est juste. ***"
                 : "*** Pas encore : lis les lignes [FAIL] ci-dessus. ***");
@@ -194,7 +194,7 @@ public final class TestKit {
             r.perMethod().forEach((name, counts) -> actual.add(name + " : " + counts[0] + " executions, " + counts[1] + " reussies"));
         }
         boolean outputOk = ProjectChecker.compare("rapport", expected, actual);
-        boolean apiOk = ProjectChecker.evaluateApi(withoutComments(mine), api);
+        boolean apiOk = api(mine, api);
         System.out.println();
         System.out.println(outputOk && apiOk ? "*** DRILL REUSSI ***" : "*** Pas encore : lis les lignes [FAIL] ci-dessus. ***");
         return outputOk && apiOk;
@@ -224,10 +224,105 @@ public final class TestKit {
             r.failures().stream().limit(3).forEach(f -> System.out.println("       echec : " + f));
         }
         boolean outputOk = ProjectChecker.compare("rapport", expected, actual);
-        boolean apiOk = ProjectChecker.evaluateApi(withoutComments(mine), api);
+        boolean apiOk = api(mine, api);
         System.out.println();
         System.out.println(outputOk && apiOk ? "*** DRILL REUSSI ***" : "*** Pas encore : lis les lignes [FAIL] ci-dessus. ***");
         return outputOk && apiOk;
+    }
+
+    // ------------------------------------------------------------------ regles de conception (chapitre 18)
+
+    /**
+     * Verifie l'API comme ProjectChecker, plus deux sortes de regles de CONCEPTION, fichier par fichier :
+     *   "max:method=N"         aucune methode (ni constructeur) ne depasse N lignes non vides dans son corps ;
+     *   "in:Fichier.java!texte" ce fichier ne doit pas contenir texte (hors commentaires et chaines) ;
+     *   "in:Fichier.java=texte" ce fichier doit contenir texte.
+     * Un "##libelle" final remplace le texte dans le message, comme dans ProjectChecker.
+     */
+    private static boolean api(Map<String, String> files, List<String> rules) {
+        List<String> plain = new ArrayList<>();
+        List<String> problems = new ArrayList<>();
+        for (String rule : rules) {
+            if (rule.startsWith("max:method=")) {
+                int max = Integer.parseInt(rule.substring("max:method=".length()));
+                files.forEach((name, text) -> longMethods(stripped(text)).forEach((method, lines) -> {
+                    if (lines > max) {
+                        problems.add(name + " : " + method + "() fait " + lines + " lignes (au plus " + max + ")");
+                    }
+                }));
+            } else if (rule.startsWith("in:")) {
+                int cut = rule.indexOf('!') > 0 && (rule.indexOf('=') < 0 || rule.indexOf('!') < rule.indexOf('='))
+                        ? rule.indexOf('!') : rule.indexOf('=');
+                String file = rule.substring(3, cut);
+                boolean forbid = rule.charAt(cut) == '!';
+                String text = rule.substring(cut + 1);
+                String label = text.contains("##") ? text.substring(text.indexOf("##") + 2) : text;
+                text = text.contains("##") ? text.substring(0, text.indexOf("##")) : text;
+                String content = files.get(file);
+                if (content == null) {
+                    problems.add(file + " : fichier introuvable");
+                } else if (stripped(content).contains(text) == forbid) {
+                    problems.add(file + (forbid ? " ne doit pas contenir : " : " doit contenir : ") + label);
+                }
+            } else {
+                plain.add(rule);
+            }
+        }
+        boolean ok = ProjectChecker.evaluateApi(withoutComments(files), plain);
+        if (rules.size() > plain.size()) {
+            if (problems.isEmpty()) {
+                System.out.println("[PASS] conception : toutes les regles de structure sont respectees");
+            } else {
+                problems.forEach(pb -> System.out.println("[FAIL] conception : " + pb));
+            }
+        }
+        return ok && problems.isEmpty();
+    }
+
+    /** Le texte sans commentaires et avec des chaines vides. */
+    private static String stripped(String text) {
+        return text.replaceAll("(?s)/\\*.*?\\*/", "").replaceAll("//[^\n]*", "")
+                .replaceAll("(?s)\"\"\".*?\"\"\"", "\"\"").replaceAll("\"(?:[^\"\\\\\\n]|\\\\.)*\"", "\"\"")
+                .replaceAll("'(?:[^'\\\\]|\\\\.)+'", "' '");
+    }
+
+    private static final Pattern METHOD_HEADER =
+            Pattern.compile("(\\w+)\\s*\\((?:[^()]|\\([^()]*\\))*\\)\\s*(?:throws\\s+[\\w.,\\s]+)?$");
+    private static final Set<String> NOT_METHODS = Set.of("if", "for", "while", "switch", "catch", "synchronized", "try");
+
+    /** Chaque methode ou constructeur : nom et nombre de lignes non vides entre ses accolades. */
+    private static Map<String, Integer> longMethods(String text) {
+        Map<String, Integer> result = new LinkedHashMap<>();
+        int headerStart = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c == ';' || c == '}') {
+                headerStart = i + 1;
+            } else if (c == '{') {
+                String header = text.substring(headerStart, i).strip();
+                headerStart = i + 1;
+                var m = METHOD_HEADER.matcher(header);
+                boolean typeHeader = header.matches("(?s).*\\b(class|record|interface|enum|new)\\b.*");
+                if (!m.find() || typeHeader || NOT_METHODS.contains(m.group(1))) {
+                    continue;
+                }
+                int depth = 0;
+                int end = i;
+                for (int j = i; j < text.length(); j++) {
+                    depth += text.charAt(j) == '{' ? 1 : text.charAt(j) == '}' ? -1 : 0;
+                    if (depth == 0) {
+                        end = j;
+                        break;
+                    }
+                }
+                // Le corps : de la fin de la ligne de l'accolade ouvrante jusqu'a l'accolade fermante.
+                int firstLineEnd = text.indexOf('\n', i);
+                String body = text.substring(firstLineEnd < 0 || firstLineEnd > end ? end : firstLineEnd, end);
+                long lines = body.lines().filter(l -> !l.isBlank()).count();
+                result.merge(m.group(1), (int) lines, Math::max);
+            }
+        }
+        return result;
     }
 
     // ------------------------------------------------------------------ lancement
