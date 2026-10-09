@@ -25,6 +25,12 @@ Chaque notion des objectifs officiels OCP 17 du chapitre doit apparaître dans a
 5. **Le crescendo :** le chapitre N n'utilise que les chapitres 1 à N. Les notions suivantes sont refusées par `Check`.
 6. **Corrigés commentés :** chaque méthode de `solution/` porte un court commentaire « pourquoi / quel piège ».
 7. **En français** : des phrases courtes, des listes plutôt que des paragraphes.
+8. **Pour un vrai débutant** (« qu'une grand-mère puisse suivre ») :
+   - chaque étape **enseigne** avant de demander : une **📖 leçon** (mots simples, exemple vérifié sur un **autre sujet** que le projet), puis **👉 À toi** ;
+   - chaque geste nouveau (clics IntelliJ, commande `javac`/`java`, lecture d'une erreur) est expliqué **une fois en entier**, puis rappelé par un renvoi (« chapitre 1, projet 0, étape 6 ») ;
+   - une leçon ne donne **jamais** la réponse d'une question ou d'une expérience de l'étape, et ses valeurs ne coïncident pas avec la sortie attendue ;
+   - une leçon n'utilise rien de ce que le `Check` du chapitre interdit.
+9. **Des indices et un corrigé par étape** : l'apprenant doit pouvoir vérifier chaque réponse (voir la section 4).
 
 ## 2. Structure d'un chapitre
 
@@ -34,10 +40,12 @@ src/main/java/chN_nom/
 ├── projects/
 │   ├── README.md               ← la liste des projets, à cocher
 │   └── pNN_sujet/
-│       ├── TODO.md             ← l'énoncé
+│       ├── TODO.md             ← l'énoncé (avec une leçon par étape)
+│       ├── INDICES.md          ← 2 indices repliés par étape, sans code
 │       ├── Data.java           ← les données
 │       ├── Check.java          ← le correcteur (généré)
 │       └── solution/           ← paquet chN_nom.projects.pNN_sujet.solution
+│           └── CORRIGE.md      ← par étape : le code, les réponses aux questions, les résultats des expériences
 └── drills/
     ├── README.md               ← quand faire quel drill, tableau de suivi J0 → R5
     └── rNN_theme/
@@ -52,6 +60,8 @@ src/main/java/chN_nom/
 
 **Le correcteur commun :** `src/main/java/projectkit/ProjectChecker.java`.
 
+**Le chapitre 1 commence par `projects/p00_bonjour`**, un projet entièrement guidé (créer une classe, la flèche verte, `Check`, les arguments, `javac`/`java` dans le terminal PowerShell, lire une erreur). Tous les autres chapitres y renvoient pour les gestes de base.
+
 **Les exceptions :**
 - **chapitre 12** : les modules sont hors Maven, dans `ch12_modules/<item>/` (un `module-info.java` par module casserait la compilation Maven). L'apprenant écrit un `build.sh`, que `ProjectChecker.checkModules` exécute ;
 - **chapitre 15** : Docker facultatif dans `ch15_jdbc-lab/`.
@@ -59,12 +69,12 @@ src/main/java/chN_nom/
 ## 3. Le `PARCOURS.md` d'un chapitre
 
 Il contient, dans cet ordre :
-1. ce que tu vas faire (projets / drills) ;
+1. ce que tu vas faire (projets / drills), suivi de l'encadré « Comment sont faits les énoncés » (leçon / À toi / expériences, et le renvoi au projet 0 du chapitre 1) ;
 2. la règle du crescendo (ce qui est permis, ce qui est exclu et ce qu'on fait à la place) ;
 3. les règles propres au chapitre, s'il y en a (sortie déterministe, bac à sable…) ;
 4. par où commencer, et l'ordre complet `p01 → r01…` ;
 5. la disposition des dossiers ;
-6. comment faire un projet ;
+6. comment faire un projet : l'étape « **Vérifie l'étape** » (ouvrir seulement la section de l'étape dans `solution/CORRIGE.md`), et les paliers de blocage (palier 2 : `INDICES.md`, palier 3 : `CORRIGE.md`) ;
 7. comment faire un drill ;
 8. comment savoir que le chapitre est acquis.
 
@@ -74,7 +84,11 @@ Il contient, dans cet ordre :
    - les notions visées, en listes ;
    - les algorithmes ;
    - **« Ce que TU crées »** : les noms des types et du `main` ;
-   - la règle du crescendo.
+   - la règle du crescendo ;
+   - sous le lien vers `PARCOURS.md`, la ligne « **Bloqué sur une étape ?** `INDICES.md` … **Étape finie ?** `solution/CORRIGE.md` … » ;
+   - un encadré **« Tes outils pour ce projet »** : les arguments à mettre dans IntelliJ, et les deux commandes exactes, à taper depuis `Kurse` :
+     `javac -d build/chN-pNN -sourcepath src/main/java src/main/java/…/Main.java` puis `java "-Duser.language=fr" -cp build/chN-pNN …Main args` (ajoute `-encoding UTF-8` si le code contient des caractères non ASCII ; ajoute le jar H2 au classpath au chapitre 15) ;
+   - pour un projet-bilan, un tableau « Tu dois… / Leçon à relire ».
 2. **Le tableau de bord**, en étapes ☐. Chaque étape contient :
    - un extrait de sa sortie ;
    - les types et les signatures ;
@@ -82,8 +96,14 @@ Il contient, dans cet ordre :
    - des **questions**.
    
    Puis viennent les **expériences**, hors sortie attendue.
+
+   Chaque étape commence par **📖 La leçon** (ou un **📖 Rappel** court), puis **👉 À toi :** avant les consignes.
 3. **La checklist** : les éléments que `Check` cherche dans le code.
 4. **La sortie attendue complète** : injectée automatiquement depuis la solution.
+
+**`INDICES.md`** : un en-tête « Comment s'en servir » (20 minutes de blocage avant d'ouvrir), puis, par étape, `<details><summary>Indice 1</summary>` et `Indice 2`, **sans code de solution**.
+
+**`solution/CORRIGE.md`** : un en-tête « Quand le lire » (seulement la section de l'étape) et la version du JDK utilisée, puis, par étape : le code ou un renvoi au fichier, la **réponse à chaque question**, et le **résultat réel** de chaque expérience (message exact, traduit en français). Une expérience se vérifie sur une **copie** de la solution modifiée, ou dans un petit programme à part ; un comportement non déterministe se lance plusieurs fois, et le corrigé donne les valeurs observées.
 
 ## 5. Le `TODO.md` d'un drill
 
@@ -96,6 +116,7 @@ Il contient, dans cet ordre :
   - la sortie attendue complète ;
   - une **carte mémoire** dans `<details>`, à lire seulement après.
 - **La répétition espacée :** J0, J+1, J+3, J+7, J+14, J+30, notée dans `drills/README.md`.
+- **Avant `## Défis` :** la ligne « Les notions de ce drill ont été apprises dans : projet … », puis un `<details>` « Comment faire ce drill, concrètement » (créer la classe, le format des lignes, les arguments, quoi faire en cas de blocage, la carte mémoire, le suivi). Au chapitre 12, la version script (`recall.sh` lancé par Git Bash).
 
 ## 6. Le correcteur `Check.java`
 
@@ -155,6 +176,12 @@ Il contient, dans cet ordre :
   - la langue de `jar` est forcée en anglais (`-J-Duser.language=en`) ;
   - les sorties de `--describe-module` sont triées.
 - **Le nettoyage :** ne jamais supprimer avec un motif générique. Toujours lister les chemins exacts.
+- **Le terminal de l'apprenant est PowerShell** (IntelliJ sous Windows) :
+  - `"-Duser.language=fr"` doit être **entre guillemets**, sinon PowerShell le coupe au point ;
+  - un script `.sh` se lance avec le chemin complet `& "C:\Program Files\Git\bin\bash.exe" chemin/script.sh` (un simple `bash` peut lancer celui de WSL) ;
+  - le séparateur d'un classpath est `;`.
+- **`javac` 17 sous Windows lit les sources en Cp1252** : `-encoding UTF-8` est nécessaire dès qu'un fichier contient des caractères non ASCII. Dans le code de l'apprenant, préférer les échappements (`'\u00A0'`).
+- **Les heredocs bash** transforment `\b`, `\1`… en caractères de contrôle : écrire les fichiers avec un vrai éditeur (ou `chr(92)` en Python), puis chercher les caractères de code < 32 dans les `.md`, `.sh` et `.java` modifiés.
 
 ## 10. Le workflow Git
 
