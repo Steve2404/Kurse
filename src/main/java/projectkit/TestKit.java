@@ -485,12 +485,20 @@ public final class TestKit {
      */
     @SuppressWarnings({"deprecation", "removal"})
     private static void stopLeftovers(Set<Thread> before) {
-        for (Thread t : Thread.getAllStackTraces().keySet()) {
+        for (Map.Entry<Thread, StackTraceElement[]> e : Thread.getAllStackTraces().entrySet()) {
+            Thread t = e.getKey();
             if (!before.contains(t) && t.isAlive() && t != Thread.currentThread()) {
                 t.interrupt();
+                // Un fil du JDK en attente (le client HTTP, chapitre 19) n'execute pas le code du projet : l'arreter
+                // de force pourrait abimer un etat partage par les lancements suivants. On ne force que les fils qui
+                // executent le code compile (une boucle infinie) ou qui empecheraient la JVM de s'arreter.
+                boolean runsProjectCode = Stream.of(e.getValue()).anyMatch(f -> f.getClassName().startsWith("checkrun."));
+                if (t.isDaemon() && !runsProjectCode) {
+                    continue;
+                }
                 try {
                     t.stop();
-                } catch (UnsupportedOperationException | SecurityException e) {
+                } catch (UnsupportedOperationException | SecurityException ex) {
                     // pas d'arret force possible sur ce JDK
                 }
             }
