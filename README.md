@@ -26,11 +26,24 @@ Chaque chapitre se travaille en deux temps :
 | 14 | `ch14_io` | I/O | 7 | 6 + 1 bonus |
 | 15 | `ch15_jdbc` | JDBC | 7 | 6 + 1 bonus |
 
+## Après le livre : vers le niveau senior
+
+Le livre prépare l'examen ; ces chapitres préparent au métier. Même format (projets, drills, `Check`, indices, corrigés, palais mental), sans crescendo à respecter du côté du livre : tout Java 17 est permis.
+
+| Chap | Dossier | Sujet | Projets | Drills |
+|---|---|---|---|---|
+| 16 | `ch16_testing` | Tester et déboguer : JUnit 5, TDD, doublures, Mockito, le débogueur | 8 | 6 (dont 2 katas) |
+| 17 | à venir | Algorithmes et structures de données | | |
+| 18 | à venir | Conception : SOLID, patrons, refactoring | | |
+| 19 | à venir | Le projet final | | |
+
+Au chapitre 16, **tu écris aussi les tests**. `Check` les lance sur ton code, sur le code de référence, et sur des **mutants** (des copies du code avec un bug glissé exprès) : un bon jeu de tests les attrape tous.
+
 Les dossiers sont dans `src/main/java/`. Les modules du chapitre 12 vivent hors Maven, dans `ch12_modules/` à la racine. `ch15_jdbc-lab/` contient un Docker facultatif (PostgreSQL et MySQL) pour le drill bonus du chapitre 15.
 
 ## Par où commencer
 
-1. Ouvre le dépôt dans IntelliJ (projet Maven, **Java 17**).
+1. Ouvre le dépôt dans IntelliJ (projet Maven, **Java 17**). Tu débutes ? Commence par `src/main/java/ch1_buildingblocks/projects/p00_bonjour`, qui montre chaque clic. Pour retenir à long terme : `PALAIS_MENTAL.md`.
 2. Lis `src/main/java/<chapitre>/PARCOURS.md` en entier : c'est le mode d'emploi du chapitre.
 3. Ouvre `projects/p01_…/TODO.md` en aperçu Markdown, et suis-le.
 
@@ -51,7 +64,7 @@ src/main/java/chN_nom/
     └── rNN_theme/         ← TODO.md (défis + carte mémoire), Check.java, solution/
 ```
 
-- **Tu crées toi-même tous les types** (classes, records, interfaces, `main`) dans le paquet du projet.
+- **Tu crées toi-même tous les types** (classes, records, interfaces, `main`, et à partir du chapitre 16 les tests) dans le paquet du projet.
 - **`Check`** lance ton programme, compare sa sortie ligne par ligne, puis vérifie que tu as utilisé l'API visée. Lance-le depuis la racine du dépôt. Avec l'argument `solution`, il vérifie la correction.
 - **Le crescendo :** le chapitre N n'utilise que les chapitres 1 à N. `Check` refuse les notions des chapitres suivants (`[FAIL] API : interdit ici`).
 - **La révision espacée :** chaque drill se refait à J0, J+1, J+3, J+7, J+14 et J+30. Avant chaque répétition, supprime ton `RecallNN.java`.

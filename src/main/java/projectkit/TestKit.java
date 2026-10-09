@@ -237,6 +237,10 @@ public final class TestKit {
             renamed.put(e.getKey(), text);
             units.add(new Source(e.getKey(), text));
         }
+        if (units.isEmpty()) {
+            return new Run("       aucun fichier .java a compiler : as-tu cree tes classes dans le paquet du projet (et non dans solution/) ?",
+                    0, 0, 0, List.of(), Map.of(), null);
+        }
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         try (StandardJavaFileManager fm = compiler.getStandardFileManager(diagnostics, null, StandardCharsets.UTF_8)) {

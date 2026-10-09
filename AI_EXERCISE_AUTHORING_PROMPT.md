@@ -136,6 +136,18 @@ Il contient, dans cet ordre :
 
 - `Check.java`, les listes d'API et la sortie attendue du `TODO.md` sont **générés** depuis la solution par script. Ne jamais les éditer à la main.
 
+### 6 bis. Les chapitres de tests (16 et suivants) : `projectkit/TestKit.java`
+
+L'apprenant écrit le code **et** ses tests (`…Test.java`) dans le paquet du projet. Le code a des signatures et des messages **imposés** par le `TODO.md` (les tests de référence les appellent) ; ses détails internes restent libres.
+
+- **`TestKit.checkProject(Check.class, args, minTests, MUTANTS, API_CODE, API_TESTS)`** recopie les sources dans un paquet neuf (`checkrun.rN`, imports du paquet du projet retirés), les compile avec `javax.tools`, et lance JUnit quatre fois : ses tests sur son code ; ses tests sur `solution/` ; les tests de `solution/` sur son code ; ses tests sur chaque **mutant**.
+- **Un mutant** = `new Mutant("Fichier.java", "texte exact", "remplacement")`, appliqué au code de `solution/`. Chaque mutant doit être tué par les tests de référence : un mutant qui survit aux tests de référence est presque toujours **équivalent** (il ne change aucun résultat) ; on le remplace, et on peut en faire une leçon.
+- **Les doublures de test** vont dans la classe de test (classes `static` imbriquées) : seuls les `…Test.java` accompagnent les tests chez les mutants.
+- **`Data.java`** est recopié dans chaque lancement ; une solution qui l'utilise l'importe explicitement (`import chN.projects.pNN.Data;`), sinon la compilation Maven du dépôt casse.
+- **`TestKit.checkDrill(Check.class, args, EXPECTED, API)`** pour un drill : il lance les tests et affiche `dNN : X executions, Y reussies` par méthode (ordre alphabétique) ; un test `@Disabled` n'apparaît pas. Les katas utilisent `checkProject`.
+- **La vérification :** `Check solution` doit réussir (tous les mutants tués) ; puis simulation de l'apprenant (copie de `solution/*.java` dans le paquet, `Check` sans argument) ; puis une expérience négative (un test retiré : un mutant doit survivre). Chaque message JUnit ou Mockito cité dans un `TODO.md` ou un `CORRIGE.md` est obtenu en direct (petite classe de test lancée par le `Launcher` de JUnit).
+- **Les interdits utiles :** `!System.out` et `!Thread.sleep` dans les tests ; `!double`/`!float` pour de l'argent ; `!LocalDateTime.now()` (et `LocalDate`, `Instant`) quand une `Clock` est injectée.
+
 ## 7. Règle n°1 : tout vérifier en direct
 
 1. **Rien sans exécution.** Ne jamais écrire un comportement, un message ou un nombre sans l'avoir **exécuté**.

@@ -49,6 +49,19 @@ Chaque pièce garde **un ou deux chapitres**. Chaque chapitre a **6 stations** (
 
 **Pourquoi cet ordre :** le salon, où l'on entre, garde les fondations. La cuisine, pleine d'outils, garde les API de base. Les chambres, où l'on « construit sa vie », gardent les classes, puis les collections. Les douches, où l'eau coule et déborde, gardent les exceptions et les fils d'exécution. La terrasse, ouverte sur le dehors, garde les fichiers et la base de données.
 
+### Le 2e circuit : les plafonds (chapitres 16 et suivants)
+
+La maison est pleine au sol. Pour les chapitres d'après le livre, on refait **le même trajet**, mais en **levant les yeux** : chaque pièce a un deuxième circuit de **12 stations au plafond** (le lustre, un coin, une poutre, le haut des rideaux, le haut de l'armoire, le plafonnier, une fissure…). Rien de nouveau à apprendre : seulement 12 points de plus par pièce, choisis une fois, toujours dans le même sens.
+
+| Plafond de… | Stations 1 à 12 |
+|---|---|
+| 🛋️ Salon | chapitre 16 — Tester et déboguer |
+| 🍳 Cuisine, 🛏️ Chambre 1 | chapitre 17 — Algorithmes et structures de données (à venir) |
+| 🛏️ Chambre 2, 🛏️ Chambre 3 | chapitre 18 — Conception (à venir) |
+| 🚿 Douches, 🌿 Terrasse | chapitre 19 — Le projet final (à venir) |
+
+Pour installer un plafond, fais la même étape 0 (section 3), mais au plafond, le jour où tu commences le chapitre.
+
 ---
 
 ## 3. 👉 À toi, étape 0 : installe le palais (une seule fois, 20 minutes)
