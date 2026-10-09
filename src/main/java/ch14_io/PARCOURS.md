@@ -161,3 +161,14 @@ build/ch14/…                 ← les bacs à sable (ignorés par git)
   - lire et modifier un attribut de fichier.
 - [ ] Tu sais écrire sans aide : supprimer ou copier un arbre, comparer deux arbres, une copie profonde par sérialisation, un tri externe, un visiteur de fichiers.
 - [ ] p02 et p07 ont été refaits **depuis un dossier vide**, 2 à 3 semaines plus tard.
+
+---
+
+## 9. 🏠 Ton palais mental (pour ne pas oublier dans 6 mois)
+
+Les règles et les pièges de ce chapitre sont rangés dans **la terrasse**, stations 1 à 6 : [`PALAIS.md`](PALAIS.md).
+
+- **Quand :** une fois le capstone réussi, pose les images (15 minutes), puis fais une balade le soir même.
+- **À chaque répétition des drills** (J+1, J+3, J+7, J+14, J+30) : la balade de la pièce **avant** le drill (2 minutes, à voix haute, sans regarder, puis vérifie).
+- **Chaque dimanche :** la grande balade, du salon jusqu'à la dernière pièce installée.
+- Le palais range les règles ; il ne remplace ni les projets ni les drills.

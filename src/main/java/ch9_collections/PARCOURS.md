@@ -195,3 +195,14 @@ L'argument `solution` vérifie la solution, pour voir à quoi ressemble un proje
   - expliquer le contrat `equals`/`hashCode` d'un `HashSet`, et ce que provoque un type brut (pollution, `ClassCastException` différée).
 - [ ] Tu sais écrire sans aide : un parcours en largeur, Dijkstra avec une `PriorityQueue`, un tri topologique, un top-k avec un tas, un cache LRU (`LinkedHashMap`), une classe générique bornée.
 - [ ] p04 et p07 ont été refaits **depuis un dossier vide**, 2 à 3 semaines plus tard.
+
+---
+
+## 8. 🏠 Ton palais mental (pour ne pas oublier dans 6 mois)
+
+Les règles et les pièges de ce chapitre sont rangés dans **la chambre 3**, stations 1 à 6 : [`PALAIS.md`](PALAIS.md).
+
+- **Quand :** une fois le capstone réussi, pose les images (15 minutes), puis fais une balade le soir même.
+- **À chaque répétition des drills** (J+1, J+3, J+7, J+14, J+30) : la balade de la pièce **avant** le drill (2 minutes, à voix haute, sans regarder, puis vérifie).
+- **Chaque dimanche :** la grande balade, du salon jusqu'à la dernière pièce installée.
+- Le palais range les règles ; il ne remplace ni les projets ni les drills.

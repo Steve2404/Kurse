@@ -37,6 +37,7 @@ Chaque notion des objectifs officiels OCP 17 du chapitre doit apparaître dans a
 ```
 src/main/java/chN_nom/
 ├── PARCOURS.md                 ← le mode d'emploi du chapitre
+├── PALAIS.md                   ← les stations du palais mental de ce chapitre
 ├── projects/
 │   ├── README.md               ← la liste des projets, à cocher
 │   └── pNN_sujet/
@@ -76,7 +77,10 @@ Il contient, dans cet ordre :
 5. la disposition des dossiers ;
 6. comment faire un projet : l'étape « **Vérifie l'étape** » (ouvrir seulement la section de l'étape dans `solution/CORRIGE.md`), et les paliers de blocage (palier 2 : `INDICES.md`, palier 3 : `CORRIGE.md`) ;
 7. comment faire un drill ;
-8. comment savoir que le chapitre est acquis.
+8. comment savoir que le chapitre est acquis ;
+9. « Ton palais mental » : la pièce et les stations du chapitre, le lien vers `PALAIS.md`, et quand faire les balades.
+
+**Le palais mental** (`PALAIS_MENTAL.md` à la racine : la méthode et l'étape 0) : la maison de l'apprenant, parcourue dans l'ordre salon → cuisine → chambre 1 → chambre 2 → chambre 3 → douche 1 → douche 2 → terrasse ; 12 stations par pièce, 6 par chapitre (12 pour le chapitre 11). Chaque station du `PALAIS.md` d'un chapitre a : une **image** (exagérée, en mouvement, avec les sens, un jeu de sons pour les mots difficiles), « À retenir » (des règles **exactes**, vérifiées), et « Mon image : … ». Le fichier finit par une « balade éclair » (une question par station). Le crescendo s'applique aussi : un `PALAIS.md` ne cite rien des chapitres suivants.
 
 ## 4. Le `TODO.md` d'un projet
 

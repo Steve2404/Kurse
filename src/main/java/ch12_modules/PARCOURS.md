@@ -165,3 +165,14 @@ L'argument `solution` vérifie la solution. Lance `Check` depuis la racine du d�
   - écrire de mémoire les commandes `javac`, `java`, `jar`, `jdeps` et `jlink` (formes courtes et longues) ;
   - reconnaître les messages : `not visible`, `module not found`, `cyclic dependence`, `InaccessibleObjectException`, `IllegalAccessError`, le paquet partagé, `jlink` et les modules automatiques.
 - [ ] p02 et p06 ont été refaits **depuis un dossier vide**, 2 à 3 semaines plus tard.
+
+---
+
+## 8. 🏠 Ton palais mental (pour ne pas oublier dans 6 mois)
+
+Les règles et les pièges de ce chapitre sont rangés dans **la douche 2**, stations 1 à 6 : [`PALAIS.md`](PALAIS.md).
+
+- **Quand :** une fois le capstone réussi, pose les images (15 minutes), puis fais une balade le soir même.
+- **À chaque répétition des drills** (J+1, J+3, J+7, J+14, J+30) : la balade de la pièce **avant** le drill (2 minutes, à voix haute, sans regarder, puis vérifie).
+- **Chaque dimanche :** la grande balade, du salon jusqu'à la dernière pièce installée.
+- Le palais range les règles ; il ne remplace ni les projets ni les drills.
