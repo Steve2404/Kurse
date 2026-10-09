@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,6 +86,7 @@ public final class TestKit {
     }
 
     private static final AtomicInteger RUN_NUMBER = new AtomicInteger();
+    private static final int TIMEOUT_SECONDS = 20;
 
     private TestKit() {
     }
@@ -148,7 +150,7 @@ public final class TestKit {
                 survivors.add(String.valueOf(i + 1));
             } else if (r.failed() > 0 || r.crash() != null) {
                 killed++;
-                System.out.println("   mutant " + (i + 1) + " : tue (par " + firstFailedTest(r) + ")");
+                System.out.println("   mutant " + (i + 1) + " : tue (" + (r.crash() != null ? r.crash() : "par " + firstFailedTest(r)) + ")");
             } else {
                 survivors.add(String.valueOf(i + 1));
                 System.out.println("   mutant " + (i + 1) + " : SURVIT (aucun de tes tests ne le remarque)");
@@ -190,6 +192,36 @@ public final class TestKit {
             System.out.println(r.compileError());
         } else {
             r.perMethod().forEach((name, counts) -> actual.add(name + " : " + counts[0] + " executions, " + counts[1] + " reussies"));
+        }
+        boolean outputOk = ProjectChecker.compare("rapport", expected, actual);
+        boolean apiOk = ProjectChecker.evaluateApi(withoutComments(mine), api);
+        System.out.println();
+        System.out.println(outputOk && apiOk ? "*** DRILL REUSSI ***" : "*** Pas encore : lis les lignes [FAIL] ci-dessus. ***");
+        return outputOk && apiOk;
+    }
+
+    /**
+     * Le Check d'un drill de RAPPEL D'ALGORITHMES (chapitre 17 et suivants) : tu ecris seulement le code
+     * (les methodes imposees), et ce sont les tests de REFERENCE (dans solution/) qui le verifient.
+     * Le rapport donne, pour chaque test de reference (ordre alphabetique), "nom : executions, reussies",
+     * puis les premiers echecs pour t'aider.
+     */
+    public static boolean checkRecall(Class<?> checkClass, String[] args, List<String> expected, List<String> api)
+            throws IOException {
+        boolean solution = args.length > 0 && args[0].equals("solution");
+        String pkg = checkClass.getPackageName();
+        Map<String, String> data = sources(dirOf(pkg), pkg, true);
+        Map<String, String> refAll = sources(dirOf(pkg + ".solution"), pkg + ".solution", false);
+        Map<String, String> mine = solution ? code(refAll) : code(sources(dirOf(pkg), pkg, false));
+        System.out.println("=== Verification du drill " + pkg + (solution ? ".solution" : "") + " ===");
+        Run r = run(merge(data, mine, tests(refAll)));
+        List<String> actual = new ArrayList<>();
+        if (r.compileError() != null) {
+            System.out.println("[ERREUR] ton code ne compile pas (ou une methode imposee manque) :");
+            System.out.println(r.compileError());
+        } else {
+            r.perMethod().forEach((name, counts) -> actual.add(name + " : " + counts[0] + " executions, " + counts[1] + " reussies"));
+            r.failures().stream().limit(3).forEach(f -> System.out.println("       echec : " + f));
         }
         boolean outputOk = ProjectChecker.compare("rapport", expected, actual);
         boolean apiOk = ProjectChecker.evaluateApi(withoutComments(mine), api);
@@ -272,6 +304,7 @@ public final class TestKit {
         List<Failure> failures = new ArrayList<>();
         Map<String, int[]> perMethod = new TreeMap<>();
         int[] totals = new int[3];
+        Set<Thread> before = Thread.getAllStackTraces().keySet();
         ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r, "testkit");
             t.setDaemon(true);
@@ -322,15 +355,16 @@ public final class TestKit {
                     }
                 });
             });
-            f.get(60, TimeUnit.SECONDS);
+            f.get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            crash = "les tests ne se terminent pas en 60 s (boucle infinie ?)";
+            crash = "les tests ne se terminent pas en " + TIMEOUT_SECONDS + " s : boucle infinie, ou algorithme beaucoup trop lent";
         } catch (Exception e) {
             crash = "erreur pendant les tests : " + e;
         } finally {
             System.setOut(originalOut);
             System.setErr(originalErr);
             executor.shutdownNow();
+            stopLeftovers(before);
         }
         if (crash == null && !failures.isEmpty() && totals[0] == 0) {
             crash = failures.get(0).toString();
@@ -340,6 +374,25 @@ public final class TestKit {
 
     // Pour un assertAll, la 1re ligne ("Multiple Failures (2 failures)") ne dit rien : on ajoute le 1er echec.
     // Les messages de Mockito commencent par une ligne vide et tiennent sur plusieurs lignes : on garde les 2 premieres non vides.
+    /**
+     * Une boucle infinie ne s'arrete pas toute seule, meme apres le delai : elle continuerait a consommer
+     * le processeur et fausserait la mesure des lancements suivants. On arrete donc les fils nes pendant le lancement.
+     * Thread.stop existe encore en Java 17 ; s'il n'est plus permis (Java 20 et plus), on laisse faire.
+     */
+    @SuppressWarnings({"deprecation", "removal"})
+    private static void stopLeftovers(Set<Thread> before) {
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (!before.contains(t) && t.isAlive() && t != Thread.currentThread()) {
+                t.interrupt();
+                try {
+                    t.stop();
+                } catch (UnsupportedOperationException | SecurityException e) {
+                    // pas d'arret force possible sur ce JDK
+                }
+            }
+        }
+    }
+
     private static String message(TestExecutionResult result) {
         return result.getThrowable().map(t -> {
             List<String> lines = t.getMessage() == null ? List.of()
